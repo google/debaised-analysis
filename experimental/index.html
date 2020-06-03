@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <?!= include('css'); ?>
+  </head>
+  
+  <body>
+    <div class="sidebar branding-below">
+      <form id="form">
+
+        <h4>Please enter the required fields</h4>
+        
+        <!--ASK TABLE RANGE-->
+        <div class="block boxed">
+          <div class="heading">
+            <b>SELECT THE TABLE</b>
+          </div>
+          <div class="inline">
+            <input id="range-picker-table" type="text" placeholder="Select table" value="" class="width100" name="range-picker-table"/>
+          </div>
+          <div class="inline">
+            <button class="blue" id="find-range" onClick="getSelectedRange(this,'range-picker-table')">Get Selected Range</button>
+          </div>
+        </div>
+        <!--TABLE RANGE END-->
+        
+        
+        <!--METRIC-->
+        <div class="block boxed">
+          <div class="heading">
+            <b>INPUT COLUMN</b>
+          </div>
+          <div class="form-group inline">
+            <label for="metric">Column Name:</label>
+            <input type="text" name="metric" id="metric" class="width100" placeholder="column"/> 
+          </div>
+          <div class="form-group inline">
+            <label for="summary">Select Operation:</label>
+            <select id="summary">
+              <option>None</option>
+              <option>Sum</option>
+              <option>Mean</option>
+              <option>Count</option>
+              <option>Count Unique</option>
+              <option>Standard Deviation</option>
+              <option>First</option>
+              <option>Last</option>
+              <option>Minimum</option>
+              <option>Maximum</option>
+            </select>
+          </div>
+        </div>
+        <!--METRIC END-->
+
+        <!--DIMENSION-->
+        <div class="block boxed">
+          <div id="dimension">
+            <div class="heading">
+              <b>OUTPUT COLUMNS</b>
+              <button name="add" class="share btn-add" onClick="funcAddDimension()">ADD</button>
+            </div>
+          </div>
+        </div>
+        <!--DIMENSION END-->
+
+        <!--SORTING and LIMIT-->
+        <div class="block boxed">
+          <div class="heading">
+            <b>SORT ORDER</b>
+          </div>
+          <div class="block">
+            <input type="radio" name="sort" id="asc" checked>
+            <label for="asc">Ascending Order&ensp;</label>
+            <input type="radio" name="sort" id="desc">
+            <label for="desc">Descending Order</label>
+          </div>
+          
+          <div class="heading">
+            <b>LIMIT (K)</b>
+          </div>
+          <div class="block inline">
+            <label for="limit">Number Of Items:&ensp;</label>
+            <input type="number" name="limit" id="limit" class="width130" min="1" placeholder="enter value of k">
+          </div>
+        </div>
+        <!--SORTING and LIMIT END-->
+      
+        <!--GROUPING-->
+        <div class="block boxed">
+          <div id="group">
+            <div class="heading">
+              <b>GROUPING</b>
+              <button name="add" class="share btn-add" onClick="funcAddGroup()">ADD</button>
+            </div>
+          </div>
+        </div>
+        <!--GROUPING END-->     
+         
+        <!--SLICE-->
+        <div class="block boxed">
+          <div id="slice">
+            <div class="heading">
+              <b>FILTER</b>
+              <button name="add" class="share btn-add" onClick="funcAddSlice()">ADD</button>
+            </div>
+          </div>
+        </div> 
+        <!--SLICE END-->
+      
+        <!--DATE-->
+        <div class="block boxed">
+          <div id="date">
+            <div class="heading">
+              <b>DATE RANGE</b>
+              <button name="date-btn" class="share btn-add" onClick="funcAddDate(this)">ADD</button>
+            </div>
+          </div>
+        </div>
+        <!--DATE END-->
+      
+        <!--TIME GRANULARITY-->
+        <div class="block boxed">
+          <div id="granularity">
+            <div class="heading">
+              <b>TIME GRANULARITY</b>
+              <button name="granularity-btn" class="share btn-add" onClick="funcAddGranularity(this)">ADD</button>
+            </div>
+          </div>
+        </div>
+        <!--TIME GRANULARITY END-->
+       
+        <!--BUTTONS-->
+        <div class="block">
+          <span id="result" name="result"></span>
+        </div>
+
+        <div class="block">
+          <button type="submit" class="blue" id="done">Compute</button>
+          <button name="close" class="grey" onClick="google.script.host.close()">Cancel</button>
+        </div>
+        <!--BUTTONS END--> 
+       
+      </form>
+
+    </div>
+    <?!= include('javascript'); ?>
+
+  </body>
+</html>
