@@ -26,6 +26,28 @@
   var idg=0;  //counter for groups created
   var idd=0;  //counter for dimensions created
     
+  function funcAddGroup(){
+    idg++;  //increment number of groups created
+    var groupId='g'+idg;  //id of the group element that will be created
+    var html= '<div class="inline">'+
+                '<label for="grp-by'+idg+'">Group By: </label>'+
+                '<input type="text" name="grp-by" id="grp-by'+idg+'" class="width130" placeholder="column">'+
+              '</div>'+
+              '<button name="delete" class="red btn-delete1" onclick="removeElement(\''+groupId+'\')">DELETE</button>';
+    addElement('group','div',groupId,html);   //parentId, elementTag, elementId, html
+  }
+    
+  function funcAddDimension(){
+    idd++; //increment number of dimensions created
+    var dimensionId ='d'+idd;
+    var html= '<div class="inline">'+
+                '<label for="dim-col'+idd+'">Column Name: </label>'+
+                '<input type="text" name="dim-col" id="dim-col'+idd+'" class="width100" placeholder="column">'+
+              '</div>'+
+              '<button name="delete" class="red btn-delete1" onclick="removeElement(\''+dimensionId+'\')">DELETE</button>';
+    addElement('dimension','div',dimensionId,html);   //parentId, elementTag, elementId, html
+  }
+
   function funcAddSlice(){
     ids++;   //increment number of slices created
     var sliceId='s'+ids;  //id of the slice element that will be created
@@ -55,28 +77,6 @@
                 '</div>'+
               '</div>';
     addElement('slice','div',sliceId,html);   //parentId, elementTag, elementId, html
-  }
-    
-  function funcAddGroup(){
-    idg++;  //increment number of groups created
-    var groupId='g'+idg;  //id of the group element that will be created
-    var html= '<div class="inline">'+
-                '<label for="grp-by'+idg+'">Group By: </label>'+
-                '<input type="text" name="grp-by" id="grp-by'+idg+'" class="width130" placeholder="column">'+
-              '</div>'+
-              '<button name="delete" class="red btn-delete1" onclick="removeElement(\''+groupId+'\')">DELETE</button>';
-    addElement('group','div',groupId,html);   //parentId, elementTag, elementId, html
-  }
-    
-  function funcAddDimension(){
-    idd++; //increment number of dimensions created
-    var dimensionId ='d'+idd;
-    var html= '<div class="inline">'+
-                '<label for="dim-col'+idd+'">Column Name: </label>'+
-                '<input type="text" name="dim-col" id="dim-col'+idd+'" class="width100" placeholder="column">'+
-              '</div>'+
-              '<button name="delete" class="red btn-delete1" onclick="removeElement(\''+dimensionId+'\')">DELETE</button>';
-    addElement('dimension','div',dimensionId,html);   //parentId, elementTag, elementId, html
   }
     
   function funcAddDate(button){

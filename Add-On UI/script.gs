@@ -40,8 +40,10 @@ function getSelectedRange(){
 
 //funntion to find the index of a particular column in sheet
 function colIndex(colName){
+
   var sheet=SpreadsheetApp.getActiveSheet();
   var data = sheet.getDataRange();
+
   //assuming header are on first row
   var headers=sheet.getRange(1,1,1,data.getLastColumn()).getValues();
   for(var i=0;i<headers[0].length;i++){
@@ -50,6 +52,7 @@ function colIndex(colName){
       return i+1;
     }
   }
+  
   //return -1 indicating column name was not found
   return -1;
 }
