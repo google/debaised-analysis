@@ -2,12 +2,12 @@
 
 from Utilities import aspects
 
-def slice_compare(table, metric, dimension, group_columns, slices, summary_operator, **kwargs):
+def slice_compare(table, metric, dimension, slices, summary_operator, **kwargs):
     """This function will implement the slice-compare intent
 
     Sorts tuples in the order metric, after applying slice, groupby operations.
     Also removes the tuples that do not lie in the given date range.
-    The arguments 'table, metric,dimension, group_columns, slices, summary_operator' are not optional so they are passed as it is,
+    The arguments 'table, metric,dimension, slices, summary_operator' are not optional so they are passed as it is,
     rest of the arguments that are optional('date_range') will be passed in kwargs.
 
     Args:
