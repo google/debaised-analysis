@@ -1,0 +1,248 @@
+<!-- Javascript Functions for extracting data filled by user and 
+    calling server-side Apps Script function to get the result -->
+
+<script>
+
+  var form = document.getElementById("form");  //fetching form
+  var done = document.getElementById("done");  //fetching the submit button
+  
+  // Function called when user clicks the Compute (submit) button
+  function submitForm(intentName,event) {
+  
+    event.preventDefault();
+   
+    done.innerHTML = "Computing";   //change value of button
+    done.disabled = "true";         //disable the button
+    done.classList.add("loading");
+    
+    //intent name
+    var intent = intentName;       //intent for which query is submitted
+    
+    //table data
+    var tableData = fetchTable();  //contains table range and header row number
+    
+    //metric
+    var metric = fetchMetricData();  //contains metric column name
+
+    //summary
+    var summaryOperator = fetchSummaryData();  //summary operation applied
+    
+    //sortlimit
+    var isAsc = fetchSortOrder();  //order of sorting (only for top-k, else null)
+
+    //limit
+    var k = fetchLimit();  //number of items for top-k (else null)
+    
+    //dimension
+    var dimensions = fetchDimension();  //1D array containing name of dimensions
+    
+    //slice
+    var slices = fetchSlice();  //1D array of objects containing slicing information
+    
+    //date
+    var dateRange = fetchDate();  //date column, start date, end date
+    
+    //granularity
+    var timeGranularity = fetchGranularity();  //contains time granularity value
+    
+    //output sheet name
+    //var outputSheet = fetchOutputSheetName();  //for extracting output sheet name
+    var outputSheet = 'Output Sheet';            //setting output sheet default name
+    
+    google.script.run
+          .withSuccessHandler(printOutput)       //call printOutput when server-side function returns successfully
+          .createJsonObject(                     //server side function
+            intent,
+            tableData,
+            metric,
+            summaryOperator,
+            isAsc,
+            k,
+            dimensions,
+            slices,
+            dateRange,
+            timeGranularity,
+            outputSheet);
+ 
+  }
+  
+  //fetching table range and header row for table
+  function fetchTable() {
+  
+    var tableData = [];
+    tableData.push(form.elements["range-picker-table"].value);
+    tableData.push(parseInt(form.elements["header-row"].value));
+    
+    console.log(tableData);
+    return tableData;
+  }
+    
+  //fetching metric column name
+  function fetchMetricData() {
+
+    var metric = 'null';
+    if(document.getElementById("metric"))
+      metric = form.elements["metric"].value;
+    else if(document.getElementById("sort-col"))
+      metric = form.elements["sort-col"].value;
+    
+    console.log(metric);
+    return metric;
+  }
+
+  //fetching summary operation selected
+  function fetchSummaryData() {
+    
+    var summary = 'null';
+    if(document.getElementById("summary")) {
+      var index = form.elements["summary"].selectedIndex;
+      var summary = form.elements["summary"].options[index].value;
+    }
+    
+    console.log(summary);
+    return summary;
+  }
+    
+  //fetching the sort-order selected (true for ascending)
+  function fetchSortOrder() {
+    
+    var sortOrder = 'null';
+    if(document.getElementsByName("sort").length > 0) {
+      var radioSort = form.elements["sort"];
+      if(radioSort[0].checked)
+        sortOrder = true;
+      else
+        sortOrder = false;
+    }
+
+    console.log(sortOrder);
+    return sortOrder;
+  }
+
+  //fetching value of k in case of top-k
+  function fetchLimit() {
+    
+    var limit = 'null';
+    if(document.getElementById("limit")) {
+      limit = form.elements["limit"].value;
+      if(limit === "")
+        limit = 5000000;
+      else 
+        limit = parseInt(limit);
+    }
+      
+    //limit is an integer with a default max value of 5000000 
+    //since 5000000 is the maximum cell limit in sheets
+    console.log(limit);
+    return limit;
+  }
+    
+  //fetching dimensions and storing them in an array
+  function fetchDimension() {
+
+    var dimCol = document.getElementsByName("dim-col");
+    var dimensions = [];
+    for(var i = 0; i < dimCol.length; i++)
+      dimensions.push(dimCol[i].value);
+
+    console.log(dimensions);
+    return dimensions;
+  }
+  
+  //fetching the data used for slicing 
+  function fetchSlice() {
+
+    var slices = [];
+    var filter = document.getElementsByName("filter");
+    var sliceCol = document.getElementsByName("slice-col");
+    var sliceOp = document.getElementsByName("slice-op");
+    var sliceVal = document.getElementsByName("slice-val");
+
+    for(var i = 0; i < filter.length; i++) {
+
+      var index = sliceOp[i].selectedIndex;
+      var operation =sliceOp[i].options[index].value; 
+      
+      //each slice value will be an object with 3 keys
+      var SliceObj = {
+        'sliceCol': sliceCol[i].value,
+        'sliceOp': operation,
+        'sliceVal': sliceVal[i].value.split(',')
+      }
+      slices.push(SliceObj);
+    }
+
+    console.log(slices);
+    return slices;
+  }
+    
+  //fetching date column name and date start,date end
+  function fetchDate() {
+    
+    //structure of object used for storing date range
+    var DateRange = {
+      'dateCol': '',
+      'dateStart': '',
+      'dateEnd': ''
+    }
+    
+    if(document.getElementById("date-content")) {
+    
+      var dateCol = form.elements["date-col"].value;
+      var dateStart = form.elements["date-start"].value;
+      var dateEnd = form.elements["date-end"].value;
+      
+      //calculating today's date
+      var today = new Date().toISOString().slice(0, 10);
+
+      /*
+       * if user doesn't specify start and end date we take their value as today's date
+       * if user specifies one of start or end date, we take other to be same as that
+       */
+      if(dateStart === '' && dateEnd === '') {
+        dateStart = today;
+        dateEnd = today;
+      }
+      else if(dateStart === '')
+        dateStart = dateEnd;
+      else if(dateEnd === '')
+        dateEnd = dateStart;
+      
+      DateRange['dateCol'] = dateCol;
+      DateRange['dateStart'] = dateStart;
+      DateRange['dateEnd'] = dateEnd;
+
+    }
+
+    console.log(DateRange);
+    return DateRange;
+  }
+  
+  //fetching the granularity option selected by user
+  function fetchGranularity() {
+    
+    var timeGranularity = 'null';
+    if(document.getElementById("period")) {
+      var index = form.elements["period"].selectedIndex;
+      timeGranularity = form.elements["period"].options[index].value;
+    }
+
+    console.log(timeGranularity);
+    return timeGranularity;
+  }
+  
+  //fetching output sheet name which will contain the output for query
+  function fetchOutputSheetName() {
+    var outputSheet = form.elements["output-sheet"].value;
+    return outputSheet;
+  }
+  
+  //Function called after server-side function - createJsonObject returns successfully
+  function printOutput(){
+  
+    done.innerHTML = "Compute";        //change value of submit button
+    done.disabled = false;             //enable the button
+    done.classList.remove("loading");
+  }
+  
+</script>
