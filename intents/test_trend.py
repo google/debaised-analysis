@@ -20,7 +20,7 @@ The query is mentiond in __doc__ of the function.
 import pandas
 
 import trend
-from util.enumerations import *
+from util.enums import *
 
 def test_1():
     """An example from the IPL dataset
