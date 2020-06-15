@@ -27,9 +27,9 @@ The query is mentiond in __doc__ of the function.
 import pandas
 
 import topk
-from util.enumerations import *
+from util.enums import *
 
-# import data.spider_eval.evaluation
+import data.spider_eval.evaluation
 
 def test_1():
     """An example from the IPL dataset
@@ -113,7 +113,7 @@ def test_7():
     	                        date_format='%Y-%m-%d')
     print(query_result)
 
-print(test_1.__doc__)
-test_1()
+print(test_5.__doc__)
+test_5()
 
 print("Test cases completed")

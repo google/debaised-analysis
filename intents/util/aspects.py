@@ -24,7 +24,7 @@ are dropped.
 
 import datetime
 
-from util.enumerations import SummaryOperators, Granularities
+from util.enums import SummaryOperators, Granularities
 
 def apply_date_range(table, date_range, date_column_name, date_format):
     """This function removes the rows from from the table that
