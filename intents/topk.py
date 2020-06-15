@@ -99,6 +99,10 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
     table = aspects.group_by(table, dimensions, summary_operator)
 
     table = table.sort_values(by=[metric], ascending=is_asc)
+    
+    # reordering the index
+    table = table.reset_index()
+    table = table.drop(['index'], axis=1)
 
     # selecting only the top-k
     table = table.head(k)
