@@ -18,12 +18,6 @@ from IPL & spider dataset.
 The query is mentiond in __doc__ of the function.
 """
 
-# to run the tests that use spider_eval dataset, download it from here -
-# https://yale-lily.github.io/spider
-# and replace the evaluation.py file to this -
-# https://drive.google.com/file/d/1QSydM2VX2q1ERrZvrBNSFiaf5A3aO93i/\
-# view?ts=5ee202e5
-
 import pandas
 
 import topk
@@ -43,6 +37,18 @@ def test_1():
     	                        date_column_name='date',
     	                        date_format='%Y-%m-%d')
     print(query_result)
+    expected_result = """        city  win_by_runs
+0       Pune           97
+1  Hyderabad           35
+2  Bangalore           15
+3       Pune            0
+4     Rajkot            0
+5     Indore            0
+6  Hyderabad            0
+7     Mumbai            0
+8     Indore            0
+9     Mumbai            0"""
+    assert(expected_result == query_result.to_string())
 
 def test_2():
     """An example from the IPL dataset
@@ -56,6 +62,12 @@ def test_2():
     	                        date_column_name='date', date_format='%Y-%m-%d',
     	                        summary_operator=SummaryOperators.MEAN)
     print(query_result)
+    expected_result = """  player_of_match  win_by_runs
+0       MM Sharma           14
+1         KK Nair            7
+2         WP Saha            7
+3         SS Iyer            0"""
+    assert(expected_result == query_result.to_string())
 
 def test_3():
     """An example from the spider dataset
@@ -68,6 +80,9 @@ def test_3():
     	                        date_column_name='date', date_format='%Y-%m-%d',
     	                        summary_operator=SummaryOperators.COUNT)
     print(query_result)
+    expected_result = """  Creation  Department_ID
+0     1789              2"""
+    assert(expected_result == query_result.to_string())
 
 def test_4():
     """An example from the spider dataset
@@ -80,6 +95,14 @@ def test_4():
     	                        date_format='%Y-%m-%d', group_columns=None,
     	                        summary_operator=None)
     print(query_result)
+    expected_result = """   Year                Theme
+0  2002               Aliens
+1  2003             MTV Cube
+2  2004      Valentine's Day
+3  2005         MTV Asia Aid
+4  2006          Codehunters
+5  2013  Carnival M is back!"""
+    assert(expected_result == query_result.to_string())
 
 def test_5():
     """An example from the spider dataset
@@ -92,6 +115,13 @@ def test_5():
     	                        date_format='%Y-%m-%d',
     	                        summary_operator=SummaryOperators.MAX)
     print(query_result)
+    expected_result = """            city        lat
+0  San Francisco  37.804770
+1   Redwood City  37.491269
+2      Palo Alto  37.448598
+3  Mountain View  37.406940
+4       San Jose  37.352601"""
+    assert(expected_result == query_result.to_string())
 
 def test_6():
     """An example from the spider dataset
@@ -102,6 +132,15 @@ def test_6():
     	                        slices=None, date_range=None,
     	                        date_column_name='date', date_format='%Y-%m-%d')
     print(query_result)
+    expected_result = """  Publication_Date       Price
+0      August 2008  15000000.0
+1       March 2008   6000000.0
+2        June 2006   4100000.0
+3     October 2005   3000000.0
+4      August 2008   3000000.0
+5       March 2007   2000000.0
+6       April 2007   2000000.0"""
+    assert(expected_result == query_result.to_string())
 
 def test_7():
     """An example from the spider dataset
@@ -112,8 +151,59 @@ def test_7():
     	                        date_range=None, date_column_name='date',
     	                        date_format='%Y-%m-%d')
     print(query_result)
+    expected_result = """                name  salary
+0        Milo Brooks      20
+1        Donald King   18050
+2    Richard Jackson   23980
+3     Patricia Jones   24450
+4        Linda Davis   27984
+5   Elizabeth Taylor   32021
+6      Haywood Kelly   32899
+7       Chad Stewart   33546
+8     David Anderson   43001
+9     Barbara Wilson   43723
+10      Robert Brown   44740
+11    Michael Miller   48090
+12     William Moore   48250
+13   Jennifer Thomas   54921
+14      William Ward   84476
+15    Michael Miller   99890
+16        Larry West  101745
+17     William Jones  105743
+18       Eric Cooper  114323
+19       James Smith  120433
+20      Dorthy Lewis  152013
+21     John Williams  153972
+22      Mary Johnson  178345
+23       Karen Scott  205187
+24        Mark Young  205187
+25   Joseph Thompson  212156
+26   Angela Martinez  212156
+27   Lawrence Sperry  212156
+28       Betty Adams  227489
+29       Lisa Walker  256481
+30     George Wright  289950"""
+    assert(expected_result == query_result.to_string())
+
+print(test_1.__doc__)
+test_1()
+
+print(test_2.__doc__)
+test_2()
+
+print(test_3.__doc__)
+test_3()
+
+print(test_4.__doc__)
+test_4()
 
 print(test_5.__doc__)
 test_5()
+
+print(test_6.__doc__)
+test_6()
+
+print(test_7.__doc__)
+test_7()
 
 print("Test cases completed")
