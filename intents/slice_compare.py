@@ -23,10 +23,10 @@ Some of the operations are optional.
 
 from util import aspects
 
-def slice_compare(table, metric, dimension, slices, slice_compare_column, summary_operator, **kwargs):
+def slice_compare(table, metric, dimensions, slices, slice_compare_column, 
+                                            summary_operator, **kwargs):
     """This function will implement the slice-compare intent
 
-    Sorts tuples in the order metric, after applying slice, groupby operations.
     Also removes the tuples that do not lie in the given date range.
     The arguments 'table, metric,dimension,slices, slices_compare_column, 
     summary_operator' are not optional, so they are passed as it is,
@@ -38,8 +38,7 @@ def slice_compare(table, metric, dimension, slices, slice_compare_column, summar
         table: Type-pandas.dataframe
             It has the contents of the csv file
         metric: Type-string
-            It is the name of the column according to which we sort,
-            and in the case when grouping has to be done,
+            It is the name of the column according to which we have group to be done,
             summary operator is applied on metric. Metric could a column
             containing strings, if we are applying count operator on it.
         dimensions: Type-list of str
@@ -95,8 +94,8 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     # slice_compare_column should be the last element of the group
     # so that groupby will show them together for every grouping
-    dimension.remove(slice_compare_column[0])
-    dimension.append(slice_compare_column[0])
+    dimensions.remove(slice_compare_column[0])
+    dimensions.append(slice_compare_column[0])
     table = aspects.group_by(table, dimensions, summary_operator)
 
     return table
