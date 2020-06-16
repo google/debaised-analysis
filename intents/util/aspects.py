@@ -77,14 +77,14 @@ def slice_table(table, slices):
         return table
     num_rows = table.shape[0]
     # list of column by which slicing will be done
-    slices_keys_list = list(slices.keys())
+    slices_key_list = list(slices.keys())
     for row in range(num_rows):
         slice_match = True
-        for key in slices_keys_list:
-            slices_values_list = slices[key]
+        for key in slices_key_list:
+            key_values_list = slices[key]
             table_key_value = table.loc[row,key]
             slice_match = False
-            for values in slices_values_list:
+            for values in key_values_list:
                 if values == table_key_value:
                     slice_match = True
         if slice_match is not True:
