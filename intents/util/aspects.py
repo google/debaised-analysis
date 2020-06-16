@@ -55,8 +55,8 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
         end_date = datetime.datetime.strptime(date_range[1], date_format)
         if row_date < start_date or end_date < row_date:
             table = table.drop([row])
-    table = table.reset_index()
-    table = table.drop(['index'], axis=1)
+    table = table.reset_index(drop=True)
+    # table = table.drop(['index'], axis=1)
     return table
 
 def slice_table(table, slices):
@@ -85,9 +85,9 @@ def slice_table(table, slices):
             table = table.drop([row])
 
     #some indices get deleted after slicing
-    table = table.reset_index()
+    table = table.reset_index(drop=True)
     # droping the new columnn named 'index' created after reset_index call
-    table = table.drop(['index'], axis=1)
+    # table = table.drop(['index'], axis=1)
     return table
 
 def crop_other_columns(table, required_columns):

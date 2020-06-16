@@ -101,8 +101,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
     table = table.sort_values(by=[metric], ascending=is_asc)
     
     # reordering the index
-    table = table.reset_index()
-    table = table.drop(['index'], axis=1)
+    table = table.reset_index(drop=True)
 
     # selecting only the top-k
     table = table.head(k)
