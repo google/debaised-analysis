@@ -1,0 +1,49 @@
+<!--ASK TABLE RANGE-->
+
+<div class="block boxed">
+
+  <!-- Heading -->
+  <div class="heading">
+    <b>SELECT THE TABLE</b>
+  </div>
+  
+  <!-- Range of selected table -->
+  <div class="block">
+
+    <div class="inline">
+      <input  
+        id="range-picker-table" 
+        type="text" 
+        placeholder="Select table" 
+        class="width100" 
+        name="range-picker-table"/>
+    </div>
+
+    <div class="inline">
+      <button 
+        class="blue" 
+        id="find-range" 
+        onClick="getSelectedRange(this,'range-picker-table','header-row')">
+          Get Selected Range
+      </button>
+    </div>
+
+  </div>
+  
+  <!-- Heading row number for the table selected -->
+  <div class="block">
+    <label for="header-row">Header Row: &ensp;</label>
+    <input 
+      type="number" 
+      name="header-row" 
+      id="header-row" 
+      class="width100" 
+      placeholder="Row number" 
+      min="1"/>
+  </div>
+
+</div>
+
+
+
+
