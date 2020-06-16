@@ -87,6 +87,8 @@ def slice_table(table, slices):
             for values in key_values_list:
                 if values == table_key_value:
                     slice_match = True
+            if slice_match == False:
+                break
         if slice_match is not True:
             table = table.drop([row])
 
