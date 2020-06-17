@@ -17,8 +17,8 @@ limitations under the License.
 import enum
 
 class SummaryOperators(enum.Enum):
-    """This attributes of this class like summary_operators.sum ,
-    .mean , etc. are enum members
+    """The attributes of this class like summary_operators.SUM ,
+    .MEAN , etc. are enum members
 
     The operators are listed in an arbitrary order.
     And currently sum, mean, count, max, min, standard deviation, variance,
@@ -38,8 +38,8 @@ class SummaryOperators(enum.Enum):
     DISTINCT = 10
 
 class Granularities(enum.Enum):
-    """This attributes of this class like granularity.daily ,
-    .annualy , etc. are enum members
+    """The attributes of this class like granularity.DAILY ,
+    .ANNUALY , etc. are enum members
 
     The granularities are listed in an arbitrary order.
     And currently annually, monthly, daily, hourly are used.
@@ -48,3 +48,19 @@ class Granularities(enum.Enum):
     MONTHLY = 2
     DAILY = 3
     HOURLY = 4
+
+class Filters(enum.Enum):
+    """The attributes of this class like Filters.EQUALTO ,
+    .NOTEQUALTO , etc. are enum members
+
+    The Filters are listed in an arbitrary order.
+    And currently =, !=, <, <=, >, >=, in, not in are used
+    """
+    EQUALTO = 1
+    NOTEQUALTO = 2
+    LESSTHAN = 3
+    LESSTHANEQUALTO = 4
+    GREATERTHAN = 5
+    GREATERTHANEQUALTO = 6
+    IN = 7
+    NOTIN = 8
