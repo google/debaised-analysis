@@ -16,15 +16,15 @@ limitations under the License.
 """This module implements the aspects
 Aspects are the operations we perform while the the users intents are
 being processed, most of them are common between all intents.
-These are the functions that take the table, then perform some operations 
+These are the functions that take the table, then perform some operations
 on it and return the updated table.
-Example in slicing - the rows that do not satisft the slicing condition 
+Example in slicing - the rows that do not satisft the slicing condition
 are dropped.
 """
 
 import datetime
 
-from util.enums import SummaryOperators, Granularities
+from util.enums import *
 
 def apply_date_range(table, date_range, date_column_name, date_format):
     """This function removes the rows from from the table that
@@ -66,9 +66,21 @@ def slice_table(table, slices):
     Args:
         table: Type-pandas.dataframe
             It has the contents of the csv file
-        slices: Type-dictionary (will be changed)
-            contains the key as column name and value as
-            list of instance by which we want to slice
+        slices: Type-List of tuples
+            Tuple represents the conditon to keep the row.
+            (column_name, filter, value)
+            column_name - is the value of the column that the
+            condition is applied upon.
+            filter - Filters enum members, ex. Filters.IN
+            list of supported operators -
+                Equal to
+                Not equal to
+                Less than
+                Less than equal to
+                Greater than
+                Greater than equal to
+                In
+                Not In
 
     Returns:
         The updated table after aplying the condition, in pandas.dataframe type
@@ -77,25 +89,37 @@ def slice_table(table, slices):
         return table
     num_rows = table.shape[0]
     # list of column by which slicing will be done
-    slices_key_list = list(slices.keys())
     for row in range(num_rows):
         slice_match = True
-        for key in slices_key_list:
-            key_values_list = slices[key]
-            table_key_value = table.loc[row,key]
-            slice_match = False
-            for values in key_values_list:
-                if values == table_key_value:
-                    slice_match = True
-            if slice_match == False:
-                break
+        for condition in slices:
+            if condition[1] == Filters.EQUAL_TO and not (
+                    table.loc[row, condition[0]] == condition[2]):
+                slice_match = False
+            if condition[1] == Filters.NOT_EQUAL_TO and not (
+                    table.loc[row, condition[0]] != condition[2]):
+                slice_match = False
+            if condition[1] == Filters.LESS_THAN and not (
+                    table.loc[row, condition[0]] < condition[2]):
+                slice_match = False
+            if condition[1] == Filters.LESS_THAN_EQUAL_TO and not (
+                    table.loc[row, condition[0]] <= condition[2]):
+                slice_match = False
+            if condition[1] == Filters.GREATER_THAN and not (
+                    table.loc[row, condition[0]] > condition[2]):
+                slice_match = False
+            if condition[1] == Filters.IN and not (
+                    table.loc[row, condition[0]] in condition[2]):
+                slice_match = False
+            if condition[1] == Filters.NOT_IN and not (
+                    table.loc[row, condition[0]] not in condition[2]):
+                slice_match = False
         if slice_match is not True:
             table = table.drop([row])
 
 
     #some indices get deleted after slicing
-    # drop=True drops the new columnn named 'index' created in reset_index call
     table = table.reset_index(drop=True)
+
     return table
 
 def crop_other_columns(table, required_columns):

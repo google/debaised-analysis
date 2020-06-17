@@ -32,7 +32,7 @@ def test_1():
     table = pandas.read_csv('data/matches.csv')
     query_result = show.show(table,
     							dimensions=['city'],
-    	                        slices={'season' : 2017},
+                                slices=[('season', Filters.EQUAL_TO, 2017)],
     	                        date_range=('2008-05-08', '2017-04-12'),
     	                        date_column_name='date',
     	                        date_format='%Y-%m-%d')
@@ -62,7 +62,7 @@ def test_2():
     query_result = show.show(table,
     							dimensions=['player_of_match'],
     							metric='win_by_runs' ,
-    	                        slices={'season' : 2017},
+                                slices=[('season', Filters.EQUAL_TO, 2017)],
     	                        date_range=('2017-05-09', '2017-05-12'),
     	                        date_column_name='date', date_format='%Y-%m-%d',
     	                        summary_operator=SummaryOperators.MEAN)
@@ -102,7 +102,7 @@ def test_4():
     """
     table = pandas.read_csv('data/matches.csv')
     query_result = show.show(table,
-    							slices={'winner' : 'Royal Challengers Bangalore','season':2008},
+    	                        slices=[('season', Filters.EQUAL_TO, 2008), ('winner', Filters.EQUAL_TO, 'Royal Challengers Bangalore')],
     							dimensions = ['team1','team2'],)
     print(query_result.to_string())
     expected_result = """                         team1                        team2
@@ -119,7 +119,7 @@ def test_5():
     table = pandas.read_csv('data/matches.csv')
     query_result = show.show(table,
     							dimensions=['umpire1'],
-    	                        slices={'season' : 2017},
+                                slices=[('season', Filters.EQUAL_TO, 2017)],
     	                        date_range=('2017-05-09', '2017-05-12'),
     	                        date_column_name='date', date_format='%Y-%m-%d',
     	                        summary_operator=SummaryOperators.DISTINCT)
@@ -138,7 +138,7 @@ def test_6():
 	table = pandas.read_csv('data/matches.csv')
 	query_result = show.show(table,
     							dimensions=['toss_winner'],
-    							slices={'season':2017})
+                                slices=[('season', Filters.EQUAL_TO, 2017)],)
 	print(query_result.to_string())
 	expected_result = """                    toss_winner
 0   Royal Challengers Bangalore

@@ -15,7 +15,7 @@ limitations under the License.
 
 """This module contains the top-k intent.
 The top-k intent sorts the table and returns the first/last k entries.
-Also it supports some operations like cropping based on date range, 
+Also it supports some operations like cropping based on date range,
 slicing(removing rows that do not follow the conditions), group by.
 Some of the operations are optional.
 """
@@ -99,7 +99,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
     table = aspects.group_by(table, dimensions, summary_operator)
 
     table = table.sort_values(by=[metric], ascending=is_asc)
-    
+
     # reordering the index
     # drop=True drops the new columnn named 'index' created in reset_index call
     table = table.reset_index(drop=True)
