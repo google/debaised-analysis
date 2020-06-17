@@ -88,32 +88,34 @@ def slice_table(table, slices):
     if slices is None:
         return table
     num_rows = table.shape[0]
+    # list of column by which slicing will be done
     for row in range(num_rows):
         slice_match = True
         for condition in slices:
-            if condition[1] == Filters.EQUALTO and not (
+            if condition[1] == Filters.EQUAL_TO and not (
                     table.loc[row, condition[0]] == condition[2]):
                 slice_match = False
-            if condition[1] == Filters.NOTEQUALTO and not (
+            if condition[1] == Filters.NOT_EQUAL_TO and not (
                     table.loc[row, condition[0]] != condition[2]):
                 slice_match = False
-            if condition[1] == Filters.LESSTHAN and not (
+            if condition[1] == Filters.LESS_THAN and not (
                     table.loc[row, condition[0]] < condition[2]):
                 slice_match = False
-            if condition[1] == Filters.LESSTHANEQUALTO and not (
+            if condition[1] == Filters.LESS_THAN_EQUAL_TO and not (
                     table.loc[row, condition[0]] <= condition[2]):
                 slice_match = False
-            if condition[1] == Filters.GREATERTHAN and not (
+            if condition[1] == Filters.GREATER_THAN and not (
                     table.loc[row, condition[0]] > condition[2]):
                 slice_match = False
             if condition[1] == Filters.IN and not (
                     table.loc[row, condition[0]] in condition[2]):
                 slice_match = False
-            if condition[1] == Filters.NOTIN and not (
+            if condition[1] == Filters.NOT_IN and not (
                     table.loc[row, condition[0]] not in condition[2]):
                 slice_match = False
         if slice_match is not True:
             table = table.drop([row])
+
 
     #some indices get deleted after slicing
     table = table.reset_index(drop=True)

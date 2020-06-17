@@ -56,11 +56,11 @@ class Filters(enum.Enum):
     The Filters are listed in an arbitrary order.
     And currently =, !=, <, <=, >, >=, in, not in are used
     """
-    EQUALTO = 1
-    NOTEQUALTO = 2
-    LESSTHAN = 3
-    LESSTHANEQUALTO = 4
-    GREATERTHAN = 5
-    GREATERTHANEQUALTO = 6
+    EQUAL_TO = 1
+    NOT_EQUAL_TO = 2
+    LESS_THAN = 3
+    LESS_THAN_EQUAL_TO = 4
+    GREATER_THAN = 5
+    GREATER_THAN_EQUAL_TO = 6
     IN = 7
-    NOTIN = 8
+    NOT_IN = 8

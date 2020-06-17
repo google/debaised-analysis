@@ -32,7 +32,7 @@ def test_1():
     """
     table = pandas.read_csv('data/matches.csv')
     query_result = topk.topk(table, 'win_by_runs', ['city'], False, 40,
-    	                        slices=[('season', Filters.EQUALTO, 2017)],
+    	                        slices=[('season', Filters.EQUAL_TO, 2017)],
     	                        date_range=('2008-05-08', '2017-04-12'),
     	                        date_column_name='date',
     	                        date_format='%Y-%m-%d')
@@ -57,7 +57,7 @@ def test_2():
     """
     table = pandas.read_csv('data/matches.csv')
     query_result = topk.topk(table, 'win_by_runs', ['player_of_match'], False,
-    	                        5, slices=[('season', Filters.EQUALTO, 2017)],
+    	                        5, slices=[('season', Filters.EQUAL_TO, 2017)],
     	                        date_range=('2017-05-09', '2017-05-12'),
     	                        date_column_name='date', date_format='%Y-%m-%d',
     	                        summary_operator=SummaryOperators.MEAN)
