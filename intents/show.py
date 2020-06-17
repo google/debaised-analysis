@@ -85,7 +85,7 @@ def show(table,**kwargs):
 
 	table = aspects.slice_table(table, slices)
 
-    # collecting the colums not to be removed
+	# collecting the colums not to be removed
 	required_columns = []
 	if dimensions is not None:
 		required_columns = dimensions.copy()
