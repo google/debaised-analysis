@@ -68,7 +68,7 @@ def slice_table(table, slices):
             It has the contents of the csv file
         slices: Type-dictionary (will be changed)
             contains the key as column name and value as
-            instance we want to slice
+            list of instance by which we want to slice
 
     Returns:
         The updated table after aplying the condition, in pandas.dataframe type
@@ -76,13 +76,22 @@ def slice_table(table, slices):
     if slices is None:
         return table
     num_rows = table.shape[0]
+    # list of column by which slicing will be done
+    slices_key_list = list(slices.keys())
     for row in range(num_rows):
         slice_match = True
-        for key in slices:
-            if table.loc[row, key] != slices[key]:
-                slice_match = False
+        for key in slices_key_list:
+            key_values_list = slices[key]
+            table_key_value = table.loc[row,key]
+            slice_match = False
+            for values in key_values_list:
+                if values == table_key_value:
+                    slice_match = True
+            if slice_match == False:
+                break
         if slice_match is not True:
             table = table.drop([row])
+
 
     #some indices get deleted after slicing
     # drop=True drops the new columnn named 'index' created in reset_index call
