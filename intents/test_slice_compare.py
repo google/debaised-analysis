@@ -30,12 +30,75 @@ def test_1():
     				'Chennai Super Kings'.
      """
     table = pandas.read_csv('data/ipl_innings.csv')
-    query_result = slice_compare.slice_compare(table, 'total_runs', ['batsman_team', 'season'], 
-                dict({'batsman_team': ['Mumbai Indians', 'Chennai Super Kings']}),
-                ['batsman_team', 'Mumbai Indians', 'Chennai Super Kings'],
-                SummaryOperators.SUM)
+    query_result = slice_compare.slice_compare(table, 'total_runs', 
+    		['batsman_team', 'season'], dict({'batsman_team': 
+    		['Mumbai Indians', 'Chennai Super Kings']}), ['batsman_team', 
+    		'Mumbai Indians', 'Chennai Super Kings'], SummaryOperators.SUM)
     print(query_result)
-print("compare total runs of 'Mumbai indians' and 'Chennai Super Kings'")
+
+    expected_output = """   season         batsman_team  total_runs
+0    2008  Chennai Super Kings         868
+1    2008       Mumbai Indians         346"""
+    assert(expected_output == query_result.to_string())
+def test_2():
+    """
+    	An example from the IPL dataset
+    	question :  compare total salary of 'A' and 'B' for year 2019.
+     """
+    table = pandas.read_csv('data/salary_list.csv')
+    query_result = slice_compare.slice_compare(table, 'salary', 
+    		['Person name', 'year'], dict({'Person name': 
+    		['A', 'B']}), ['Person name', 'A', 'B'], SummaryOperators.SUM)
+    print(query_result)
+    
+    expected_output = """   year Person name  salary
+0  2019           A   10239
+1  2019           B    8190"""
+    assert(expected_output == query_result.to_string())
+
+def test_3():
+    """
+    	An example from the IPL dataset
+    	question :  compare total run scored in 1st innings and second innings by batsman_teams.
+     """
+    table = pandas.read_csv('data/ipl_innings.csv')
+    query_result = slice_compare.slice_compare(table, 'total_runs', 
+    		['batsman_team', 'innings'], dict({'innings': 
+    		['1st', '2nd']}), ['innings', '1st', '2nd'], SummaryOperators.SUM)
+    print(query_result)
+    
+    expected_output = """                   batsman_team innings  total_runs
+0           Chennai Super Kings     1st         544
+1           Chennai Super Kings     2nd         324
+2               Deccan Chargers     1st          40
+3               Deccan Chargers     2nd         102
+4              Delhi Daredevils     1st         248
+5              Delhi Daredevils     2nd         342
+6                 Gujarat Lions     1st         100
+7                 Gujarat Lions     2nd           4
+8               Kings XI Punjab     1st         448
+9               Kings XI Punjab     2nd         522
+10        Kolkata Knight Riders     1st         338
+11        Kolkata Knight Riders     2nd         708
+12               Mumbai Indians     1st         330
+13               Mumbai Indians     2nd          16
+14                Pune Warriors     1st          12
+15                Pune Warriors     2nd         158
+16             Rajasthan Royals     1st         368
+17             Rajasthan Royals     2nd         608
+18  Royal Challengers Bangalore     1st         866
+19  Royal Challengers Bangalore     2nd         136
+20          Sunrisers Hyderabad     1st          63
+21          Sunrisers Hyderabad     2nd         331"""
+    assert(expected_output == query_result.to_string())
+
+print("\ncompare total runs of 'Mumbai indians' and 'Chennai Super Kings'")
 test_1()
 
-print("Test cases completed")
+print("\ncompare total salary of 'A' and 'B' for year 2019.")
+test_2()
+
+print("\ncompare total run scored in 1st innings and second innings by batsman_teams.")
+test_3()
+
+print("\nTest cases completed")
