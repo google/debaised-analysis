@@ -21,7 +21,6 @@ from util.enums import SummaryOperators
 
 def test_1():
     """
-        An example from the IPL dataset
         question :  compare total salary of 'A' and 'B' for year 2019.
      """
     table = pandas.read_csv('data/salary_list_modified.csv')
@@ -33,7 +32,6 @@ def test_1():
 
 def test_2():
     """
-        An example from the IPL dataset
         question :  compare avg run for 'MI' and 'CSK' by city.
      """
     table = pandas.read_csv('data/ipl_example.csv')
