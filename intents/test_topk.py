@@ -16,11 +16,13 @@ limitations under the License.
 """This module has some examples of function calls for queries
 from IPL & spider dataset.
 The query is mentiond in __doc__ of the function.
+TODO - assert the suggestions
 """
 
 import pandas
 
 import topk
+
 from util.enums import *
 
 import data.spider_eval.evaluation
@@ -48,7 +50,7 @@ def test_1():
 7     Mumbai            0
 8     Indore            0
 9     Mumbai            0"""
-    assert(expected_result == query_result.to_string())
+    assert(expected_result == query_result[0].to_string())
 
 def test_2():
     """An example from the IPL dataset
@@ -67,7 +69,7 @@ def test_2():
 1         KK Nair            7
 2         WP Saha            7
 3         SS Iyer            0"""
-    assert(expected_result == query_result.to_string())
+    assert(expected_result == query_result[0].to_string())
 
 def test_3():
     """An example from the spider dataset
@@ -82,7 +84,7 @@ def test_3():
     print(query_result)
     expected_result = """  Creation  Department_ID
 0     1789              2"""
-    assert(expected_result == query_result.to_string())
+    assert(expected_result == query_result[0].to_string())
 
 def test_4():
     """An example from the spider dataset
@@ -102,7 +104,7 @@ def test_4():
 3  2005         MTV Asia Aid
 4  2006          Codehunters
 5  2013  Carnival M is back!"""
-    assert(expected_result == query_result.to_string())
+    assert(expected_result == query_result[0].to_string())
 
 def test_5():
     """An example from the spider dataset
@@ -121,7 +123,7 @@ def test_5():
 2      Palo Alto  37.448598
 3  Mountain View  37.406940
 4       San Jose  37.352601"""
-    assert(expected_result == query_result.to_string())
+    assert(expected_result == query_result[0].to_string())
 
 def test_6():
     """An example from the spider dataset
@@ -140,7 +142,7 @@ def test_6():
 4      August 2008   3000000.0
 5       March 2007   2000000.0
 6       April 2007   2000000.0"""
-    assert(expected_result == query_result.to_string())
+    assert(expected_result == query_result[0].to_string())
 
 def test_7():
     """An example from the spider dataset
@@ -183,7 +185,26 @@ def test_7():
 28       Betty Adams  227489
 29       Lisa Walker  256481
 30     George Wright  289950"""
-    assert(expected_result == query_result.to_string())
+    assert(expected_result == query_result[0].to_string())
+
+def test_8():
+    """This query uses a manually created dataset - to test similarity between
+    rank vectors question : Top-4 rating between 23/05/2010 to 25/05/2011
+    """
+    # in this database the ranks reverse if the previous window is considered
+    table = pandas.read_csv('data/rating.csv')
+    query_result = topk.topk(table, 'Rating', ['User Name'], True, 4,
+                             slices=None,
+                             date_range=('23/05/2010', '25/05/2011'),
+                             date_column_name='date',
+                             date_format='%d/%m/%Y')
+    print(query_result)
+    expected_result = """  User Name  Rating
+0      Benq    3400
+1     300iq    4300
+2       cba    5200
+3   tourist    6100"""
+    assert(expected_result == query_result[0].to_string())
 
 print(test_1.__doc__)
 test_1()
@@ -205,5 +226,8 @@ test_6()
 
 print(test_7.__doc__)
 test_7()
+
+print(test_8.__doc__)
+test_8()
 
 print("Test cases completed")
