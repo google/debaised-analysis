@@ -115,7 +115,7 @@ def simpson_paradox(table, metric, dimensions, all_dimensions, slice_compare_col
         list of three numbers([maximum_result, minimum_result, initial_result]).(It will be changed later).
 
     """
-    
+
 	# removing all metric column except the one by which we will do group_by operation
 	required_columns = all_dimensions.copy()
 	required_columns.append(metric)
@@ -130,8 +130,13 @@ def simpson_paradox(table, metric, dimensions, all_dimensions, slice_compare_col
 	grouping_dimensions.remove(slice_compare_column[0])
 	grouping_dimensions.append(slice_compare_column[0])
 
+	required_table = table.copy()
+	required_columns = grouping_dimensions.copy()
+	required_columns.append(metric)
+	required_table = aspects.crop_other_columns(required_table, required_columns)
+
 	#initial_result will store the dominent percentage of initial groups given by user.
-	initial_result = check_dominent_percentage(table.copy(), grouping_dimensions, slice_compare_column, summary_operator)
+	initial_result = check_dominent_percentage(required_table, grouping_dimensions, slice_compare_column, summary_operator)
 
 	maximum_result = initial_result
 	minimum_result = initial_result
@@ -144,13 +149,25 @@ def simpson_paradox(table, metric, dimensions, all_dimensions, slice_compare_col
 		if (column in grouping_dimensions):
 			new_grouping_dimensions.remove(column)
 			new_grouping_dimensions.append(slice_compare_column[0])
-			temp_result = check_dominent_percentage(table.copy(), new_grouping_dimensions, slice_compare_column, summary_operator)
-			maximum_result = max(maximum_result, temp_result)
-			minimum_result = min(minimum_result, temp_result)
+
+			required_table = table.copy()
+			required_columns = new_grouping_dimensions.copy()
+			required_columns.append(metric)
+			required_table = aspects.crop_other_columns(required_table, required_columns)
+
+			new_grouping_result = check_dominent_percentage(required_table, new_grouping_dimensions, slice_compare_column, summary_operator)
+			maximum_result = max(maximum_result, new_grouping_result)
+			minimum_result = min(minimum_result, new_grouping_result)
 		else:
 			new_grouping_dimensions.append(column)
 			new_grouping_dimensions.append(slice_compare_column[0])
-			new_grouping_result = check_dominent_percentage(table.copy(), new_grouping_dimensions, slice_compare_column, summary_operator)
+
+			required_table = table.copy()
+			required_columns = new_grouping_dimensions.copy()
+			required_columns.append(metric)
+			required_table = aspects.crop_other_columns(required_table, required_columns)
+
+			new_grouping_result = check_dominent_percentage(required_table, new_grouping_dimensions, slice_compare_column, summary_operator)
 			maximum_result = max(maximum_result, new_grouping_result)
 			minimum_result = min(minimum_result, new_grouping_result)
 	return [maximum_result, minimum_result, initial_result]
