@@ -21,9 +21,7 @@ on it and return the updated table.
 Example in slicing - the rows that do not satisft the slicing condition
 are dropped.
 """
-
 import datetime
-
 from util.enums import *
 
 def apply_date_range(table, date_range, date_column_name, date_format):

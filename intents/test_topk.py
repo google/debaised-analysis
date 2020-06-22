@@ -18,13 +18,9 @@ from IPL & spider dataset.
 The query is mentiond in __doc__ of the function.
 TODO - assert the suggestions
 """
-
 import pandas
-
 import topk
-
 from util.enums import *
-
 import data.spider_eval.evaluation
 
 def test_1():

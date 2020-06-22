@@ -21,9 +21,7 @@ Some of the operations are optional.
 """
 
 from oversights.regression_to_mean import regression_to_mean
-
 from util.enums import *
-
 from util import aspects
 
 def topk(table, metric, dimensions, is_asc, k, **kwargs):

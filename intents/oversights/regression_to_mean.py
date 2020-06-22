@@ -22,17 +22,10 @@ If the top-k is queried for a time window in which the results look much
 different from the previous window, or the next window of the same size, the
 oversight suggestion is passed.
 """
-
-import sys
-
 import datetime
-
 import math
-
 from util import aspects, constants, time_window
-
 from util.enums import *
-
 import topk
 
 def regression_to_mean(table, metric, dimensions, is_asc, k, **kwargs):
