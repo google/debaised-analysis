@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <?!= include("css"); ?>
+  </head>
+
+  <body>
+    <div class="sidebar branding-below">
+
+        <h4 style ="text-align:center">
+          <em>Json Input</em>
+        </h4>
+        
+        <textarea id="json-input" name="json-input" rows="8" cols="35"></textarea>
+       
+        <div class="block" id="result" name="result">
+        </div>
+
+        <!--BUTTONS-->
+        <div class="block">
+          <button type="submit" class="blue" id="done" onClick="processQuery()">Compute</button>
+          <button name="close" class="grey" onClick="google.script.host.close()">Cancel</button>
+        </div>
+        <!--BUTTONS END--> 
+       
+
+    </div>
+    
+    <!-- INCLUDING SCRIPT FILES -->
+    
+    <!-- Javascript Functions for extracting data filled by user and 
+    calling server-side Apps Script function to get the result -->
+    <?!= include('intents/javascript/submit_form'); ?>
+
+    <!-- Javascript Helper Functions to perform repetitive tasks and keep code DRY -->
+    <?!= include('intents/javascript/helper_functions'); ?>
+    
+    <script>
+      
+    function processQuery() {
+
+      var resultElement = document.getElementById("result");
+      if(resultElement.classList.contains("boxed"))
+        resultElement.classList.remove("boxed");
+      document.getElementById("result").innerHTML = "";
+  
+      done.innerHTML = "Computing";   //change value of button
+      done.disabled = true;         //disable the button
+      done.classList.add("loading");
+    
+      var jsonInput = document.getElementById("json-input").value;
+      console.log("Json Input given by user " + jsonInput);
+      
+      google.script.run
+          .withSuccessHandler(printOutput)       //call printOutput when server-side function returns successfully
+          .callGcpUsingJson(jsonInput);
+
+    }
+    
+    </script>
+  </body>
+</html>
+
+

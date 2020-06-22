@@ -1,0 +1,248 @@
+<style>
+/*rgb(207, 232, 252);*/
+  .branding-below {
+    bottom: 56px;
+    top: 0;
+  }
+  
+  .heading {
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+  }
+  
+  .add {
+    color: green;
+    cursor: default;
+    float: right;
+  }
+  
+  .remove {
+    color: #dd4b39;
+    cursor: default;
+    float: right;
+  }
+  
+  .loading {
+    cursor: wait !important;
+  }
+  
+  .width80 {
+    min-width: 80px;
+    max-width: 80px;
+  }
+
+  .width100 {
+    min-width: 100px;
+    max-width: 100px;
+  }
+  
+  .width110 {
+    min-width: 110px;
+    max-width: 110px;
+  }
+  
+  .width125 {
+    min-width: 125px;
+    max-width: 125px;
+  }
+  
+  .width130 {
+    min-width: 130px;
+    max-width: 130px;
+  }
+  
+  .boxed {                       
+    background: white;
+    border: 2px solid #e5e5e5;
+    border-radius: 6px;
+    box-shadow: 2px 2px #d3d3d3;
+    padding: 5px;
+    padding-bottom: 20px;   
+  }
+   
+  .box-slice {
+    border: 1px solid #e5e5e5;
+    padding: 10px;
+  }
+  
+  .drp1 {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 12px;
+    height: 19px;
+    overflow: hidden;
+    padding: 0px 8px 8px 10px;    
+    position: relative;
+    min-width: 150px;
+    max-width: 150px;
+  }
+
+  .drp1 .drp2 {
+    width: 120%;
+  }
+
+  .drp1 .drp2 select {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    font-size: 1em;
+    line-height: 1;
+    padding: 0;
+    position: relative;
+    width: 80%;
+    z-index: 10;
+  }
+  
+  .icon-text {
+    position: relative;
+    top: -6px;
+  } 
+  
+  #output-table {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  #query-output:hover {
+    box-shadow: 0 0 18px #888888;
+    transition: 0.3s; 
+  }
+
+  #output-table td, #output-table th {
+    border: 1px solid #ddd;
+    padding: 5px;
+  }
+
+  #output-table tr:nth-child(even) {
+   background-color: #f8f9fa;
+  }
+  
+  #output-table tr:hover {
+    background-color: #ddd;
+  }
+  
+  #output-table th {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: left;
+    background-color: #4285f4;
+    color: white;
+  }
+  
+  #query-output {
+    overflow: auto;
+    max-height : 500px;
+    white-space: nowrap;
+  }
+  
+  #btn-add-output {
+    margin: 5px 5px 10px 10px;
+  }
+  
+  #btn-del-output {
+    margin: 5px 0px 10px 5px;
+  }
+  
+  .btn-output-text {
+    line-height: 5px;
+  }
+  
+  .style-output {
+    margin-left: 8px;
+    margin-right: 8px;
+    border: 1px solid #f8f9fa;
+  }
+  
+  .add-sheet-heading {
+    margin-left: 20px;
+    margin-right: 10px;
+    line-height: 8px;
+  }
+  
+  .onoffswitch {
+    position: relative; 
+    width: 61px;
+    -webkit-user-select:none; 
+    -moz-user-select:none; 
+    -ms-user-select: none;
+  }
+  
+  .onoffswitch-checkbox {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .onoffswitch-label {
+    display: block; 
+    overflow: hidden; 
+    cursor: pointer;
+    border: 2px solid #D6D6D6; 
+    border-radius: 23px;
+    box-shadow: 0 0 5px #d3d3d3;
+  }
+
+  .onoffswitch-inner {
+    display: block; 
+    width: 200%; 
+    margin-left: -100%;
+    transition: margin 0.3s ease-in 0s;
+  }
+  
+  .onoffswitch-inner:before, .onoffswitch-inner:after {
+    display: block; 
+    float: left; 
+    width: 50%; 
+    height: 20px; 
+    padding: 0; 
+    line-height: 20px;
+    font-size: 11px; 
+    color: white; 
+    font-family: Trebuchet, Arial, sans-serif; 
+    font-weight: bold;
+    box-sizing: border-box;
+  }
+  
+  .onoffswitch-inner:before {
+    content: "YES";
+    padding-left: 10px;
+    background-color: #0d47a1; 
+    color: #FFFFFF;
+  }
+  
+  .onoffswitch-inner:after {
+    content: "NO";
+    padding-right: 10px;
+    background-color: #EEEEEE; 
+    color: #999999;
+    text-align: right;
+  }
+  
+  .onoffswitch-switch {
+    display: block; 
+    min-width: 10px; 
+    max-width: 10px;
+    border: 2px solid #D6D6D6; 
+    border-radius: 50%;
+    background: #FFFFFF;
+    position: absolute; 
+    top: 0; 
+    bottom: 0;
+    height: 10px;
+    margin: 25px 8px 0px 5px;
+    transition: all 0.3s ease-in 0s; 
+  }
+
+  .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+    margin-left: 0;
+  }
+  
+  .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+    right: 0px; 
+  }
+  
+</style>
