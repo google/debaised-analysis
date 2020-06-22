@@ -57,9 +57,12 @@ def topk(table, metric, dimensions, is_asc, k, **kwargs):
             It is required by datetime.strp_time to parse the date in the format
             Format Codes
 https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
-        slices: Type-dictionary (will be changed)
-            contains the key as column name and value as instance we want
-            to slice
+        slices: Type-List of tuples
+            Tuple represents the conditon to keep the row.
+            (column_name, filter, value)
+            column_name - is the value of the column that the
+            condition is applied upon.
+            filter - Filters enum members, ex. Filters.IN
         summary_operator: Type-summary_operators enum members
             It denotes the summary operator, after grouping by dimensions.
             ex. SummaryOperators.MAX, SummaryOperators.SUM
@@ -136,9 +139,12 @@ def topk_results(table, metric, dimensions, is_asc, k, **kwargs):
             It is required by datetime.strp_time to parse the date in the format
             Format Codes
 https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
-        slices: Type-dictionary (will be changed)
-            contains the key as column name and value as instance we want
-            to slice
+        slices: Type-List of tuples
+            Tuple represents the conditon to keep the row.
+            (column_name, filter, value)
+            column_name - is the value of the column that the
+            condition is applied upon.
+            filter - Filters enum members, ex. Filters.IN
         summary_operator: Type-summary_operators enum members
             It denotes the summary operator, after grouping by dimensions.
             ex. SummaryOperators.MAX, SummaryOperators.SUM

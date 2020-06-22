@@ -14,11 +14,13 @@ limitations under the License.
 """
 
 """
-This module stores the cuttoff of different that are fixed while
-execution of the code.
+This module stores various constants that affect behavior of
+intents / oversights
 These may be changed to decrease the number of false positives.
 """
+
 # cut-off of set intersection method in regression to the mean
-RTM_SET_INTERSECTION = .7
-# cut-off of similarity in ranks method in regression to the mean
-RTM_RANK_VECTOR = 30
+RTM_SET_INTERSECTION_CUT_OFF = .7
+
+# threshold of similarity in ranks method in regression to the mean
+RTM_RANK_VECTOR_SIMILARITY_THRESHOLD = 30

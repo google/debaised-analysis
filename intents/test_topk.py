@@ -50,7 +50,9 @@ def test_1():
 7     Mumbai            0
 8     Indore            0
 9     Mumbai            0"""
+    expected_suggestions = """['The results has duplicates, you forgot to apply group by']"""
     assert(expected_result == query_result[0].to_string())
+    assert(expected_suggestions == str(query_result[1]))
 
 def test_2():
     """An example from the IPL dataset
@@ -69,7 +71,9 @@ def test_2():
 1         KK Nair            7
 2         WP Saha            7
 3         SS Iyer            0"""
+    expected_suggestions = """["very few of the top-k in the given date range will be in the previous window's top-k"]"""
     assert(expected_result == query_result[0].to_string())
+    assert(expected_suggestions == str(query_result[1]))
 
 def test_3():
     """An example from the spider dataset
@@ -84,7 +88,9 @@ def test_3():
     print(query_result)
     expected_result = """  Creation  Department_ID
 0     1789              2"""
+    expected_suggestions = """['No suggestions as date condition is not there.']"""
     assert(expected_result == query_result[0].to_string())
+    assert(expected_suggestions == str(query_result[1]))
 
 def test_4():
     """An example from the spider dataset
@@ -104,7 +110,9 @@ def test_4():
 3  2005         MTV Asia Aid
 4  2006          Codehunters
 5  2013  Carnival M is back!"""
+    expected_suggestions = """['No suggestions as date condition is not there.']"""
     assert(expected_result == query_result[0].to_string())
+    assert(expected_suggestions == str(query_result[1]))
 
 def test_5():
     """An example from the spider dataset
@@ -123,7 +131,9 @@ def test_5():
 2      Palo Alto  37.448598
 3  Mountain View  37.406940
 4       San Jose  37.352601"""
+    expected_suggestions = """['No suggestions as date condition is not there.']"""
     assert(expected_result == query_result[0].to_string())
+    assert(expected_suggestions == str(query_result[1]))
 
 def test_6():
     """An example from the spider dataset
@@ -142,7 +152,9 @@ def test_6():
 4      August 2008   3000000.0
 5       March 2007   2000000.0
 6       April 2007   2000000.0"""
+    expected_suggestions = """['The results has duplicates, you forgot to apply group by']"""
     assert(expected_result == query_result[0].to_string())
+    assert(expected_suggestions == str(query_result[1]))
 
 def test_7():
     """An example from the spider dataset
@@ -185,7 +197,9 @@ def test_7():
 28       Betty Adams  227489
 29       Lisa Walker  256481
 30     George Wright  289950"""
+    expected_suggestions = """['The results has duplicates, you forgot to apply group by']"""
     assert(expected_result == query_result[0].to_string())
+    assert(expected_suggestions == str(query_result[1]))
 
 def test_8():
     """This query uses a manually created dataset - to test similarity between
@@ -204,7 +218,9 @@ def test_8():
 1     300iq    4300
 2       cba    5200
 3   tourist    6100"""
+    expected_suggestions = """["The ranks of the top-k in the date range differs much from the previous window's top-k"]"""
     assert(expected_result == query_result[0].to_string())
+    assert(expected_suggestions == str(query_result[1]))
 
 print(test_1.__doc__)
 test_1()
