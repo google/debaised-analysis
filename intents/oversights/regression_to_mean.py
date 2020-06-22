@@ -31,7 +31,7 @@ import math
 
 sys.path.append("../..")
 
-from util import aspects, cut_off, time_window
+from util import aspects, constants, time_window
 
 from util.enums import *
 
@@ -50,7 +50,7 @@ def regression_to_mean(table, metric, dimensions, is_asc, k, **kwargs):
         Checks if the ranks of the common items in both the
         results differ a lot.
 
-    The cut-off in both the methods is fixed in the util/cut_off module
+    The cut-off in both the methods is fixed in the util/constants module
 
     Args:
         table: Type-pandas.dataframe
@@ -158,7 +158,7 @@ def _set_intersect(table1, table2, columns):
     Returns:
         A suggestion of type-str if the intersection between the 2
         results is less compared to their union. The cut-off is used
-        is taken from util.cut_off
+        is taken from util.constants
     """
     set1 = _convert_to_set(table1, columns)
     set2 = _convert_to_set(table2, columns)
@@ -175,7 +175,7 @@ def _set_intersect(table1, table2, columns):
 
     if score == 0:
         return 'None of the top-k in the given date range will be in the previous window\'s top-k'
-    elif score <= cut_off.RTM_SET_INTERSECTION:
+    elif score <= constants.RTM_SET_INTERSECTION:
         return 'very few of the top-k in the given date range will be in the previous window\'s top-k'
     else:
         return None
@@ -193,7 +193,7 @@ def _similarity_between_ranks(table1, table2, dimensions):
             dimension is 'batsman'.
     Returns:
         A suggestion of type-str if the angle between the 2 vectors excedes a
-        cutoff value, that is taken from util.cut_off
+        cutoff value, that is taken from util.constants
     """
     common_rows = _convert_to_set(table1, dimensions).intersection(_convert_to_set(table2, dimensions))
 
@@ -202,7 +202,7 @@ def _similarity_between_ranks(table1, table2, dimensions):
 
     angle = _angle_between_vectors(rank_vector_1, rank_vector_2, common_rows)
 
-    if angle < cut_off.RTM_RANK_VECTOR:
+    if angle < constants.RTM_RANK_VECTOR:
         return None
     else:
         return 'The ranks of the top-k in the date range differs much from the previous window\'s top-k'
