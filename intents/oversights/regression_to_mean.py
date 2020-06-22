@@ -100,7 +100,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
                                      date_format=date_format, slices=slices,
                                      summary_operator=summary_operator)
 
-    current_topk_set = convert_to_set(current_topk, dimensions)
+    current_topk_set = _convert_to_set(current_topk, dimensions)
 
     # Checking if the result table contains duplicates
     if len(current_topk_set) != current_topk.shape[0]:
@@ -130,13 +130,13 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
                                       date_format=date_format,
                                       date_range=(previous_start, previous_end))
 
-    set_intersect_suggestions = set_intersect(previous_topk,
+    set_intersect_suggestions = _set_intersect(previous_topk,
                                               current_topk, dimensions)
 
     if set_intersect_suggestions is not None:
         return set_intersect_suggestions
 
-    rank_vector_suggestion = similarity_between_ranks(previous_topk,
+    rank_vector_suggestion = _similarity_between_ranks(previous_topk,
                                                       current_topk, dimensions)
 
     if rank_vector_suggestion is not None:
@@ -144,7 +144,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     return None
 
-def set_intersect(table1, table2, columns):
+def _set_intersect(table1, table2, columns):
     """ This function suggests oversight if the size
     of intersection/size of union is less than a fixed value
 
@@ -160,8 +160,8 @@ def set_intersect(table1, table2, columns):
         results is less compared to their union. The cut-off is used
         is taken from util.cut_off
     """
-    set1 = convert_to_set(table1, columns)
-    set2 = convert_to_set(table2, columns)
+    set1 = _convert_to_set(table1, columns)
+    set2 = _convert_to_set(table2, columns)
 
     score = len(set1.intersection(set2))
 
@@ -180,7 +180,7 @@ def set_intersect(table1, table2, columns):
     else:
         return None
 
-def similarity_between_ranks(table1, table2, dimensions):
+def _similarity_between_ranks(table1, table2, dimensions):
     """ This function gives suggestions if the rank vector of the 2 passed
     results differ a lot. Uses the angle between the 2 vectors as a parameter.
 
@@ -195,19 +195,19 @@ def similarity_between_ranks(table1, table2, dimensions):
         A suggestion of type-str if the angle between the 2 vectors excedes a
         cutoff value, that is taken from util.cut_off
     """
-    common_rows = convert_to_set(table1, dimensions).intersection(convert_to_set(table2, dimensions))
+    common_rows = _convert_to_set(table1, dimensions).intersection(_convert_to_set(table2, dimensions))
 
-    rank_vector_1 = rank_vector(table1, dimensions)
-    rank_vector_2 = rank_vector(table2, dimensions)
+    rank_vector_1 = _rank_vector(table1, dimensions)
+    rank_vector_2 = _rank_vector(table2, dimensions)
 
-    angle = angle_between_vectors(rank_vector_1, rank_vector_2, common_rows)
+    angle = _angle_between_vectors(rank_vector_1, rank_vector_2, common_rows)
 
     if angle < cut_off.RTM_RANK_VECTOR:
         return None
     else:
         return 'The ranks of the top-k in the date range differs much from the previous window\'s top-k'
 
-def angle_between_vectors(vector_1, vector_2, common_rows):
+def _angle_between_vectors(vector_1, vector_2, common_rows):
     """ Calculates the angle in between the 2 rank vectors.
     Uses dot product to calculate the cosine of the angle, then math.acos to
     convert into angle.
@@ -241,7 +241,7 @@ def angle_between_vectors(vector_1, vector_2, common_rows):
 
     return angle
 
-def rank_vector(table, columns):
+def _rank_vector(table, columns):
     """ Calculates the rank vector of the table passed
     Applies a mathematical function to makes the ranks closer to each other.
 
@@ -267,7 +267,7 @@ def rank_vector(table, columns):
         rank_vector_dict[tuple(list_row)] = math.log(2+row)
     return rank_vector_dict
 
-def convert_to_set(table, columns):
+def _convert_to_set(table, columns):
     """ Converts the columns of the table which are in the
     list- columns into a set of tuples.
 

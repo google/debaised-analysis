@@ -145,7 +145,7 @@ def crop_other_columns(table, required_columns):
 
     return table
 
-def count_distinct(values):
+def _count_distinct(values):
     """ This function returns the number of distinct entries in values.
     The values are inserted into a set and it's size is returned.
 
@@ -206,7 +206,7 @@ def group_by(table, dimensions, summary_operator):
         table = table.groupby(dimensions).last()
 
     if summary_operator == SummaryOperators.DISTINCT:
-        table = table.groupby(dimensions).agg(count_distinct)
+        table = table.groupby(dimensions).agg(_count_distinct)
 
     table = table.reset_index()
 
