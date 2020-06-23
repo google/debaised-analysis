@@ -53,9 +53,12 @@ def slice_compare(table, metric, dimensions, slices, slice_compare_column,
             It is required by datetime.strp_time to parse the date in the format
             Format Codes
 https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
-        slices: Type-dictionary (will be changed)
-            contains the key as column name and value as instance we want
-            to slice
+        slices: Type-List of tuples
+            Tuple represents the conditon to keep the row.
+            (column_name, filter, value)
+            column_name - is the value of the column that the
+            condition is applied upon.
+            filter - Filters enum members, ex. Filters.IN
         slice_compare_column: Type-list of string
             first element denotes the column name by which we will do comparision.
             rest elements will the value belongs to that column by which we

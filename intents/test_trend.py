@@ -16,9 +16,7 @@ limitations under the License.
 """This module has some examples of function calls for queries from IPL dataset.
 The query is mentiond in __doc__ of the function.
 """
-
 import pandas
-
 import trend
 from util.enums import *
 
