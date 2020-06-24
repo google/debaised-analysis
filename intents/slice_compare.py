@@ -22,9 +22,82 @@ Some of the operations are optional.
 """
 
 from util import aspects
+from oversights.simpson_paradox import simpson_paradox
 
-def slice_compare(table, metric, dimensions, slices, slice_compare_column, 
-                                            summary_operator, **kwargs):
+def slice_compare(table, metric, dimensions, all_dimension, all_metric, 
+                slices, slice_compare_column, summary_operator, **kwargs):
+    """ This function returns both the results according to the intent
+    as well as the debiasing suggestions.
+    Some of the oversights considered in this intent are-
+    1. simpson's paradox
+    Args:
+        table: Type-pandas.dataframe
+            It has the contents of the csv file
+        metric: Type-string
+            It is the name of the column according to which we have group to be done,
+            summary operator is applied on metric. Metric could a column
+            containing strings, if we are applying count operator on it.
+        dimensions: Type-list of str
+            It is the name of column we want.
+            In query:'top 5 batsman according to runs', dimension is 'batsman'.
+            When summary_operator is not None, we group by dimensions.
+        all_dimension: Type-list of str
+            It is the list of dimension columns in the initial table
+        all_dimension: Type-list of str
+            It is the list of metric columns in the initial table
+        date_range: Type-tuple
+            Tuple of start_date and end_date
+        date_column_name: Type-str
+            It is the name of column which contains date
+        date_format: Type-str
+            It is required by datetime.strp_time to parse the date in the format
+            Format Codes
+https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
+        slices: Type-List of tuples
+            Tuple represents the conditon to keep the row.
+            (column_name, filter, value)
+            column_name - is the value of the column that the
+            condition is applied upon.
+            filter - Filters enum members, ex. Filters.IN
+        slice_compare_column: Type-list of string
+            first element denotes the column name by which we will do comparision.
+            rest elements will the value belongs to that column by which we
+            will compare the slices.
+        summary_operator: Type-summary_operators enum members
+            It denotes the summary operator, after grouping by dimensions.
+            ex. SummaryOperators.MAX, SummaryOperators.SUM
+
+    Note-summary_operator is always applied on metric column passed,
+         and only when grouping is done
+    Returns:
+        The function will return both suggestions and the results in a tuple.
+        (results, suggestions)
+        results: Type - pandas dataframe, The results of the intended slice-compare
+        suggestions: Type - List of strings, List of suggestions.
+    """
+    date_column_name = kwargs.get('date_column_name', 'date')
+    date_range = kwargs.get('date_range', None)
+    date_format = kwargs.get('date_format', '%Y-%m-%d')
+
+    table = aspects.apply_date_range(table, date_range,
+                                     date_column_name, date_format)
+
+    table = aspects.slice_table(table, slices)
+
+    result_table = slice_compare_results(table.copy(), metric, dimensions.copy(),
+                                slice_compare_column, summary_operator)
+
+    suggestions = []
+
+    simpson_paradox_suggestion = simpson_paradox(table, metric, dimensions, all_dimension,
+                                    slice_compare_column, summary_operator)
+    if len(simpson_paradox_suggestion) > 0:
+        suggestions.append(simpson_paradox_suggestion)
+
+    return (result_table, suggestions)
+
+def slice_compare_results(table, metric, dimensions,
+                    slice_compare_column, summary_operator):
     """This function will implement the slice-compare intent
 
     Also removes the tuples that do not lie in the given date range.
@@ -53,9 +126,12 @@ def slice_compare(table, metric, dimensions, slices, slice_compare_column,
             It is required by datetime.strp_time to parse the date in the format
             Format Codes
 https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
-        slices: Type-dictionary (will be changed)
-            contains the key as column name and value as instance we want
-            to slice
+        slices: Type-List of tuples
+            Tuple represents the conditon to keep the row.
+            (column_name, filter, value)
+            column_name - is the value of the column that the
+            condition is applied upon.
+            filter - Filters enum members, ex. Filters.IN
         slice_compare_column: Type-list of string
             first element denotes the column name by which we will do comparision.
             rest elements will the value belongs to that column by which we
@@ -73,16 +149,6 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
         given `table(a pandas dataframe object)``
 
     """
-
-    date_column_name = kwargs.get('date_column_name', 'date')
-    date_range = kwargs.get('date_range', None)
-    date_format = kwargs.get('date_format', 'yyyy-mm-dd')
-
-
-    table = aspects.apply_date_range(table, date_range,
-                                     date_column_name, date_format)
-
-    table = aspects.slice_table(table, slices)
 
    # collecting the colums not to be removed
     required_columns = []

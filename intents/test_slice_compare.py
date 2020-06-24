@@ -31,29 +31,32 @@ def test_1():
      """
     table = pandas.read_csv('data/ipl_innings.csv')
     query_result = slice_compare.slice_compare(table, 'total_runs', 
-    		['batsman_team', 'season'], [('batsman_team', Filters.IN, ['Mumbai Indians', 'Chennai Super Kings'])], ['batsman_team', 
+    		['batsman_team', 'season'], ['batsman_team', 'season'], ['total_runs'],  [('batsman_team', Filters.IN, ['Mumbai Indians', 'Chennai Super Kings'])], ['batsman_team', 
     		'Mumbai Indians', 'Chennai Super Kings'], SummaryOperators.SUM)
     print(query_result)
-
-    expected_output = """   season         batsman_team  total_runs
+    expected_result = """   season         batsman_team  total_runs
 0    2008  Chennai Super Kings         868
 1    2008       Mumbai Indians         346"""
-    assert(expected_output == query_result.to_string())
+    expected_suggestion = """[]"""
+    assert(expected_result == query_result[0].to_string())
+    assert(expected_suggestion == str(query_result[1]))
 def test_2():
     """
     	An example from the IPL dataset
     	question :  compare total salary of 'A' and 'B' for year 2019.
      """
-    table = pandas.read_csv('data/salary_list.csv')
+    table = pandas.read_csv('data/salary_list_modified.csv')
     query_result = slice_compare.slice_compare(table, 'salary', 
-    		['Person name', 'year'], [('Person name', Filters.IN, 
+    		['Person name', 'year'], ['Person name', 'year', 'month'], ['salary'], [('Person name', Filters.IN, 
     		['A', 'B'])] , ['Person name', 'A', 'B'], SummaryOperators.SUM)
     print(query_result)
     
-    expected_output = """   year Person name  salary
+    expected_result = """   year Person name  salary
 0  2019           A   10239
 1  2019           B    8190"""
-    assert(expected_output == query_result.to_string())
+    expected_suggestion = """["['year', 'month', 'Person name'] these group of columns have different results than initial columns so you might also look for the given group of columns"]"""
+    assert(expected_result == query_result[0].to_string())
+    assert(expected_suggestion == str(query_result[1]))
 
 def test_3():
     """
@@ -62,7 +65,7 @@ def test_3():
      """
     table = pandas.read_csv('data/ipl_innings.csv')
     query_result = slice_compare.slice_compare(table, 'total_runs', 
-    		['batsman_team', 'innings'], [('innings', Filters.IN, 
+    		['batsman_team', 'innings'], ['batsman_team', 'innings'], ['total_runs'], [('innings', Filters.IN, 
     		['1st', '2nd'])], ['innings', '1st', '2nd'], SummaryOperators.SUM)
     print(query_result)
     
@@ -89,8 +92,11 @@ def test_3():
 19  Royal Challengers Bangalore     2nd         136
 20          Sunrisers Hyderabad     1st          63
 21          Sunrisers Hyderabad     2nd         331"""
-    assert(expected_output == query_result.to_string())
+    expected_suggestion = """[]"""
 
+    assert(expected_output == query_result[0].to_string())
+    assert(expected_suggestion == str(query_result[1]))
+    
 print("\ncompare total runs of 'Mumbai indians' and 'Chennai Super Kings'")
 test_1()
 
