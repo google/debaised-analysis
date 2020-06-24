@@ -33,20 +33,20 @@ import pandas
 import json
 
 class RequestClass:
-	"""This class mimics the flask class, it has the get_json function
-	that loads the json from the json file.
-	Its object is passed to the hello_http in main.py.
-	"""
+    """This class mimics the flask class, it has the get_json function
+    that loads the json from the json file.
+    Its object is passed to the hello_http in main.py.
+    """
     args = None
     json_obj = ''
     def get_json(param, **kwargs):
-    	"""
+        """
         Returns:
             The json object of the str in obj.json
-    	"""
+        """
         silent = kwargs.get('silent', None)
-        f = open("data/obj.json", "r")
-        json_obj = json.loads(f.readline())
+        json_file = open("data/obj.json", "r")
+        json_obj = json.loads(json_file.readline())
         return json_obj
 
 obj = RequestClass()

@@ -107,9 +107,6 @@ def hello_http(request):
                                 )
         query_table_dataframe = query_result[0]
         suggestions = query_result[1]
-    elif intent == 'slice compare':
-        # ToDo
-        pass
     else:
         raise Exception("Intent name does not match")
 
