@@ -130,10 +130,7 @@ def simpson_paradox(table, metric, dimensions, all_dimensions,
 			simpson_paradox_columns = new_grouping_dimensions
 	if len(simpson_paradox_columns) > 0:
 		suggestion = str(simpson_paradox_columns)
-		suggestion = suggestion + ' these group of columns have '
-								+ 'different results than initial'
-								+ ' columns so you might also look'
-								+ ' for the given group of columns'
+		suggestion = suggestion + ' these group of columns have different results than initial columns so you might also look for the given group of columns'
 		return suggestion
 	else:
 		return ""
@@ -179,8 +176,7 @@ def check_dominent_percentage(table, dimensions, slice_compare_column,
 
 	while row_i < num_rows:
 		difference = 0
-		if row_i == num_rows - 1 or table_matrix[row_i][:(num_columns-2)] != 
-									table_matrix[row_i+1][:(num_columns-2)]:
+		if row_i == num_rows - 1 or table_matrix[row_i][:(num_columns-2)] != table_matrix[row_i+1][:(num_columns-2)]:
 			difference = 0
 			if table_matrix[row_i][num_columns-2] == slice_compare_column[1]:
 				difference = table_matrix[row_i][num_columns-1]
@@ -188,11 +184,9 @@ def check_dominent_percentage(table, dimensions, slice_compare_column,
 				difference = -table_matrix[row_i][num_columns-1]
 		else:
 			if table_matrix[row_i][num_columns-2] == slice_compare_column[1]:
-				difference = table_matrix[row_i][num_columns-1] -
-							 table_matrix[row_i+1][num_columns-1]
+				difference = table_matrix[row_i][num_columns-1] - table_matrix[row_i+1][num_columns-1]
 			else:
-				difference = table_matrix[row_i+1][num_columns-1] - 
-							 table_matrix[row_i][num_columns-1]
+				difference = table_matrix[row_i+1][num_columns-1] - table_matrix[row_i][num_columns-1]
 			row_i = row_i + 1
 		if difference > 0:
 			positive_count = positive_count + 1
