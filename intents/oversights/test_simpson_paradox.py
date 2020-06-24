@@ -28,7 +28,9 @@ def test_1():
             ['Person name'], ['Person name', 'month'], ['Person name', 
             'A', 'B'], SummaryOperators.SUM)
     print(query_result)
-    # assert(query_result == ['month', 'Person name'])
+
+    expected_result = "['month', 'Person name'] these group of columns have different results than initial columns so you might also look for the given group of columns"
+    assert(query_result == expected_result)
 
 def test_2():
     """
@@ -39,7 +41,9 @@ def test_2():
             ['team_name', 'city'], ['team_name', 'city'], ['team_name', 
             'MI', 'CSK'], SummaryOperators.MEAN)
     print(query_result)
-    # assert(query_result == ['team_name'])
+
+    expected_result = "['team_name'] these group of columns have different results than initial columns so you might also look for the given group of columns"
+    assert(query_result == expected_result)
 
 print("\ncompare total salary of 'A' and 'B' for year 2019.")
 test_1()
