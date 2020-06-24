@@ -1,6 +1,6 @@
 """
 Copyright 2020 Google LLC
-
+                                                                                
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -89,8 +89,8 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     suggestions = []
 
-    simpson_paradox_suggestion = simpson_paradox(table, metric, dimensions, all_dimension,
-                                    slice_compare_column, summary_operator)
+    simpson_paradox_suggestion = simpson_paradox(table, metric, dimensions, 
+                    all_dimension, slice_compare_column, summary_operator)
     if len(simpson_paradox_suggestion) > 0:
         suggestions.append(simpson_paradox_suggestion)
 

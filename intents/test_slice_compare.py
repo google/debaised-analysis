@@ -1,6 +1,6 @@
 """
 Copyright 2020 Google LLC
-
+                                                                                
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -31,15 +31,20 @@ def test_1():
      """
     table = pandas.read_csv('data/ipl_innings.csv')
     query_result = slice_compare.slice_compare(table, 'total_runs', 
-    		['batsman_team', 'season'], ['batsman_team', 'season'], ['total_runs'],  [('batsman_team', Filters.IN, ['Mumbai Indians', 'Chennai Super Kings'])], ['batsman_team', 
-    		'Mumbai Indians', 'Chennai Super Kings'], SummaryOperators.SUM)
+    		['batsman_team', 'season'], ['batsman_team', 'season'], ['total_runs'],
+            [('batsman_team', Filters.IN, ['Mumbai Indians', 'Chennai Super Kings'])],
+             ['batsman_team', 'Mumbai Indians', 'Chennai Super Kings'], 
+                SummaryOperators.SUM)
     print(query_result)
+    
     expected_result = """   season         batsman_team  total_runs
 0    2008  Chennai Super Kings         868
 1    2008       Mumbai Indians         346"""
     expected_suggestion = """[]"""
+    
     assert(expected_result == query_result[0].to_string())
     assert(expected_suggestion == str(query_result[1]))
+
 def test_2():
     """
     	An example from the IPL dataset
@@ -47,14 +52,19 @@ def test_2():
      """
     table = pandas.read_csv('data/salary_list_modified.csv')
     query_result = slice_compare.slice_compare(table, 'salary', 
-    		['Person name', 'year'], ['Person name', 'year', 'month'], ['salary'], [('Person name', Filters.IN, 
-    		['A', 'B'])] , ['Person name', 'A', 'B'], SummaryOperators.SUM)
+    		['Person name', 'year'], ['Person name', 'year', 'month'], 
+            ['salary'], [('Person name', Filters.IN, ['A', 'B'])] , 
+            ['Person name', 'A', 'B'], SummaryOperators.SUM)
     print(query_result)
     
     expected_result = """   year Person name  salary
 0  2019           A   10239
 1  2019           B    8190"""
-    expected_suggestion = """["['year', 'month', 'Person name'] these group of columns have different results than initial columns so you might also look for the given group of columns"]"""
+    expected_suggestion = """["['year', 'month', 'Person name'] these group """
+                        + """of columns have different results than initial """
+                        + """columns so you might also look for the given group"""
+                        + """ of columns"]"""
+    
     assert(expected_result == query_result[0].to_string())
     assert(expected_suggestion == str(query_result[1]))
 
@@ -65,8 +75,9 @@ def test_3():
      """
     table = pandas.read_csv('data/ipl_innings.csv')
     query_result = slice_compare.slice_compare(table, 'total_runs', 
-    		['batsman_team', 'innings'], ['batsman_team', 'innings'], ['total_runs'], [('innings', Filters.IN, 
-    		['1st', '2nd'])], ['innings', '1st', '2nd'], SummaryOperators.SUM)
+    		['batsman_team', 'innings'], ['batsman_team', 'innings'], ['total_runs'],
+             [('innings', Filters.IN, ['1st', '2nd'])], ['innings', '1st', '2nd'], 
+                            SummaryOperators.SUM)
     print(query_result)
     
     expected_output = """                   batsman_team innings  total_runs
@@ -96,7 +107,7 @@ def test_3():
 
     assert(expected_output == query_result[0].to_string())
     assert(expected_suggestion == str(query_result[1]))
-    
+
 print("\ncompare total runs of 'Mumbai indians' and 'Chennai Super Kings'")
 test_1()
 
