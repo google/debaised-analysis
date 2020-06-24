@@ -135,7 +135,7 @@ def simpson_paradox(table, metric, dimensions, all_dimensions,
 	else:
 		return ""
 
-def check_dominent_percentage(table, dimensions, slice_compare_column, 
+def _check_dominent_percentage(table, dimensions, slice_compare_column, 
 													summary_operator):
 	"""This function can compare all the numbers of first and second 
 		slice and return what ppperceeentage of nnnnumbers of first 

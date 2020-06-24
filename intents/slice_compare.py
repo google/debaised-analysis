@@ -96,7 +96,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     return (result_table, suggestions)
 
-def slice_compare_results(table, metric, dimensions,
+def _slice_compare_results(table, metric, dimensions,
                     slice_compare_column, summary_operator):
     """This function will implement the slice-compare intent
 
