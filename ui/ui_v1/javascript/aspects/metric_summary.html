@@ -1,0 +1,72 @@
+<!-- Javascript Functions for metric and summary -->
+
+<script>
+
+  function funcAddMetric(icon){
+  
+    var text = icon.innerHTML;
+    
+    //generating operation that can be applied on metric
+    var summaryOperations = generateOptions(
+      "Sum,Mean,Count,Count Distinct,Standard Deviation,Variance,First,Last,Minimum,Maximum");
+    
+    // User clicks add button
+    if(text === "add_circle") {
+    
+     // html for entering Operation and Metric
+      var html= '<div class="block">'+
+                  '<label for="summary">Operation Applied: </label>'+
+                  '<select id="summary">'+
+                    summaryOperations+
+                  '</select>'+
+                '</div>'+
+                '<div class="block">'+
+                  '<label for="metric">Operand Column:&ensp;</label>'+
+                  '<input type="text" name="metric" id="metric" class="width125" placeholder="Column Name" onfocusout="fillSortByColumn()"/> '+
+                '</div>';         
+                
+      addElement("metric-summary","div","metric-summary-content",html);   //parentId, elementTag, elementId, html
+      
+      icon.classList.remove("add");
+      icon.classList.add("remove");
+      icon.innerHTML ="remove_circle";
+      
+      //Disable the sort-by column and delete it's value to ensure metric and sort-by column remain same
+      if(document.getElementById("sort-col")) {
+        form.elements["sort-col"].value = "";
+        form.elements["sort-col"].disabled = true;
+      }
+      
+      //Message that alerts grouping will be performed
+      document.getElementById("message-alert").innerHTML = "<br>(Grouping enabled)";
+    }
+    //User clicks remove button
+    else{
+    
+      removeElement("metric-summary-content");  // remove metric and summary operation
+      
+      icon.classList.remove("remove");
+      icon.classList.add("add");
+      icon.innerHTML ="add_circle";
+      
+      //enable the sort-by column
+      if(document.getElementById("sort-col"))
+        form.elements["sort-col"].disabled = false;
+      
+      //remove grouping alert
+      document.getElementById("message-alert").innerHTML = "";
+    }
+  }
+  
+  // Function invoked when metric field is about to lose focus
+  function fillSortByColumn() {
+    
+    //set the value of sort-by column to be same as metric
+    if(document.getElementById("sort-col")) {
+      var metric = form.elements["metric"].value;
+      var sortCol = form.elements["sort-col"];
+      sortCol.value = metric;
+    }
+  }
+
+</script>

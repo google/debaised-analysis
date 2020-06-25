@@ -1,0 +1,61 @@
+<!-- Javascript Functions for autofilling Table Range field or fetching Table Range as selected by user  -->
+
+<script>
+
+  //function to select the table range
+  function getSelectedRange(rangePicker,rangeId,headerId) {
+  
+    rangePicker.innerHTML = "Selecting";    // Change the button value while getting range
+    rangePicker.disabled = true;            // Disable the button while getting range
+    rangePicker.classList.add("loading");
+    
+    //creating an object containing button, rangeId and headerId
+    var RangeObj = {
+      'rangePicker' : rangePicker,
+      'rangeId' : rangeId,
+      'headerId' : headerId
+    }
+    
+    google.script.run                           // Executes a Apps Script function - getSelectedRange
+          .withSuccessHandler(updateRangeField) // updateRangeField will be called upon successful completion of Apps Script function
+          .withUserObject(RangeObj)             // To pass argument to updateRangeField
+          .getSelectedRange();                  
+    return;
+  }
+        
+  // Function called when server-side function - getSelectedRange returns successfully
+  function updateRangeField(tableRange,RangeObj) {
+  
+    document.getElementById(RangeObj.rangeId).value = tableRange[0];    // Update range field value
+    document.getElementById(RangeObj.headerId).value = tableRange[1];   // Update header row value
+    RangeObj.rangePicker.innerHTML = "Get Selected Range";              // Reset the button value
+    RangeObj.rangePicker.disabled = false;                              // Enable the button
+    RangeObj.rangePicker.classList.remove("loading");
+  }
+  
+  
+  // This function is fired when the entire page loads
+  // It autofills the table range field with entire table
+  window.onload = function() {
+  
+    var rangePicker = document.getElementById("find-range");
+    rangePicker.innerHTML = "Selecting";   // Change the button value while getting range
+    rangePicker.disabled = true;           // Disable the button while getting range
+    rangePicker.classList.add("loading");
+    
+    google.script.run
+          .withSuccessHandler(function(rangeString) {
+          
+            document.getElementById("range-picker-table").value = rangeString;
+            var rangePicker = document.getElementById("find-range");
+            
+            document.getElementById("header-row").value=1;      //set header row as 1 by default
+            rangePicker.innerHTML = "Get Selected Range";       // Reset the button value
+            rangePicker.disabled = false;                       // Enable the button
+            rangePicker.classList.remove("loading");
+            
+          })
+          .autoDetectTable();  //server-side Apps Script function called that finds table range
+  }
+  
+</script>

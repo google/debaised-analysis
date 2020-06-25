@@ -1,0 +1,37 @@
+<!-- SORTING and LIMIT -->
+
+<div class="block boxed">
+
+  <!-- Heading -->
+  <div class="heading">
+    <b>SORTING</b>
+  </div>
+  
+  <!-- Sort Order - ascending/descending -->
+  <div class="block">
+    <div class="inline" >Sort Order: <br><br></div>
+    <div class="inline">
+      <input type="radio" name="sort" id="asc" checked>
+      <label for="asc">Ascending Order</label>
+      <br>
+      <input type="radio" name="sort" id="desc">
+      <label for="desc">Descending Order</label>
+    </div>
+  </div>
+  
+  <!-- Column you want to sort -->
+  <div class="block">
+    <label for="sort-col">Sort-By Column: </label>
+    <input id="sort-col" name="sort-col" type="text" class="width125" placeholder="Column Name">
+  </div>
+  
+  <!-- K for top-k -->
+  <div class="heading">
+    <b>K (ITEMS)</b>
+  </div>
+  <div class="block inline">
+    <label for="limit">Number Of Items:&ensp;</label>
+    <input type="number" name="limit" id="limit" class="width130" min="1" placeholder="Enter value of k">
+  </div>
+  
+</div>

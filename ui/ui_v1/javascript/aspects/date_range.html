@@ -1,0 +1,45 @@
+<!-- Javascript Functions for adding date-range field -->
+
+<script>
+
+  function funcAddDate(icon) {
+  
+    var text=icon.innerHTML;
+    
+    // User clicks add button
+    if(text === "add_circle") {
+    
+      // html for entering Date Column Name, Start Date and End Date
+      var html= '<div class="block">'+
+                  '<label for="date-col">Date Column:&ensp;</label>'+
+                  '<input type="text" id="date-col" name="date-col" class="width130" placeholder="Column"> '+
+                '</div>'+
+                '<div class="block">'+
+                  '<div class="inline form-group">'+
+                    '<label for="date-start">Start Date:</label>'+
+                    '<input type="date" id="date-start" name="date-start" class="width125">'+
+                  '</div>'+
+                  '<div class="inline form-group">'+
+                    '<label for="date-end">End Date:</label>'+
+                    '<input type="date" id="date-end" name="date-end" class="width125">'+
+                  '</div>'+
+                '</div>';
+                
+      addElement("date","div","date-content",html);   //parentId, elementTag, elementId, html
+      
+      icon.classList.remove("add");
+      icon.classList.add("remove");
+      icon.innerHTML = "remove_circle";
+    }
+    //User clicks remove button
+    else {
+    
+      removeElement("date-content");     // remove date field
+      
+      icon.classList.remove("remove");
+      icon.classList.add("add");
+      icon.innerHTML = "add_circle";
+    }
+  }
+  
+</script>
