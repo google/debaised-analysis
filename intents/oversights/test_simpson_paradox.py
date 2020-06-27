@@ -24,8 +24,8 @@ def test_1():
         question :  compare total salary of 'A' and 'B' for year 2019.
      """
     table = pandas.read_csv('data/salary_list_modified.csv')
-    query_result = simpson_paradox.simpson_paradox(table, 'salary', 
-            ['Person name'], ['Person name', 'month'], ['Person name', 
+    query_result = simpson_paradox.simpson_paradox(table, 'salary',
+            ['Person name'], ['Person name', 'month'], ['Person name',
             'A', 'B'], SummaryOperators.SUM)
     print(query_result)
 
@@ -37,9 +37,9 @@ def test_2():
         question :  compare avg run for 'MI' and 'CSK' by city.
      """
     table = pandas.read_csv('data/ipl_example.csv')
-    query_result = simpson_paradox.simpson_paradox(table, 'run_scored', 
-            ['team_name', 'city'], ['team_name', 'city'], ['team_name', 
-            'MI', 'CSK'], SummaryOperators.MEAN)
+    query_result = simpson_paradox.simpson_paradox(table, 'run_scored',
+            ['team_name', 'city'], ['team_name', 'city'], ['team_name',
+             'MI', 'CSK'], SummaryOperators.MEAN)
     print(query_result)
 
     expected_result = "['team_name'] these group of columns have different results than initial columns so you might also look for the given group of columns"

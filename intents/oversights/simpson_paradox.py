@@ -57,14 +57,14 @@ def simpson_paradox(table, metric, dimensions, all_dimensions,
 
     """
 
-	""" removing all metric column except the one by which we will
-			 								do group_by operation"""
+	"""removing all metric column except the one by which we will
+    do group_by operation"""
 	required_columns = all_dimensions.copy()
 	required_columns.append(metric)
 	table = aspects.crop_other_columns(table, required_columns)
 
-	""" operational_dimensions will contain list of all dimension
-									except slice_compare_column"""
+	"""operational_dimensions will contain list of all dimension
+    except slice_compare_column"""
 	operational_dimensions = all_dimensions.copy()
 	operational_dimensions.remove(slice_compare_column[0])
 	grouping_dimensions = dimensions.copy()
@@ -80,11 +80,11 @@ def simpson_paradox(table, metric, dimensions, all_dimensions,
 											 required_columns)
 
 	"""initial_result will store the dominent percentage of
-	   initial groups given by user."""
+    initial groups given by user."""
 	initial_result = check_dominent_percentage(required_table,
-	                                      grouping_dimensions,
-	                                     slice_compare_column,
-	                                         summary_operator)
+                                          grouping_dimensions,
+                                          slice_compare_column,
+                                          summary_operator)
 	simpson_paradox_columns = []
 	max_difference = 75
 
@@ -94,8 +94,8 @@ def simpson_paradox(table, metric, dimensions, all_dimensions,
 		new_grouping_result = 0
 
 		""" if column is already in grouping_dimensions then
-		    we will remove it otherwise we will add the column
-            to grouping_dimensions"""
+        we will remove it otherwise we will add the column
+        to grouping_dimensions"""
 		if (column in grouping_dimensions):
 			new_grouping_dimensions.remove(column)
 			new_grouping_dimensions.append(slice_compare_column[0])
@@ -104,12 +104,12 @@ def simpson_paradox(table, metric, dimensions, all_dimensions,
 			required_columns = new_grouping_dimensions.copy()
 			required_columns.append(metric)
 			required_table = aspects.crop_other_columns(required_table,
-														required_columns)
+                                                      required_columns)
 
 			new_grouping_result = check_dominent_percentage(required_table,
-											new_grouping_dimensions.copy(),
-											slice_compare_column,
-											summary_operator)
+                                            new_grouping_dimensions.copy(),
+                                            slice_compare_column,
+                                            summary_operator)
 		else:
 			new_grouping_dimensions.append(column)
 			new_grouping_dimensions.append(slice_compare_column[0])
@@ -118,12 +118,12 @@ def simpson_paradox(table, metric, dimensions, all_dimensions,
 			required_columns = new_grouping_dimensions.copy()
 			required_columns.append(metric)
 			required_table = aspects.crop_other_columns(required_table,
-														required_columns)
+                                                      required_columns)
 
 			new_grouping_result = check_dominent_percentage(required_table,
-													new_grouping_dimensions,
-													slice_compare_column,
-													summary_operator)
+                                                    new_grouping_dimensions,
+                                                    slice_compare_column,
+                                                    summary_operator)
 
 		if abs(new_grouping_result - initial_result) >= max_difference:
 			max_difference = abs(new_grouping_result - initial_result)
@@ -136,7 +136,7 @@ def simpson_paradox(table, metric, dimensions, all_dimensions,
 		return ""
 
 def _check_dominent_percentage(table, dimensions, slice_compare_column,
-													summary_operator):
+                                                     summary_operator):
 	"""This function can compare all the numbers of first and second
 		slice and return what ppperceeentage of nnnnumbers of first
 		slice if greater than the second slice.
