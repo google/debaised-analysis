@@ -1,6 +1,6 @@
 """
 Copyright 2020 Google LLC
-                                                                                
+
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,16 +15,16 @@ limitations under the License.
 
 """
 This module contains the simpson's paradox debaising.
-The simpson_paradox module can give user result, according to which 
-column group of column simpson paradox exist for some perticular 
-slicing. It will check simpson's-paradox for all related groups and 
-suggest the user to do operation on those groups. 
+The simpson_paradox module can give user result, according to which
+column group of column simpson paradox exist for some perticular
+slicing. It will check simpson's-paradox for all related groups and
+suggest the user to do operation on those groups.
 """
 
 from util import aspects
 from util.enums import SummaryOperators
 
-def simpson_paradox(table, metric, dimensions, all_dimensions, 
+def simpson_paradox(table, metric, dimensions, all_dimensions,
 						slice_compare_column, summary_operator):
 	"""This function will implement the simpson's-paradox debaising
 
@@ -57,13 +57,13 @@ def simpson_paradox(table, metric, dimensions, all_dimensions,
 
     """
 
-	""" removing all metric column except the one by which we will 
+	""" removing all metric column except the one by which we will
 			 								do group_by operation"""
 	required_columns = all_dimensions.copy()
 	required_columns.append(metric)
 	table = aspects.crop_other_columns(table, required_columns)
 
-	""" operational_dimensions will contain list of all dimension 
+	""" operational_dimensions will contain list of all dimension
 									except slice_compare_column"""
 	operational_dimensions = all_dimensions.copy()
 	operational_dimensions.remove(slice_compare_column[0])
@@ -79,23 +79,23 @@ def simpson_paradox(table, metric, dimensions, all_dimensions,
 	required_table = aspects.crop_other_columns(required_table,
 											 required_columns)
 
-	"""initial_result will store the dominent percentage of 
-							initial groups given by user."""
-	initial_result = check_dominent_percentage(required_table, 
-										grouping_dimensions, 
-										slice_compare_column, 
-										summary_operator)
+	"""initial_result will store the dominent percentage of
+	   initial groups given by user."""
+	initial_result = check_dominent_percentage(required_table,
+	                                      grouping_dimensions,
+	                                     slice_compare_column,
+	                                         summary_operator)
 	simpson_paradox_columns = []
 	max_difference = 75
-	
+
 	for column in operational_dimensions:
 		new_grouping_dimensions = dimensions.copy()
 		new_grouping_dimensions.remove(slice_compare_column[0])
 		new_grouping_result = 0
 
-		""" if column is already in grouping_dimensions then 
-					we will remove it otherwise we will 
-					add the column to grouping_dimensions"""
+		""" if column is already in grouping_dimensions then
+		    we will remove it otherwise we will add the column
+            to grouping_dimensions"""
 		if (column in grouping_dimensions):
 			new_grouping_dimensions.remove(column)
 			new_grouping_dimensions.append(slice_compare_column[0])
@@ -103,12 +103,12 @@ def simpson_paradox(table, metric, dimensions, all_dimensions,
 			required_table = table.copy()
 			required_columns = new_grouping_dimensions.copy()
 			required_columns.append(metric)
-			required_table = aspects.crop_other_columns(required_table, 
+			required_table = aspects.crop_other_columns(required_table,
 														required_columns)
 
-			new_grouping_result = check_dominent_percentage(required_table, 
-											new_grouping_dimensions.copy(), 
-											slice_compare_column, 
+			new_grouping_result = check_dominent_percentage(required_table,
+											new_grouping_dimensions.copy(),
+											slice_compare_column,
 											summary_operator)
 		else:
 			new_grouping_dimensions.append(column)
@@ -117,12 +117,12 @@ def simpson_paradox(table, metric, dimensions, all_dimensions,
 			required_table = table.copy()
 			required_columns = new_grouping_dimensions.copy()
 			required_columns.append(metric)
-			required_table = aspects.crop_other_columns(required_table, 
+			required_table = aspects.crop_other_columns(required_table,
 														required_columns)
 
-			new_grouping_result = check_dominent_percentage(required_table, 
-													new_grouping_dimensions, 
-													slice_compare_column, 
+			new_grouping_result = check_dominent_percentage(required_table,
+													new_grouping_dimensions,
+													slice_compare_column,
 													summary_operator)
 
 		if abs(new_grouping_result - initial_result) >= max_difference:
@@ -135,10 +135,10 @@ def simpson_paradox(table, metric, dimensions, all_dimensions,
 	else:
 		return ""
 
-def _check_dominent_percentage(table, dimensions, slice_compare_column, 
+def _check_dominent_percentage(table, dimensions, slice_compare_column,
 													summary_operator):
-	"""This function can compare all the numbers of first and second 
-		slice and return what ppperceeentage of nnnnumbers of first 
+	"""This function can compare all the numbers of first and second
+		slice and return what ppperceeentage of nnnnumbers of first
 		slice if greater than the second slice.
 
     Args:
@@ -146,7 +146,7 @@ def _check_dominent_percentage(table, dimensions, slice_compare_column,
             It has the contents of the csv file
         dimensions: Type-list of str
             It is the name of column we want.
-            In query:'compare batsman A and B according to total_runs', 
+            In query:'compare batsman A and B according to total_runs',
             dimension is 'batsman'. we group by dimensions.
         slice_compare_column: Type-list of string
             first element denotes the column name by which we will do comparision.
@@ -195,4 +195,3 @@ def _check_dominent_percentage(table, dimensions, slice_compare_column,
 		row_i = row_i + 1
 
 	return (positive_count / total_count) * 100
-    
