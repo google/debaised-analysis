@@ -1,6 +1,6 @@
 """
 Copyright 2020 Google LLC
-                                                                                
+
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,7 +16,7 @@ limitations under the License.
 """This module contains the slice-compare intent.
 The slice-compare intent can give the result so that user can easily
 compare the data according to the way user want.
-Also it supports some operations like cropping based on date range, 
+Also it supports some operations like cropping based on date range,
 slicing(removing rows that do not follow the conditions), group by.
 Some of the operations are optional.
 """
@@ -24,7 +24,7 @@ Some of the operations are optional.
 from util import aspects
 from oversights.simpson_paradox import simpson_paradox
 
-def slice_compare(table, metric, dimensions, all_dimension, all_metric, 
+def slice_compare(table, metric, dimensions, all_dimension, all_metric,
                 slices, slice_compare_column, summary_operator, **kwargs):
     """ This function returns both the results according to the intent
     as well as the debiasing suggestions.
@@ -89,19 +89,19 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     suggestions = []
 
-    simpson_paradox_suggestion = simpson_paradox(table, metric, dimensions, 
+    simpson_paradox_suggestion = simpson_paradox(table, metric, dimensions,
                     all_dimension, slice_compare_column, summary_operator)
     if len(simpson_paradox_suggestion) > 0:
         suggestions.append(simpson_paradox_suggestion)
 
     return (result_table, suggestions)
 
-def _slice_compare_results(table, metric, dimensions,
-                    slice_compare_column, summary_operator):
+def _slice_compare_results(table, metric, dimensions, slice_compare_column,
+                                                         summary_operator):
     """This function will implement the slice-compare intent
 
     Also removes the tuples that do not lie in the given date range.
-    The arguments 'table, metric,dimension,slices, slices_compare_column, 
+    The arguments 'table, metric,dimension,slices, slices_compare_column,
     summary_operator' are not optional, so they are passed as it is,
     'date_range' will be passed in kwargs.
     If some the optional args are None(not passed),
