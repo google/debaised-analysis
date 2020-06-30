@@ -47,17 +47,24 @@ def mean_vs_median(values):
         A String that contains the suggestions.
     """
 
-    skew_value = skew(values)
+    skew_value = _skew(values)
 
-    if(skew_value>=constants.LOWER_BOUND_SIMILARITY_MEAN_VS_MEDIAN 
-    	and skew_value<=constants.UPPER_BOUND_SIMILARITY_MEAN_VS_MEDIAN):
+    if (skew_value >= constants.LOWER_BOUND_SIMILARITY_MEAN_VS_MEDIAN 
+    	and skew_value <= constants.UPPER_BOUND_SIMILARITY_MEAN_VS_MEDIAN):
     		return None
     else:
     	return 'Median is very different from the Mean'
 
-def skew(values):
+def _skew(values):
 	""" This function calculates the skew value of the list
-	of values.
+	of values which represents the difference between the mean
+	and median which also corresponds to the skewness.
+	Using the following formula ,
+	(1/((n-1)*(n-2)))*(sum over i { ((values[i]-mean(values))/(std_dev))**3) }
+	n -> number of values
+	std_dev -> standard deviation of all values
+	For documentation of this function refer to SKEW function
+	available in Google Sheets
 
     Args:
         values : Type-list of numbers could be floating points
@@ -81,12 +88,12 @@ def skew(values):
 	# Summation of skewness of each element
 	skew_value = 0
 	for x in values:
-		skew_of_x = (x-mean)/std_dev
+		skew_of_x = (x - mean) / std_dev
 		skew_of_x = (skew_of_x)**3
 		skew_value += skew_of_x
 
 	#Normalizing skewness with the size of data
-	skew_value = (skew_value*size)/((size-1)*(size-2))
+	skew_value = (skew_value * size) / ((size - 1) * (size - 2))
 
 	return skew_value
 

@@ -27,7 +27,7 @@ def test_1():
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
 	expected_suggestion = "Median is very different from the Mean"
 
-	assert(suggestion==expected_suggestion)
+	assert(suggestion == expected_suggestion)
 
 def test_2():
 	"""
@@ -43,7 +43,7 @@ def test_2():
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
 	expected_suggestion = None
 
-	assert(suggestion==expected_suggestion)
+	assert(suggestion == expected_suggestion)
 
 def test_3():
 	"""
@@ -58,7 +58,7 @@ def test_3():
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
 	expected_suggestion = "Median is very different from the Mean"
 
-	assert(suggestion==expected_suggestion)	
+	assert(suggestion == expected_suggestion)	
 
 def test_4():
 	"""
@@ -73,7 +73,7 @@ def test_4():
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
 	expected_suggestion = None
 
-	assert(suggestion==expected_suggestion)		
+	assert(suggestion == expected_suggestion)		
     
 def test_5():
 	"""
@@ -88,7 +88,7 @@ def test_5():
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
 	expected_suggestion = None
 
-	assert(suggestion==expected_suggestion)	
+	assert(suggestion == expected_suggestion)	
 
 def test_6():
 	"""
@@ -104,7 +104,7 @@ def test_6():
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
 	expected_suggestion = "Median is very different from the Mean"
 
-	assert(suggestion==expected_suggestion)	
+	assert(suggestion == expected_suggestion)	
 
 def test_7():
 	"""
@@ -120,7 +120,7 @@ def test_7():
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
 	expected_suggestion = "Median is very different from the Mean"
 
-	assert(suggestion==expected_suggestion)	
+	assert(suggestion == expected_suggestion)	
 
 def test_8():
 	"""
@@ -135,7 +135,7 @@ def test_8():
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
 	expected_suggestion = "Median is very different from the Mean"
 
-	assert(suggestion==expected_suggestion)	
+	assert(suggestion == expected_suggestion)	
 
 def test_9():
 	"""
@@ -151,7 +151,7 @@ def test_9():
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
 	expected_suggestion = "Median is very different from the Mean"
 
-	assert(suggestion==expected_suggestion)		
+	assert(suggestion == expected_suggestion)		
 
 def test_10():
 	"""
@@ -167,7 +167,7 @@ def test_10():
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
 	expected_suggestion = None
 
-	assert(suggestion==expected_suggestion)		
+	assert(suggestion == expected_suggestion)		
 
 print(test_1.__doc__)
 test_1()
