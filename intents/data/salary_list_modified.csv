@@ -1,0 +1,25 @@
+Person name,year,month,salary
+A,2019,Jan,1
+B,2019,Jan,2
+A,2019,Feb,2
+B,2019,Feb,4
+A,2019,Mar,4
+B,2019,Mar,8
+A,2019,Apr,8
+B,2019,Apr,16
+A,2019,May,16
+B,2019,May,32
+A,2019,Jun,32
+B,2019,Jun,64
+A,2019,Jul,64
+B,2019,Jul,128
+A,2019,Aug,128
+B,2019,Aug,256
+A,2019,Sep,256
+B,2019,Sep,512
+A,2019,Oct,512
+B,2019,Oct,1024
+A,2019,Nov,1024
+B,2019,Nov,2048
+A,2019,Dec,8192
+B,2019,Dec,4096
