@@ -14,8 +14,8 @@ limitations under the License.
 """
 
 """
-	This module has some examples of function calls for queries from
-	small part of innings dataset. The query is also mentioned.
+    This module has some examples of function calls for queries from
+    small part of innings dataset. The query is also mentioned.
 """
 
 import pandas
@@ -25,18 +25,18 @@ from util.enums import *
 
 def test_1():
     """
-    	An example from the IPL dataset
-    	question :  compare total runs of 'Mumbai indians' and
-    				'Chennai Super Kings'.
+        An example from the IPL dataset
+        question :  compare total runs of 'Mumbai indians' and
+                    'Chennai Super Kings'.
      """
     table = pandas.read_csv('data/ipl_innings.csv')
     query_result = slice_compare.slice_compare(table, 'total_runs',
-	                                           ['batsman_team', 'season'],
-	                                           ['batsman_team', 'season'],
-	                                           ['total_runs'],
-	                                           [('batsman_team', Filters.IN, ['Mumbai Indians', 'Chennai Super Kings'])],
-	                                           ['batsman_team', 'Mumbai Indians', 'Chennai Super Kings'],
-	                                           SummaryOperators.SUM)
+                                               ['batsman_team', 'season'],
+                                               ['batsman_team', 'season'],
+                                               ['total_runs'],
+                                               [('batsman_team', Filters.IN, ['Mumbai Indians', 'Chennai Super Kings'])],
+                                               ['batsman_team', 'Mumbai Indians', 'Chennai Super Kings'],
+                                               SummaryOperators.SUM)
     print(query_result)
 
     expected_result = """   season         batsman_team  total_runs
@@ -49,17 +49,17 @@ def test_1():
 
 def test_2():
     """
-    	An example from the IPL dataset
-    	question :  compare total salary of 'A' and 'B' for year 2019.
+        An example from the IPL dataset
+        question :  compare total salary of 'A' and 'B' for year 2019.
      """
     table = pandas.read_csv('data/salary_list_modified.csv')
     query_result = slice_compare.slice_compare(table, 'salary',
-	                                           ['Person name', 'year'],
-	                                           ['Person name', 'year', 'month'],
-	                                           ['salary'],
-	                                           [('Person name', Filters.IN, ['A', 'B'])] ,
-	                                           ['Person name', 'A', 'B'],
-	                                           SummaryOperators.SUM)
+                                               ['Person name', 'year'],
+                                               ['Person name', 'year', 'month'],
+                                               ['salary'],
+                                               [('Person name', Filters.IN, ['A', 'B'])] ,
+                                               ['Person name', 'A', 'B'],
+                                               SummaryOperators.SUM)
     print(query_result)
 
     expected_result = """   year Person name  salary
@@ -72,16 +72,16 @@ def test_2():
 
 def test_3():
     """
-    	An example from the IPL dataset
-    	question :  compare total run scored in 1st innings and second innings by batsman_teams.
+        An example from the IPL dataset
+        question :  compare total run scored in 1st innings and second innings by batsman_teams.
      """
     table = pandas.read_csv('data/ipl_innings.csv')
     query_result = slice_compare.slice_compare(table, 'total_runs',
-	                                           ['batsman_team', 'innings'],
-	                                           ['batsman_team', 'innings'],
-	                                           ['total_runs'],
+                                               ['batsman_team', 'innings'],
+                                               ['batsman_team', 'innings'],
+                                               ['total_runs'],
                                                [('innings', Filters.IN, ['1st', '2nd'])],
-	                                           ['innings', '1st', '2nd'],
+                                               ['innings', '1st', '2nd'],
                                                SummaryOperators.SUM)
     print(query_result)
 
