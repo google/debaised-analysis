@@ -32,11 +32,11 @@ def test_1():
     table = pandas.read_csv('data/ipl_innings.csv')
     query_result = slice_compare.slice_compare(table, 'total_runs',
 	                                           ['batsman_team', 'season'],
-											   ['batsman_team', 'season'],
-											   ['total_runs'],
-											   [('batsman_team', Filters.IN, ['Mumbai Indians', 'Chennai Super Kings'])],
-											   ['batsman_team', 'Mumbai Indians', 'Chennai Super Kings'],
-											   SummaryOperators.SUM)
+	                                           ['batsman_team', 'season'],
+	                                           ['total_runs'],
+	                                           [('batsman_team', Filters.IN, ['Mumbai Indians', 'Chennai Super Kings'])],
+	                                           ['batsman_team', 'Mumbai Indians', 'Chennai Super Kings'],
+	                                           SummaryOperators.SUM)
     print(query_result)
 
     expected_result = """   season         batsman_team  total_runs
@@ -54,9 +54,12 @@ def test_2():
      """
     table = pandas.read_csv('data/salary_list_modified.csv')
     query_result = slice_compare.slice_compare(table, 'salary',
-    		['Person name', 'year'], ['Person name', 'year', 'month'],
-            ['salary'], [('Person name', Filters.IN, ['A', 'B'])] ,
-            ['Person name', 'A', 'B'], SummaryOperators.SUM)
+	                                           ['Person name', 'year'],
+	                                           ['Person name', 'year', 'month'],
+	                                           ['salary'],
+	                                           [('Person name', Filters.IN, ['A', 'B'])] ,
+	                                           ['Person name', 'A', 'B'],
+	                                           SummaryOperators.SUM)
     print(query_result)
 
     expected_result = """   year Person name  salary
@@ -74,9 +77,12 @@ def test_3():
      """
     table = pandas.read_csv('data/ipl_innings.csv')
     query_result = slice_compare.slice_compare(table, 'total_runs',
-    		['batsman_team', 'innings'], ['batsman_team', 'innings'], ['total_runs'],
-             [('innings', Filters.IN, ['1st', '2nd'])], ['innings', '1st', '2nd'],
-                            SummaryOperators.SUM)
+	                                           ['batsman_team', 'innings'],
+	                                           ['batsman_team', 'innings'],
+	                                           ['total_runs'],
+                                               [('innings', Filters.IN, ['1st', '2nd'])],
+	                                           ['innings', '1st', '2nd'],
+                                               SummaryOperators.SUM)
     print(query_result)
 
     expected_output = """                   batsman_team innings  total_runs

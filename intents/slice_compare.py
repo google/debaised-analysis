@@ -85,7 +85,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
     table = aspects.slice_table(table, slices)
 
     result_table = _slice_compare_results(table.copy(), metric, dimensions.copy(),
-                                slice_compare_column, summary_operator)
+                                          slice_compare_column, summary_operator)
 
     suggestions = []
 
