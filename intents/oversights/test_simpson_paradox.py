@@ -25,8 +25,10 @@ def test_1():
      """
     table = pandas.read_csv('data/salary_list_modified.csv')
     query_result = simpson_paradox.simpson_paradox(table, 'salary',
-            ['Person name'], ['Person name', 'month'], ['Person name',
-            'A', 'B'], SummaryOperators.SUM)
+                                                   ['Person name'],
+                                                   ['Person name', 'month'],
+                                                   ['Person name', 'A', 'B'],
+                                                   SummaryOperators.SUM)
     print(query_result)
 
     expected_result = "['month', 'Person name'] these group of columns have different results than initial columns so you might also look for the given group of columns"
@@ -38,8 +40,10 @@ def test_2():
      """
     table = pandas.read_csv('data/ipl_example.csv')
     query_result = simpson_paradox.simpson_paradox(table, 'run_scored',
-            ['team_name', 'city'], ['team_name', 'city'], ['team_name',
-             'MI', 'CSK'], SummaryOperators.MEAN)
+                                                   ['team_name', 'city'],
+                                                   ['team_name', 'city'],
+                                                   ['team_name', 'MI', 'CSK'],
+                                                   SummaryOperators.MEAN)
     print(query_result)
 
     expected_result = "['team_name'] these group of columns have different results than initial columns so you might also look for the given group of columns"

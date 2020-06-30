@@ -25,7 +25,7 @@ from util import aspects
 from oversights.simpson_paradox import simpson_paradox
 
 def slice_compare(table, metric, dimensions, all_dimension, all_metric,
-                slices, slice_compare_column, summary_operator, **kwargs):
+                  slices, slice_compare_column, summary_operator, **kwargs):
     """ This function returns both the results according to the intent
     as well as the debiasing suggestions.
     Some of the oversights considered in this intent are-
@@ -84,13 +84,16 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     table = aspects.slice_table(table, slices)
 
-    result_table = slice_compare_results(table.copy(), metric, dimensions.copy(),
+    result_table = _slice_compare_results(table.copy(), metric, dimensions.copy(),
                                 slice_compare_column, summary_operator)
 
     suggestions = []
 
-    simpson_paradox_suggestion = simpson_paradox(table, metric, dimensions,
-                    all_dimension, slice_compare_column, summary_operator)
+    simpson_paradox_suggestion = simpson_paradox(table, metric,
+                                                 dimensions,
+                                                 all_dimension,
+                                                 slice_compare_column,
+                                                 summary_operator)
     if len(simpson_paradox_suggestion) > 0:
         suggestions.append(simpson_paradox_suggestion)
 
