@@ -163,6 +163,8 @@ def _str_to_summary_operator_enum(summary_operator):
         return enums.SummaryOperators.SUM
     elif summary_operator == 'Mean':
         return enums.SummaryOperators.MEAN
+    elif summary_operator == 'Median':
+        return enums.SummaryOperators.MEDIAN
     elif summary_operator == 'Count':
         return enums.SummaryOperators.COUNT
     elif summary_operator == 'Maximum':
