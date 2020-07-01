@@ -18,7 +18,7 @@ def test_1():
 	"""
 	Situation : One of the entry of data contains a number with an extra 0 in it
 	"""
-	test_file = open("../data/data_for_test_mean_vs_median/test_1.txt", "r")
+	test_file = open("data/data_for_test_mean_vs_median/test_1.txt", "r")
 	values = test_file.read().split("\n")
 	values = list(map(int, values))
 	
@@ -34,7 +34,7 @@ def test_2():
 	Situation : Values having some high peaks above the median and some low peaks
 	below the median due to which mean balances to be around median
 	"""
-	test_file = open("../data/data_for_test_mean_vs_median/test_2.txt", "r")
+	test_file = open("data/data_for_test_mean_vs_median/test_2.txt", "r")
 	values = test_file.read().split("\n")
 	values = list(map(int, values))
 	
@@ -49,7 +49,7 @@ def test_3():
 	"""
 	Situation : A lot of initial values are very small values
 	"""
-	test_file = open("../data/data_for_test_mean_vs_median/test_3.txt", "r")
+	test_file = open("data/data_for_test_mean_vs_median/test_3.txt", "r")
 	values = test_file.read().split("\n")
 	values = list(map(int, values))
 	
@@ -64,7 +64,7 @@ def test_4():
 	"""
 	Situation : There are only 2 data points present
 	"""
-	test_file = open("../data/data_for_test_mean_vs_median/test_4.txt", "r")
+	test_file = open("data/data_for_test_mean_vs_median/test_4.txt", "r")
 	values = test_file.read().split("\n")
 	values = list(map(int, values))
 	
@@ -79,7 +79,7 @@ def test_5():
 	"""
 	Situation : Symmetrical data which includes negative numbers also
 	"""
-	test_file = open("../data/data_for_test_mean_vs_median/test_5.txt", "r")
+	test_file = open("data/data_for_test_mean_vs_median/test_5.txt", "r")
 	values = test_file.read().split("\n")
 	values = list(map(int, values))
 	
@@ -95,7 +95,7 @@ def test_6():
 	Situation : Values having negative numbers which are large in absolute value
 	The skewness in this situation should be negative
 	"""
-	test_file = open("../data/data_for_test_mean_vs_median/test_6.txt", "r")
+	test_file = open("data/data_for_test_mean_vs_median/test_6.txt", "r")
 	values = test_file.read().split("\n")
 	values = list(map(int, values))
 	
@@ -111,7 +111,7 @@ def test_7():
 	Situation : Values containing a large number of 0s in between which impacts the
 	mean value but not the median value
 	"""
-	test_file = open("../data/data_for_test_mean_vs_median/test_7.txt", "r")
+	test_file = open("data/data_for_test_mean_vs_median/test_7.txt", "r")
 	values = test_file.read().split("\n")
 	values = list(map(int, values))
 	
@@ -126,7 +126,7 @@ def test_8():
 	"""
 	Situation : Values represeting a exponential set of values
 	"""
-	test_file = open("../data/data_for_test_mean_vs_median/test_8.txt", "r")
+	test_file = open("data/data_for_test_mean_vs_median/test_8.txt", "r")
 	values = test_file.read().split("\n")
 	values = list(map(int, values))
 	
@@ -142,7 +142,7 @@ def test_9():
 	Situation : Clustering example of data , with first initial values having 
 	low value and rest of the values being high
 	"""
-	test_file = open("../data/data_for_test_mean_vs_median/test_9.txt", "r")
+	test_file = open("data/data_for_test_mean_vs_median/test_9.txt", "r")
 	values = test_file.read().split("\n")
 	values = list(map(int, values))
 	
@@ -158,7 +158,7 @@ def test_10():
 	Situation : All values being 0 , this situation check if there is any zero
 	division errors
 	"""
-	test_file = open("../data/data_for_test_mean_vs_median/test_10.txt", "r")
+	test_file = open("data/data_for_test_mean_vs_median/test_10.txt", "r")
 	values = test_file.read().split("\n")
 	values = list(map(int, values))
 	

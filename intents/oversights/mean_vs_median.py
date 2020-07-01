@@ -23,6 +23,8 @@ differs a lot from median , the oversight suggestion is passed.
 Here we use the SKEW function (also available as an inbuilt function in Google 
 Sheets) as the parameter to detect the difference between mean and median.
 """
+import sys
+sys.path.append(".")
 
  
 # for calculation standard deviation i.e pstdev() and mean i.e mean()
