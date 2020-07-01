@@ -24,3 +24,7 @@ RTM_SET_INTERSECTION_CUT_OFF = .7
 
 # threshold of similarity in ranks method in regression to the mean
 RTM_RANK_VECTOR_SIMILARITY_THRESHOLD = 30
+
+# range of similarity between mean and median in skew method
+LOWER_BOUND_SIMILARITY_MEAN_VS_MEDIAN = -0.3
+UPPER_BOUND_SIMILARITY_MEAN_VS_MEDIAN = 0.3
