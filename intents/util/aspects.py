@@ -22,7 +22,7 @@ Example in slicing - the rows that do not satisft the slicing condition
 are dropped.
 """
 import datetime
-from util.enums import *
+from util import enums
 
 def apply_date_range(table, date_range, date_column_name, date_format):
     """This function removes the rows from from the table that
@@ -73,7 +73,7 @@ def slice_table(table, slices):
             (column_name, filter, value)
             column_name - is the value of the column that the
             condition is applied upon.
-            filter - Filters enum members, ex. Filters.IN
+            filter - Filters enum members, ex. enums.Filters.IN
             list of supported operators -
                 Equal to
                 Not equal to
@@ -89,35 +89,46 @@ def slice_table(table, slices):
     """
     if slices is None:
         return table
+
     num_rows = table.shape[0]
-    # list of column by which slicing will be done
+
+    # init a list that will contain index of rows to be dropped
+    rows_to_be_dropped = []
+
     for row in range(num_rows):
         slice_match = True
+        # checking if all condition in slices match
         for condition in slices:
-            if condition[1] == Filters.EQUAL_TO and not (
+            if condition[1] == enums.Filters.EQUAL_TO and not (
                     table.loc[row, condition[0]] == condition[2]):
                 slice_match = False
-            if condition[1] == Filters.NOT_EQUAL_TO and not (
+            if condition[1] == enums.Filters.NOT_EQUAL_TO and not (
                     table.loc[row, condition[0]] != condition[2]):
                 slice_match = False
-            if condition[1] == Filters.LESS_THAN and not (
+            if condition[1] == enums.Filters.LESS_THAN and not (
                     table.loc[row, condition[0]] < condition[2]):
                 slice_match = False
-            if condition[1] == Filters.LESS_THAN_EQUAL_TO and not (
+            if condition[1] == enums.Filters.LESS_THAN_EQUAL_TO and not (
                     table.loc[row, condition[0]] <= condition[2]):
                 slice_match = False
-            if condition[1] == Filters.GREATER_THAN and not (
+            if condition[1] == enums.Filters.GREATER_THAN and not (
                     table.loc[row, condition[0]] > condition[2]):
                 slice_match = False
-            if condition[1] == Filters.IN and not (
+            if condition[1] == enums.Filters.GREATER_THAN_EQUAL_TO and not (
+                    table.loc[row, condition[0]] >= condition[2]):
+                slice_match = False
+            if condition[1] == enums.Filters.IN and not (
                     table.loc[row, condition[0]] in condition[2]):
                 slice_match = False
-            if condition[1] == Filters.NOT_IN and not (
+            if condition[1] == enums.Filters.NOT_IN and not (
                     table.loc[row, condition[0]] not in condition[2]):
                 slice_match = False
-        if slice_match is not True:
-            table = table.drop([row])
 
+        # collecting row index if slice condition does not satisfy
+        if slice_match is not True:
+            rows_to_be_dropped.append(row)
+
+    table = table.drop(rows_to_be_dropped)
 
     #some indices get deleted after slicing
     table = table.reset_index(drop=True)
@@ -176,34 +187,34 @@ def group_by(table, dimensions, summary_operator):
     """
     if summary_operator is None:
         return table
-    if summary_operator == SummaryOperators.SUM:
+    if summary_operator == enums.SummaryOperators.SUM:
         table = table.groupby(dimensions).sum()
 
-    if summary_operator == SummaryOperators.MEAN:
+    if summary_operator == enums.SummaryOperators.MEAN:
         table = table.groupby(dimensions).mean()
 
-    if summary_operator == SummaryOperators.COUNT:
+    if summary_operator == enums.SummaryOperators.COUNT:
         table = table.groupby(dimensions).count()
 
-    if summary_operator == SummaryOperators.MAX:
+    if summary_operator == enums.SummaryOperators.MAX:
         table = table.groupby(dimensions).max()
 
-    if summary_operator == SummaryOperators.MIN:
+    if summary_operator == enums.SummaryOperators.MIN:
         table = table.groupby(dimensions).min()
 
-    if summary_operator == SummaryOperators.STD:
+    if summary_operator == enums.SummaryOperators.STD:
         table = table.groupby(dimensions).std()
 
-    if summary_operator == SummaryOperators.VAR:
+    if summary_operator == enums.SummaryOperators.VAR:
         table = table.groupby(dimensions).var()
 
-    if summary_operator == SummaryOperators.FIRST:
+    if summary_operator == enums.SummaryOperators.FIRST:
         table = table.groupby(dimensions).first()
 
-    if summary_operator == SummaryOperators.LAST:
+    if summary_operator == enums.SummaryOperators.LAST:
         table = table.groupby(dimensions).last()
 
-    if summary_operator == SummaryOperators.DISTINCT:
+    if summary_operator == enums.SummaryOperators.DISTINCT:
         table = table.groupby(dimensions).agg(_count_distinct)
 
     table = table.reset_index()
@@ -236,13 +247,13 @@ def granular_time(row_date, granularity):
     Returns:
        Returns the updated row_date
     """
-    if granularity == Granularities.HOURLY:
+    if granularity == enums.Granularities.HOURLY:
         row_date = row_date.replace(second=0, minute=0)
-    if granularity == Granularities.DAILY:
+    if granularity == enums.Granularities.DAILY:
         row_date = row_date.replace(second=0, minute=0, hour=0)
-    if granularity == Granularities.MONTHLY:
+    if granularity == enums.Granularities.MONTHLY:
         row_date = row_date.replace(second=0, minute=0, hour=0, day=1)
-    if granularity == Granularities.ANNUALLY:
+    if granularity == enums.Granularities.ANNUALLY:
         row_date = row_date.replace(second=0, minute=0, hour=0, day=1, month=1)
 
     return row_date

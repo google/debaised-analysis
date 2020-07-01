@@ -20,7 +20,7 @@ TODO - assert the suggestions
 """
 import pandas
 import topk
-from util.enums import *
+from util import enums
 import data.spider_eval.evaluation
 
 def test_1():
@@ -30,7 +30,7 @@ def test_1():
     """
     table = pandas.read_csv('data/matches.csv')
     query_result = topk.topk(table, 'win_by_runs', ['city'], False, 40,
-    	                        slices=[('season', Filters.EQUAL_TO, 2017)],
+    	                        slices=[('season', enums.Filters.EQUAL_TO, 2017)],
     	                        date_range=('2008-05-08', '2017-04-12'),
     	                        date_column_name='date',
     	                        date_format='%Y-%m-%d')
@@ -57,10 +57,10 @@ def test_2():
     """
     table = pandas.read_csv('data/matches.csv')
     query_result = topk.topk(table, 'win_by_runs', ['player_of_match'], False,
-    	                        5, slices=[('season', Filters.EQUAL_TO, 2017)],
+    	                        5, slices=[('season', enums.Filters.EQUAL_TO, 2017)],
     	                        date_range=('2017-05-09', '2017-05-12'),
     	                        date_column_name='date', date_format='%Y-%m-%d',
-    	                        summary_operator=SummaryOperators.MEAN)
+    	                        summary_operator=enums.SummaryOperators.MEAN)
     print(query_result)
     expected_result = """  player_of_match  win_by_runs
 0       MM Sharma           14
@@ -80,7 +80,7 @@ def test_3():
     query_result = topk.topk(table, 'Department_ID', ['Creation'], False, 1,
     	                        slices=None, date_range=None,
     	                        date_column_name='date', date_format='%Y-%m-%d',
-    	                        summary_operator=SummaryOperators.COUNT)
+    	                        summary_operator=enums.SummaryOperators.COUNT)
     print(query_result)
     expected_result = """  Creation  Department_ID
 0     1789              2"""
@@ -119,7 +119,7 @@ def test_5():
     query_result = topk.topk(table, 'lat', ['city'], False, 10000, slices=None,
     	                        date_range=None, date_column_name='date',
     	                        date_format='%Y-%m-%d',
-    	                        summary_operator=SummaryOperators.MAX)
+    	                        summary_operator=enums.SummaryOperators.MAX)
     print(query_result)
     expected_result = """            city        lat
 0  San Francisco  37.804770
