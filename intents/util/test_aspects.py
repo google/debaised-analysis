@@ -113,6 +113,27 @@ def test_2():
 
     assert(time_taken <= 20)
 
+
+def test_3():
+    """
+    Situation : This tests the median aspect.
+                In the same randomly generated dataset calculate the median
+                age group by gender
+    Args:
+    Returns:
+    """
+    table = pandas.read_csv('data/data_for_test_aspects/test_1.csv')
+
+    result_table = aspects.group_by(table, ['Gender'], enums.SummaryOperators.MEDIAN)
+
+    print(result_table)
+
+    expected_result = """   Gender  Age
+0  Female   50
+1    Male   51"""
+
+    assert(result_table.to_string() == expected_result)
+
 # print(generate_1.__doc__)
 # generate_1()
 
@@ -121,5 +142,8 @@ test_1()
 
 print(test_2.__doc__)
 test_2()
+
+print(test_3.__doc__)
+test_3()
 
 print('Test cases completed')

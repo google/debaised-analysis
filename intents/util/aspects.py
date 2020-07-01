@@ -193,6 +193,9 @@ def group_by(table, dimensions, summary_operator):
     if summary_operator == enums.SummaryOperators.MEAN:
         table = table.groupby(dimensions).mean()
 
+    if summary_operator == enums.SummaryOperators.MEDIAN:
+        table = table.groupby(dimensions).median()
+
     if summary_operator == enums.SummaryOperators.COUNT:
         table = table.groupby(dimensions).count()
 
