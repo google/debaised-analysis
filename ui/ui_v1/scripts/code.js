@@ -47,6 +47,7 @@ function include(filename) {
 function getSelectedRange() {
   var range = SpreadsheetApp.getActiveSheet().getActiveRange(); 
   var rangeString = range.getA1Notation(); 
+  //selecting first row from the range selected as header row
   var headerRow = range.getLastRow() - range.getHeight()+1;
   var tableRange = [rangeString,headerRow];
   return tableRange;
