@@ -13,20 +13,25 @@
 
 #!/bin/bash
 #
-# Runs all the tests & exits if any of the test fails
+# Runs all the tests & stores the results in the array - list_logs
+# Displays all the results at the end
 # Whenever a new test_file.py is added it should be added here
 
+# function to show errors
 err() {
   echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: $*" >&2
 }
 
+# empty array initialized
 list_logs=()
 
 if ! python3 test_topk.py;
 then
+  # if this test fails echos the error and also stores in an array
   err "test_topk failed"
   list_logs+=("test_topk failed")
 else
+  # if this does not fails then just stores in the array
   list_logs+=("test_topk passed")
 fi
 
@@ -81,7 +86,10 @@ fi
 echo 'All tests completed '
 echo 'Results -'
 
+
 list_logs_length=${#list_logs[@]}
+
+# Displaying all the results at the end
 for ((i=0;i<list_logs_length;i++)); do
     echo "${list_logs[i]}"
 done
