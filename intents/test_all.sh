@@ -20,39 +20,68 @@ err() {
   echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: $*" >&2
 }
 
-if ! python3 test_topk.py; then
+list_logs=()
+
+if ! python3 test_topk.py;
+then
   err "test_topk failed"
-  exit 1
+  list_logs+=("test_topk failed")
+else
+  list_logs+=("test_topk passed")
 fi
 
-if ! python3 test_trend.py; then
+if ! python3 test_trend.py;
+then
   err "test_trend failed"
-  exit 1
+  list_logs+=("test_trend failed")
+else
+  list_logs+=("test_trend passed")
 fi
 
-if ! python3 test_show.py; then
+if ! python3 test_show.py;
+then
   err "test_show failed"
-  exit 1
+  list_logs+=("test_show failed")
+else
+  list_logs+=("test_show passed")
 fi
 
-if ! python3 test_slice_compare.py; then
+if ! python3 test_slice_compare.py;
+then
   err "test_slice_compare failed"
-  exit 1
+  list_logs+=("test_slice_compare failed")
+else
+  list_logs+=("test_slice_compare passed")
 fi
 
-if ! python3 util/test_aspects.py; then
+if ! python3 util/test_aspects.py;
+then
   err "util/test_aspects failed"
-  exit 1
+  list_logs+=("util/test_aspects failed")
+else
+  list_logs+=("util/test_aspects passed")
 fi
 
-if ! python3 oversights/test_mean_vs_median.py; then
+if ! python3 oversights/test_mean_vs_median.py;
+then
   err "oversights/test_mean_vs_median failed"
-  exit 1
+  list_logs+=("oversights/test_mean_vs_median failed")
+else
+  list_logs+=("oversights/test_mean_vs_median passed")
 fi
 
-if ! python3 oversights/test_simpson_paradox.py; then
+if ! python3 oversights/test_simpson_paradox.py;
+then
   err "oversights/test_simpson_paradox failed"
-  exit 1
+  list_logs+=("oversights/test_simpson_paradox failed")
+else
+  list_logs+=("oversights/test_simpson_paradox passed")
 fi
 
-echo 'All tests completed'
+echo 'All tests completed '
+echo 'Results -'
+
+list_logs_length=${#list_logs[@]}
+for ((i=0;i<list_logs_length;i++)); do
+    echo "${list_logs[i]}"
+done
