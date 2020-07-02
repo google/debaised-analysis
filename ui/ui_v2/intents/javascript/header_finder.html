@@ -1,0 +1,23 @@
+<!-- JavaScript function to receive header names -->
+<script>
+
+  // function call to get column header names
+  var headers = [];
+  window.onload = function() {
+    
+    google.script.run
+          .withSuccessHandler(updateHeaders) 
+          .getHeaders();
+          
+  }
+  
+  //update javascript array - headers with the received value
+  function updateHeaders(headerArray) {
+
+    console.log("headers ",headerArray);
+    headers = headerArray;
+    updateAutoCompleteHeaders();
+
+  }
+
+</script>

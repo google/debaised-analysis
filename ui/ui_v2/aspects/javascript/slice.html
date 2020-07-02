@@ -1,0 +1,100 @@
+<!-- Javascript Functions for adding slices -->
+
+<script>
+  
+  var ids=0;  //counter for slices created
+  
+  function funcAddSlice() {
+  
+    ids++;                //increment number of slices created
+    var sliceId = 's'+ids;  //id of the slice element that will be created
+    
+    //generating operations the can be applied for filtering
+    var sliceOperation = generateOptions(
+      "Equal to,Not equal to,Less than,Less than equal to,Greater than,Greater than equal to,In,Not In");
+
+    // html for each slice created
+    var html= '<div name="filter" class="box-slice">'+
+                '<span class="material-icons remove" onclick="removeElement(\''+sliceId+'\')"><b>close</b></span>'+
+                '<br>'+
+                '<div id="part1-slice" class="block">'+
+                  '<label for="slice-col'+ids+'" class="inline">Column Name:&ensp;</label>'+
+                  '<input type="text" name="slice-col" id="slice-col'+ids+'" class="width80" placeholder="Column">'+
+                '</div>'+
+                '<div id="part2-slice" class="block">'+
+                  '<label for="slice-op'+ids+'" class="inline">Filter Operation:&ensp;</label>'+
+                  '<select id="slice-op'+ids+'" name="slice-op" class="width100">'+
+                    sliceOperation+
+                  '</select>'+
+                '</div>'+
+                '<div id="part3-slice" class="block form-group">'+
+                  '<label for="slice-val'+ids+'">Filter Value: </label>'+
+                  '<textarea id="slice-val'+ids+'" name="slice-val" placeholder="Values(separated by ,)" cols="30" rows="1"></textarea>'+
+                  '<div class="block inline">'+
+                    '<button class="blue" id="find-filter-range" onClick="getFilterValues(this,\'slice-val'+ids+'\')">Fill From Sheet</button>'+
+                  '</div>'+
+                  '<div class="block inline">'+
+                    '<button class="grey" id="delete-filter-range" onClick="deleteFilterValues(this,\'slice-val'+ids+'\')">Remove The Values</button>'+
+                  '</div>'+
+                '</div>'+
+              '</div>';
+              
+    addElement("slice","div",sliceId,html);   //parentId, elementTag, elementId, html
+    
+    var sliceCol = document.getElementById("slice-col"+ids);
+    autoComplete(sliceCol);
+    
+  }
+  
+  //function to fill the selected filter values from sheet
+  function getFilterValues(rangePicker,idName) {
+  
+    rangePicker.innerHTML = "Loading";   // Change the button value while getting range
+    rangePicker.disabled = true;         // Disable the button while getting range
+    rangePicker.classList.add("loading");
+    
+    //creating an object containing button and idname of the textarea where we fill slice values
+    var RangeObj = {
+      'rangePicker' : rangePicker,
+      'idName' : idName
+    }
+    
+    google.script.run                            // Executes a Apps Script function - getFilterValues
+          .withSuccessHandler(updateFilterField) // updateFilterField called upon successfull completion of Apps Script function
+          .withUserObject(RangeObj)              // To pass argument to updateFieldField
+          .getFilterValues();                  
+    return;
+  }
+        
+  // Function called when server-side function - getFilterValues returns successfully
+  function updateFilterField(filterValues,RangeObj) {
+
+    // filling the values selected from sheet in the textarea
+    var filter = "";
+    for(var i = 0; i < filterValues.length; i++) {
+      for(var j = 0; j < filterValues[0].length; j++) {
+        filter = filter.concat(filterValues[i][j]);
+        filter = filter.concat(",");
+      }
+    }
+    if(filter.length > 1)
+      filter = filter.slice(0,filter.length - 1);
+      
+    document.getElementById(RangeObj.idName).value = filter;  // Update the text area value
+    RangeObj.rangePicker.innerHTML = "Fill From Sheet";       // Reset the button value
+    RangeObj.rangePicker.disabled = false;                    // Enable the button
+    RangeObj.rangePicker.classList.remove("loading");
+  }
+  
+  // Function to delete specified filter values
+  function deleteFilterValues(rangePicker,idName) {
+  
+    rangePicker.innerHTML = "Removing";  // Change the button value while deleting values
+    rangePicker.disabled = true;         // Disable the button  
+    
+    document.getElementById(idName).value = "";   // Update the filter values
+    rangePicker.innerHTML = "Remove The Values";  // Reset the button value
+    rangePicker.disabled = false;                 // Enable the button
+  }
+
+</script>

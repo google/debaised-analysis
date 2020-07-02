@@ -1,0 +1,322 @@
+ <style>
+
+  /* headings on index page */
+  .heading-index {
+    font-size: 15px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+  }
+
+  /* edit icon */
+  .edit {
+    cursor: pointer;
+    padding: 3px;
+    position: absolute;
+    right: 10%;
+  }
+
+  /* box around data range */
+  .box-data-range {   
+    background: rgba(0,0,0,.02);
+    border: 2px solid #e5e5e5;
+    border-radius: 6px;
+    box-shadow: 2px 2px #d3d3d3;
+    color: #000;
+    padding: 5px;
+    padding-bottom: 20px;   
+  }
+
+  /* show dialog */
+  .modal {
+    background-color: rgba(0, 0, 0, 0.5);
+    height: 100%;
+    left: 0;
+    opacity: 0;
+    position: fixed;
+    top: 0;
+    transform: scale(1.1);
+    transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
+    visibility: hidden;
+    width: 100%;
+    z-index: 1;
+  }
+
+  /* dialog content */
+  .modal-content {
+    background-color: white;
+    border-radius: 0.5rem;
+    left: 50%;
+    padding: 1rem 1.5rem;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 25%;
+    width: 235px;
+  }
+
+  /* close button for dialog */
+  .close-button {
+    color: #DB4437;
+    cursor: pointer;
+    float: right;
+    position: relative;
+    top: -2px;
+  }
+
+  .close-button:hover {
+    background: #DB4437;
+    color: white;
+  }
+
+  .show-modal {
+    opacity: 1;
+    transform: scale(1.0);
+    transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
+    visibility: visible;
+  }
+
+  /* form that takes input data range and header row */
+  .form {
+    background-color: #fff;
+    box-shadow: 2px 2px 16px 3px rgba(0, 0, 0, 0.4);
+    padding: 2rem 3rem 4rem;
+  }
+
+  /* select range icon */
+  #select-range {
+    bottom: 37px;
+    cursor: pointer;
+    float: right;
+    position: relative;
+    right: 27px;
+  }
+
+  /* collasible bars to select intent */
+  .collapsible {
+    background: rgba(0,0,0,.02);
+    border-left: 1px solid rgba(0,0,0,.125);
+    border-right: 1px solid rgba(0,0,0,.125);
+    border-top: 0.5px solid rgba(0,0,0,.125);
+    border-bottom: 0.5px solid rgba(0,0,0,.125);
+    border-radius: 0;
+    color: #444;
+    cursor: pointer;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 15px;
+    font-weight: bold;
+    height: 40px;
+    line-height: 40px;
+    text-align: left;
+    transition: all .2s ease-in-out; 
+    transition: 0.4s;
+    width: 100%;
+  }
+
+  .collapsible:hover {
+    background: #555;
+    border: none; 
+    color: #fff; 
+    transform: scale(1.02); 
+  }
+
+  .active {
+    background: #555;
+    border: none;
+    color: #fff;
+  }
+
+  /* content of collapsible bars */
+  .content {
+    background: white;
+    border-left: 1px solid rgba(0,0,0,.125);
+    border-right: 1px solid rgba(0,0,0,.125);
+    max-height: 0;
+    overflow: hidden;
+    padding: 0px 18px;
+    transition: max-height 0.2s ease-out;
+  }
+
+  /* sample query title */
+  .sample-query span {
+    color: #002855;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 5px;
+    text-decoration: underline ;
+    text-decoration-color: #002855;
+  }
+
+  .sample-query:hover span {
+    background: #fef0ef;
+    color: #ef476f;
+    font-weight: bold;
+    text-decoration-color: #ef476f;
+  }
+
+  /* sample query content */
+  .query-content {
+    background: white;
+    max-height: 0;
+    overflow: hidden;
+    padding: 0;
+    transition: max-height 0.2s ease-out;
+  }
+
+  /* icons for expandable panels */
+  .expand-icon {
+    float: right;
+    position: relative;
+    top: 10px;
+    transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  }
+
+  .collapse-icon {
+    float: right;
+    position: relative;
+    top: 10px;
+    transform: rotate(180deg);
+    transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  }
+
+  /* icon text on hover */
+  .icon-hover .icon-hover-text {
+    background-color: #555;
+    border-radius: 6px;
+    color: #fff;
+    margin-left: -60px;
+    opacity: 0;
+    padding: 3px 0;
+    position: absolute;
+    text-align: center;
+    transition: opacity 0.3s;
+    visibility: hidden;
+    z-index: 1;
+  }
+
+  .icon-hover .icon-hover-text::after {
+    border-color: #555 transparent transparent transparent;
+    border-style: solid;
+    border-width: 5px;
+    bottom: 100%;
+    content: "";
+    left: 50%;
+    margin-left: -5px;
+    position: absolute;
+    transform: rotate(180deg);
+  }
+
+  .icon-hover:hover .icon-hover-text {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .icon-hover .hover-edit {
+    right: 7%;
+    top: 18%;
+    width: 50px;
+  }
+
+  .icon-hover .hover-range {
+    right: 4%;
+    top: 45%;
+    width: 105px;
+  }
+
+  /* input field with floating label */
+  .floating {
+    background-color: #f5f5f5;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    margin-bottom: 2rem;
+    transition: background-color 0.2s ease;
+  }
+
+  .floating:hover,
+  .floating:focus-within {
+    background-color: #e9e9e9;
+  }
+
+  .floating .floating-input {
+    border-bottom: 0.1rem solid rgba(0, 0, 0, 0.42);
+    caret-color: #6200ee;
+    font-size: 1rem;
+    padding: 1.8rem 1rem 0.6rem;
+    transition: border-color 0.2s ease; 
+  }
+
+  .floating:hover .floating-input {
+    border-color: rgba(0, 0, 0, 0.62);
+  }
+
+  .floating-input::placeholder {
+    color: rgba(0, 0, 0, 0);
+  }
+
+  .floating-label {
+    display: block;
+    font-weight: 500;
+    max-height: 0;
+    pointer-events: none;
+    position: relative;
+  }
+
+  .floating-label::before {
+    backface-visibility: hidden;
+    color: #222;
+    content: attr(data-content);
+    display: inline-block;
+    filter: blur(0);
+    left: 1rem;
+    position: relative;
+    transform-origin: left top;
+    transition: transform 0.2s ease;
+  }
+
+  .floating-label::after {
+    background-color: #6200ee;
+    bottom: 1rem;
+    content: "";
+    height: 0.1rem;
+    left: 0;
+    margin-top: -0.1rem;
+    opacity: 0;
+    position: absolute;
+    top: 100%;
+    transform: scale3d(0, 1, 1);
+    transition: transform 180ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 180ms cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+    width: 100%;
+  }
+
+  .floating-input:focus + .floating-label::after {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
+  }
+
+  .floating-input:placeholder-shown + .floating-label::before {
+    transform: translate3d(0, -2.2rem, 0) scale3d(1, 1, 1);
+  }
+
+  .floating-label::before,
+  .floating-input:focus + .floating-label::before {
+    transform: translate3d(0, -3.12rem, 0) scale3d(0.82, 0.82, 1);
+  }
+
+  .floating-input:focus + .floating-label::before {
+    color: #6200ee;
+  }
+
+  input[type="text"], input[type="number"] {
+    background: none;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    display: block;
+    height: 60px;
+    width: 100%;
+  }
+
+</style>
+

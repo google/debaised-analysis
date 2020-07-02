@@ -1,0 +1,57 @@
+<!-- Javascript Functions for autofilling Table Range field and fetching Table Range as selected by user  -->
+
+<script>
+  
+  // function invoked when home page loads
+  // calls server side function to receive the autodetected table
+  window.onload = function() {
+  
+    document.getElementById('data-range').innerHTML = "Loading... ";    // Update range field value
+    document.getElementById('header-row').innerHTML = "Loading... "; 
+    document.getElementById('data-range').classList.add("loading");
+    document.getElementById('header-row').classList.add("loading");
+    
+    google.script.run
+          .withSuccessHandler(updateDataRange) 
+          .prefillDataRange();
+
+  }
+  
+  // function to fill the range fields with the autodetected values obtained
+  function updateDataRange(dataRange) {
+
+    console.log("Autodetected Data Range ",dataRange);
+    document.getElementById('data-range').innerHTML = dataRange['rangeString'];    // Update range field value
+    document.getElementById('header-row').innerHTML = parseInt(dataRange['headerRow'],10);   // Update header row value
+    document.getElementById('data-range').classList.remove("loading");
+    document.getElementById('header-row').classList.remove("loading");
+
+  }
+  
+  //function to select the table range
+  function getSelectedRange(rangePicker) {
+
+    rangePicker.nextElementSibling.innerHTML = "Selecting";    // Change the button value while getting range
+    rangePicker.classList.add("loading");
+
+    google.script.run                              // Executes a Apps Script function - getSelectedRange
+          .withSuccessHandler(updateSelectedRange) // updateRangeField will be called upon successful completion of Apps Script function
+          .withUserObject(rangePicker)             // To pass argument to updateRangeField
+          .getSelectedRange();                  
+    return;
+
+  }
+        
+  // Function called when server-side function - getSelectedRange returns successfully
+  function updateSelectedRange(dataRange,rangePicker) {
+    
+    document.getElementById('edit-data-range').value = dataRange['rangeString'];            // Update range field value
+    document.getElementById('edit-header-row').value = parseInt(dataRange['headerRow'],10); // Update header row value
+    document.getElementById('edit-data-range').focus();
+
+    rangePicker.nextElementSibling.innerHTML = "Get data range";             // Reset the button value
+    rangePicker.classList.remove("loading");
+ 
+  }
+  
+</script>

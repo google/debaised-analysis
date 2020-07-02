@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap" rel="stylesheet">
+    <?!= include("autocomplete/css/awesomplete_css"); ?>
+    <?!= include("indexpage/css/index_css"); ?>
+    <?!= include("css"); ?>
+  </head>
+  
+  <body>
+    <div class="sidebar branding-below">
+    
+      <h3>Select Table</h3>
+      
+      <!-- data range selection -->
+      <div class="block box-data-range">
+      
+        <div class="heading-index">
+          <b>DATA RANGE</b>
+          <span class="icon-hover">
+            <span class="material-icons edit trigger">edit</span>
+            <span class="icon-hover-text hover-edit">Edit</span>
+          </span>
+        </div>
+
+        <p>Range: 
+          <span id="data-range"></span>
+        </p>
+        <p>Header Row: 
+          <span id="header-row"></span>
+        </p>
+        
+        <div class="modal">
+          <div class="modal-content">
+          
+            <div class="heading-index">
+              <b>EDIT DATA RANGE</b>
+              <span class="material-icons close-button">close</span>
+            </div>
+            
+            <form id="table-range">
+              <div class="floating">
+                <input id="edit-data-range" name="edit-data-range" class="floating-input" type="text" placeholder="Range" />
+                <label for="edit-data-range" class="floating-label" data-content="Range"></label>
+                <span class="icon-hover">
+                  <span class="material-icons trigger" id="select-range" onclick="getSelectedRange(this)">border_all</span>
+                  <span class="icon-hover-text hover-range">Get data range</span>
+                </span>
+              </div>
+              <div class="floating">
+                <input id="edit-header-row" name="edit-header-row" class="floating-input" type="number" placeholder="Header Row" min="1"/>
+                <label for="edit-header-row" class="floating-label" data-content="Header Row">
+                </label>
+              </div>
+              <button class="action" id="update">Update</button>
+              <button id="cancel">Cancel</button>
+            </form>
+            
+          </div><!-- modal content ends -->
+        </div><!-- modal ends -->
+        
+      </div><!-- range selection ends -->
+      
+      <!-- intent picker -->
+      <div id="expandable-panel">
+         
+        <h3><br><br>Pick Intent:</h3>
+        
+        <button type="button" class="collapsible" style="border-radius: 6px 6px 0 0">
+          Show
+          <span class="material-icons expand-icon">expand_more</span>
+        </button>
+        <div class="content">
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+          <p class="sample-query"><span>Show Sample Query</span></p>
+          <div class="query-content">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+          </div>
+          <div style="padding: 7px 0px 7px 0px;"><button class="action" onclick="loadIntent(this,'show')">Select</button></div>
+        </div>
+        
+        <button type="button" class="collapsible">
+          Top-k
+          <span class="material-icons expand-icon">expand_more</span>
+        </button>
+        <div class="content">
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+          <p class="sample-query"><span>Show Sample Query</span></p>
+          <div class="query-content">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+          </div>
+          <div style="padding: 7px 0px 7px 0px;"><button class="action" onclick="loadIntent(this,'topk')">Select</button></div>
+        </div>
+
+        <button type="button" class="collapsible">
+          Trend
+          <span class="material-icons expand-icon">expand_more</span>
+        </button>
+        <div class="content">
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+        </div>
+
+        <button type="button" class="collapsible">
+          Slice Compare
+          <span class="material-icons expand-icon">expand_more</span>
+        </button>
+        <div class="content">
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+        </div>
+
+        <button type="button" class="collapsible">
+          Time Compare
+          <span class="material-icons expand-icon">expand_more</span>
+        </button>
+        <div class="content">
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+        </div>
+
+        <button type="button" class="collapsible" style="border-radius: 0 0 6px 6px">
+          Growth
+          <span class="material-icons expand-icon">expand_more</span>
+        </button>
+        <div class="content">
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+        </div>
+      
+      </div> <!-- expandable panel ends -->
+      
+    </div>
+
+    <!-- Javascript Functions that handle autocompletion -->
+    <?!= include("autocomplete/javascript/awesomplete_js"); ?>
+    <?!= include("autocomplete/javascript/autocomplete_functions"); ?> 
+    
+    <!-- Javascript Functions for fetching Table Range as selected by user -->
+    <?!= include('indexpage/javascript/table_selector'); ?>  
+
+    <!-- Javascript Functions that are particular to index page --> 
+    <?!= include('indexpage/javascript/index_js'); ?> 
+
+    
+  </body>
+</html>
+
+

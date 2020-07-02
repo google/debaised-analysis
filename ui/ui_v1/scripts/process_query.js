@@ -1,5 +1,6 @@
 //json object that contains all aspects and table's data
-var JsonObj = {
+//TODO- change key rowRange to tableMetaDate and key k to limit
+var jsonObj = {
   'intent': 'null',
   'table': 'null',
   'rowRange': 'null',
@@ -13,89 +14,89 @@ var JsonObj = {
   'timeGranularity': 'null'
 }
 
-//function to set keys of JsonObj, called from client side javascript
+//function to set keys of jsonObj, called from client side javascript
 function createJsonObject(intent,tableData,metric,summaryOperator,isAsc,k,
   dimensions,slices,dateRange,timeGranularity,outputSheet) {
 
   /*
    * set intent 
-   * JsonObj.intent is a string storing intent name
+   * jsonObj.intent is a string storing intent name
    */
-  JsonObj.intent = intent;
+  jsonObj.intent = intent;
   
   /*
    * set table and rowRange
-   * JsonObj.table is a 2d array consisting of sheet's data
+   * jsonObj.table is a 2d array consisting of sheet's data
    */
-  JsonObj.table = getTable(tableData);
+  jsonObj.table = getTable(tableData);
   
   /*
    * set metric
-   * JsonObj.metric is a string storing column name
+   * jsonObj.metric is a string storing column name
    */
-  JsonObj.metric = metric;
+  jsonObj.metric = metric;
   
   /*
    * set dimension
-   * JsonObj.dimensions is a 1d array of strings storing name of output columns
+   * jsonObj.dimensions is a 1d array of strings storing name of output columns
    */
   if(dimensions.length > 0)
-    JsonObj.dimensions = dimensions;
+    jsonObj.dimensions = dimensions;
   
   /*
    * set summary
-   * JsonObj.summaryOperator is a string storing the name of operation to be applied
+   * jsonObj.summaryOperator is a string storing the name of operation to be applied
    */
-  JsonObj.summaryOperator = summaryOperator;
+  jsonObj.summaryOperator = summaryOperator;
   
   /* 
    * set sortOrder
-   * JsonObj.isAsc is a boolean variable which stores true for ascending order
+   * jsonObj.isAsc is a boolean variable which stores true for ascending order
    */
-  JsonObj.isAsc = isAsc;
+  jsonObj.isAsc = isAsc;
   
   /* 
    * set limit
-   * JsonObj.k is an Integer storing K 
+   * jsonObj.k is an Integer storing K 
    * (if user doesn't specify values of k -5000000 default)
    */
-  JsonObj.k = k;
+  jsonObj.k = k;
    
   /*
    * set slice
-   * JsonObj.slices is a 1d array of objects
+   * jsonObj.slices is a 1d array of objects
    * each object has 3 keys - sliceCol, sliceOp, sliceVal
    * sliceCol is a string, sliceOp is a string, sliceVal is 1d array of strings
    */
   if(slices.length > 0)
-    JsonObj.slices = slices;
+    jsonObj.slices = slices;
    
   /*
    * set dateRange
-   * JsonObj.dateRange is an object with 3 keys - dateCol, dateStart, dateEnd
+   * jsonObj.dateRange is an object with 3 keys - dateCol, dateStart, dateEnd
    * dateCol is a string, dateStart and dateEnd are dates (yyyy-mm-dd) 
    */
   if(dateRange.dateCol !== '' && dateRange.dateStart !== '' && dateRange.dateEnd !== '') {
     dateRange.dateStart = new Date(dateRange.dateStart);
     dateRange.dateEnd = new Date(dateRange.dateEnd);
-    JsonObj.dateRange=dateRange;
+    jsonObj.dateRange=dateRange;
     //formatDate(dateRange.dateCol);
   }
     
   /*
    * set timeGranularity
-   * JsonObj.timeGranularity is a string containing the selected value
+   * jsonObj.timeGranularity is a string containing the selected value
    */
-  JsonObj.timeGranularity = timeGranularity;
+  jsonObj.timeGranularity = timeGranularity;
   
-  //printing the JsonObj
-  Logger.log(JsonObj);
+  //printing the jsonObj
+  Logger.log(jsonObj);
 
-  //printing JsonObj in json format
-  Logger.log(JSON.stringify(JsonObj));
+  //printing jsonObj in json format
+  Logger.log(JSON.stringify(jsonObj));
   
   //calling GCP function
-  var outputTable = callGcpFunc();
+  var outputTable = callGcpToObtainIntentResult(); 
   
   //converting date from json into javascript date object
   outputTable = formatDate(outputTable);
@@ -105,7 +106,7 @@ function createJsonObject(intent,tableData,metric,summaryOperator,isAsc,k,
   
 }
 
-//function to get the table data and set rowRange of JsonObj
+//function to get the table data and set rowRange of jsonObj
 function getTable(tableData) {
 
   var sheet = SpreadsheetApp.getActiveSheet();
@@ -138,10 +139,10 @@ function getTable(tableData) {
   
   /*
    * set rowRange
-   * JsonObj.rowRange is an object with keys header, rowStart and rowEnd
+   * jsonObj.rowRange is an object with keys header, rowStart and rowEnd
    * header, rowStart and rowEnd are integers
    */
-  JsonObj.rowRange = objRowRange;
+  jsonObj.rowRange = objRowRange;
 
   //sending entire sheet data 
   var rangeAll = sheet.getDataRange();
@@ -149,13 +150,13 @@ function getTable(tableData) {
 }
 
 //function to call gcp function to obtain result from the received data
-function callGcpFunc() {
+function callGcpToObtainIntentResult() {
 
   var options = {
   'method' : 'post',
   'contentType': 'application/json',
   // Convert the JavaScript object to a JSON string.
-  'payload' : JSON.stringify(JsonObj)
+  'payload' : JSON.stringify(jsonObj)
   };
     
   var response= UrlFetchApp.fetch(
@@ -175,11 +176,11 @@ function formatDate(outputTable) {
   var index = -1;    // default index value = -1
 
   //printing date column name
-  Logger.log(JsonObj['dateRange']['dateCol']);
+  Logger.log(jsonObj['dateRange']['dateCol']);
 
   //checking output table header row to check if date column exists
   for(var i = 0; i < outputTable[0].length; i++) {
-    if(outputTable[0][i] === JsonObj['dateRange']['dateCol']){
+    if(outputTable[0][i] === jsonObj['dateRange']['dateCol']){
       index = i;
       break; 
     }

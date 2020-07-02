@@ -1,0 +1,35 @@
+<!-- Contains functions that use autocomplete library -->
+
+<script>
+
+  var awesomepleteObjects = [];
+  var idAwesomeplete=0;
+  
+  //function to add autocomplete for the input element given
+  function autoComplete(input) {
+
+    //id number of autocomplete object created for input fields
+    idAwesomeplete++;
+
+    var awesomeplete = 'awesomeplete'+idAwesomeplete;
+    awesomeplete = new Awesomplete(input, {
+      list: headers,
+      minChars: 1,
+      maxItems: 7
+    });
+    
+    //awesomepleteObjects is an array of autocomplete objects created
+    awesomepleteObjects.push(awesomeplete);
+  }
+  
+
+  //function called when headers are updated to update autocomplete values
+  function updateAutoCompleteHeaders(){
+   
+    for(var i = 0; i < awesomepleteObjects.length; i++) {
+      awesomepleteObjects[i].list = headers;
+    }
+   
+  } 
+
+</script>
