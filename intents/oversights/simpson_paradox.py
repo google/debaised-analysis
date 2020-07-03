@@ -34,7 +34,7 @@ def simpson_paradox(table, metric, dimensions, all_dimensions,
         table: Type-pandas.dataframe
             It has the contents of the csv file
         metric: Type-string
-            It is the name of the column according to which we have group to be done,
+            It is the name of the column according to which grouping will be done.
             summary operator is applied on metric. Metric could a column
             containing strings, if we are applying count operator on it.
         dimensions: Type-list of str
