@@ -43,7 +43,7 @@ def slice_compare(table, metric, dimensions, all_dimension, all_metric,
             When summary_operator is not None, we group by dimensions.
         all_dimension: Type-list of str
             It is the list of dimension columns in the initial table
-        all_dimension: Type-list of str
+        all_metric: Type-list of str
             It is the list of metric columns in the initial table
         date_range: Type-tuple
             Tuple of start_date and end_date
@@ -79,28 +79,30 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
     date_range = kwargs.get('date_range', None)
     date_format = kwargs.get('date_format', '%Y-%m-%d')
 
-    table = aspects.apply_date_range(table, date_range,
-                                     date_column_name, date_format)
-
-    table = aspects.slice_table(table, slices)
-
     result_table = _slice_compare_results(table.copy(), metric, dimensions.copy(),
-                                          slice_compare_column, summary_operator)
+                                          slices, slice_compare_column[0], 
+                                          summary_operator,
+                                          date_column_name = date_column_name,
+                                          date_range = date_range, 
+                                          date_format = date_format)
 
     suggestions = []
 
-    simpson_paradox_suggestion = simpson_paradox(table, metric,
-                                                 dimensions,
-                                                 all_dimension,
+    simpson_paradox_suggestion = simpson_paradox(table, metric, dimensions,
+                                                 all_dimension, slices,
                                                  slice_compare_column,
-                                                 summary_operator)
+                                                 summary_operator,
+                                                 date_column_name = date_column_name,
+                                                 date_range = date_range, 
+                                                 date_format = date_format)
     if len(simpson_paradox_suggestion) > 0:
         suggestions.append(simpson_paradox_suggestion)
 
     return (result_table, suggestions)
 
-def _slice_compare_results(table, metric, dimensions, slice_compare_column,
-                                                         summary_operator):
+def _slice_compare_results(table, metric, dimensions, slices, 
+                                   slice_compare_column_name,
+                                   summary_operator, **kwargs):
     """This function will implement the slice-compare intent
 
     Also removes the tuples that do not lie in the given date range.
@@ -135,10 +137,8 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
             column_name - is the value of the column that the
             condition is applied upon.
             filter - Filters enum members, ex. Filters.IN
-        slice_compare_column: Type-list of string
-            first element denotes the column name by which we will do comparision.
-            rest elements will the value belongs to that column by which we
-            will compare the slices.
+        slice_compare_column_name: Type-list of string
+            The name of column on which we shall apply slice-compare operation
         summary_operator: Type-summary_operators enum members
             It denotes the summary operator, after grouping by dimensions.
             ex. SummaryOperators.MAX, SummaryOperators.SUM
@@ -153,7 +153,16 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     """
 
-   # collecting the colums not to be removed
+    date_column_name = kwargs.get('date_column_name', 'date')
+    date_range = kwargs.get('date_range', None)
+    date_format = kwargs.get('date_format', '%Y-%m-%d')
+
+    table = aspects.apply_date_range(table, date_range,
+                                     date_column_name, date_format)
+
+    table = aspects.slice_table(table, slices)
+
+    # collecting the colums not to be removed
     required_columns = []
     if dimensions is not None:
         required_columns = dimensions.copy()
@@ -163,8 +172,8 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     # slice_compare_column should be the last element of the group
     # so that groupby will show them together for every grouping
-    dimensions.remove(slice_compare_column[0])
-    dimensions.append(slice_compare_column[0])
+    dimensions.remove(slice_compare_column_name)
+    dimensions.append(slice_compare_column_name)
     table = aspects.group_by(table, dimensions, summary_operator)
 
     return table
