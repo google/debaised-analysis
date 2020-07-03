@@ -39,8 +39,8 @@ def simpson_paradox(table, metric, dimensions, all_dimensions,
             containing strings, if we are applying count operator on it.
         dimensions: Type-list of str
             It is the name of column we want.
-            In query:'top 5 batsman according to runs', dimension is 'batsman'.
-            When summary_operator is not None, we group by dimensions.
+            'compare batsman A and B according to total_runs',
+             dimension is 'batsman'. we group by dimensions.
         all_dimension: Type-list of str
             It is the list of dimension columns in the initial table
         date_range: Type-tuple
