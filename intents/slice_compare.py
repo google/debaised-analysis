@@ -291,6 +291,10 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     updated_table = pandas.concat([required_table_for_all, required_table_for_one])
 
-    result_table = aspects.group_by(updated_table, dimensions, summary_operator)
+    grouping_columns = dimensions.copy()
+    grouping_columns.remove(slice_compare_column[0])
+    grouping_columns.append(slice_compare_column[0])
+    
+    result_table = aspects.group_by(updated_table, grouping, summary_operator)
 
     return result_table
