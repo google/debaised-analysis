@@ -29,7 +29,6 @@ def test_1():
     query_result = simpson_paradox.simpson_paradox(table, 'salary',
                                                    ['Person name'],
                                                    ['Person name', 'month'],
-                                                   [('Person name', Filters.IN, ['A', 'B'])] ,
                                                    ['Person name', 'A', 'B'],
                                                    SummaryOperators.SUM)
     print(query_result)
@@ -45,7 +44,6 @@ def test_2():
     query_result = simpson_paradox.simpson_paradox(table, 'run_scored',
                                                    ['team_name', 'city'],
                                                    ['team_name', 'city'],
-                                                   [('team_name', Filters.IN, ['MI', 'CSK'])] ,
                                                    ['team_name', 'MI', 'CSK'],
                                                    SummaryOperators.MEAN)
     print(query_result)

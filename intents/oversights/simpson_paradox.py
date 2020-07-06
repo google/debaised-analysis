@@ -26,8 +26,7 @@ from util.enums import SummaryOperators
 from util.enums import Filters
 
 def simpson_paradox(table, metric, dimensions, all_dimensions,
-                                 slices, slice_compare_column, 
-                                 summary_operator, **kwargs):
+                    slice_compare_column, summary_operator, **kwargs):
     """This function will implement the simpson's-paradox debaising
 
     Args:
@@ -79,6 +78,12 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     table = aspects.apply_date_range(table, date_range,
                                      date_column_name, date_format)
+    
+    slices = kwargs.get('slices', None)
+    if slices == None:
+        slices = [(slice_compare_column[0], Filters.IN, [slice_compare_column[1], slice_compare_column[2]])]
+    else:
+        slices.append((slice_compare_column[0], Filters.IN, [slice_compare_column[1], slice_compare_column[2]]))
 
     table = aspects.slice_table(table, slices)
 
