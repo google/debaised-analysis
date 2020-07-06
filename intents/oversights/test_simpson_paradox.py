@@ -12,15 +12,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-import sys
+import sys  
 sys.path.append(".")
-
-
 
 import pandas
 
 import simpson_paradox
 from util.enums import SummaryOperators
+from util.enums import Filters
 
 def test_1():
     """
@@ -30,6 +29,7 @@ def test_1():
     query_result = simpson_paradox.simpson_paradox(table, 'salary',
                                                    ['Person name'],
                                                    ['Person name', 'month'],
+                                                   [('Person name', Filters.IN, ['A', 'B'])] ,
                                                    ['Person name', 'A', 'B'],
                                                    SummaryOperators.SUM)
     print(query_result)
@@ -45,6 +45,7 @@ def test_2():
     query_result = simpson_paradox.simpson_paradox(table, 'run_scored',
                                                    ['team_name', 'city'],
                                                    ['team_name', 'city'],
+                                                   [('team_name', Filters.IN, ['MI', 'CSK'])] ,
                                                    ['team_name', 'MI', 'CSK'],
                                                    SummaryOperators.MEAN)
     print(query_result)

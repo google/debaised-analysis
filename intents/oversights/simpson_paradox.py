@@ -26,22 +26,37 @@ from util.enums import SummaryOperators
 from util.enums import Filters
 
 def simpson_paradox(table, metric, dimensions, all_dimensions,
-                       slice_compare_column, summary_operator):
+                                 slices, slice_compare_column, 
+                                 summary_operator, **kwargs):
     """This function will implement the simpson's-paradox debaising
 
     Args:
         table: Type-pandas.dataframe
             It has the contents of the csv file
         metric: Type-string
-            It is the name of the column according to which we will do grouping,
+            It is the name of the column according to which grouping will be done.
             summary operator is applied on metric. Metric could a column
             containing strings, if we are applying count operator on it.
         dimensions: Type-list of str
             It is the name of column we want.
-            In query:'compare batsman A and B according to total_runs',
+            'compare batsman A and B according to total_runs',
              dimension is 'batsman'. we group by dimensions.
         all_dimension: Type-list of str
-        	It contains list of all dimensions
+            It is the list of dimension columns in the initial table
+        date_range: Type-tuple
+            Tuple of start_date and end_date
+        date_column_name: Type-str
+            It is the name of column which contains date
+        date_format: Type-str
+            It is required by datetime.strp_time to parse the date in the format
+            Format Codes
+https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
+        slices: Type-List of tuples
+            Tuple represents the conditon to keep the row.
+            (column_name, filter, value)
+            column_name - is the value of the column that the
+            condition is applied upon.
+            filter - Filters enum members, ex. Filters.IN
         slice_compare_column: Type-list of string
             first element denotes the column name by which we will do comparision.
             rest elements will the value belongs to that column by which we
@@ -57,6 +72,15 @@ def simpson_paradox(table, metric, dimensions, all_dimensions,
         return a string with debiasing suggestion or empty string.
 
     """
+
+    date_column_name = kwargs.get('date_column_name', 'date')
+    date_range = kwargs.get('date_range', None)
+    date_format = kwargs.get('date_format', '%Y-%m-%d')
+
+    table = aspects.apply_date_range(table, date_range,
+                                     date_column_name, date_format)
+
+    table = aspects.slice_table(table, slices)
 
     """removing all metric column except the one by which we will
        do group_by operation"""
