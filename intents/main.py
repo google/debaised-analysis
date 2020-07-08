@@ -18,7 +18,7 @@ serves a purpose of a master function to all the intets.
 It returns the result of the intent and also the list of suggestions.
 """
 
-import json, pandas, enum, topk
+import json, pandas, enum, topk, slice_compare
 from flask import escape
 from show import show
 from util import enums
@@ -34,6 +34,7 @@ def hello_http(request):
         <http://flask.pocoo.org/docs/1.0/api/#flask.Flask.make_response>.
     """
     request_json = request.get_json(silent=True)
+    
     request_args = request.args
 
     # extracting the intent parameters from the json
@@ -47,6 +48,7 @@ def hello_http(request):
     is_asc = request_json['isAsc']
     k = request_json['k']
     slices = request_json['slices']
+    slice_compare_column = request_json['comparisonValue']
     date = request_json['dateRange']
     time_granularity = request_json['timeGranularity']
     row_start = row_range["rowStart"]
@@ -85,7 +87,7 @@ def hello_http(request):
 
     if metric == 'null':
         metric = None
-
+    
     summary_operator = _str_to_summary_operator_enum(summary_operator)
 
     suggestions = []
@@ -107,6 +109,15 @@ def hello_http(request):
                                 )
         query_table_dataframe = query_result[0]
         suggestions = query_result[1]
+    elif intent == 'slice_compare':
+        query_table_dataframe = slice_compare.slice_compare(query_table_dataframe,
+                                                            metric, dimensions, [], [],
+                                                            slice_compare_column_list,
+                                                            summary_operator=summary_operator,
+                                                            date_column_name=date_column_name,
+                                                            date_range=date_range,
+                                                            slices=slices_list
+                                                            )
     else:
         raise Exception("Intent name does not match")
 
@@ -159,7 +170,7 @@ def _str_to_summary_operator_enum(summary_operator):
     Returns:
         SummaryOperator enum member
     """
-    if summary_operator == 'SUM':
+    if summary_operator == 'Sum':
         return enums.SummaryOperators.SUM
     elif summary_operator == 'Mean':
         return enums.SummaryOperators.MEAN

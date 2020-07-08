@@ -24,7 +24,6 @@ Some of the operations are optional.
 from util import aspects
 from oversights.simpson_paradox import simpson_paradox
 from util.enums import SummaryOperators, Filters
-# from oversights.benchmark_set_too_different
 import pandas
 
 def slice_compare(table, metric, dimensions, all_dimension, all_metric,
@@ -94,9 +93,6 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
                                                       date_range = date_range, 
                                                       date_format = date_format)
         suggestions = []
-        # below function will be implemented
-        # if SummaryOperators.MEAN == summary_operator or SummaryOperators.MEDIAN == summary_operator:
-        #     suggestions = benchmark_set_too_different(table)
         return (result_table, suggestions)
 
     result_table = _slice_compare_results(table.copy(), metric, dimensions.copy(),
