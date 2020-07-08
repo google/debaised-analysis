@@ -18,6 +18,7 @@ a passed column is & also wether day_first is True/False for that column.
 """
 import datetime
 import pandas
+from util import enums
 
 def get_column_type_and_order(column):
     """
@@ -25,8 +26,8 @@ def get_column_type_and_order(column):
     the values in it. It also returns the day_first = Bool for the column.
 
     Args - column - type list
-    Returns - dict - {type_str, day_first}}
-                type_str = 'Consistent' / 'all ambiguous' / 'Inconsistent'
+    Returns - dict - {type, day_first}}
+                type = attribute of enums.ColumnTypes ex ColumnTypes.CONSISTENT
                 in case of 'Constient' column day_first = True / False
     """
     # Convert integers in the list to strings
@@ -49,16 +50,16 @@ def get_column_type_and_order(column):
 
     if count_date_type[True] != 0 and count_date_type[False] != 0:
         # Inconsistent type column
-        column_type_and_order['type_str'] = 'Inconsistent'
+        column_type_and_order['type'] = enums.ColumnTypes.INCONSISTENT
         column_type_and_order['day_first'] = None
     elif count_date_type[True] != 0:
-        column_type_and_order['type_str'] = 'Constient'
+        column_type_and_order['type'] = enums.ColumnTypes.CONSINTENT
         column_type_and_order['day_first'] = True
     elif count_date_type[False] != 0:
-        column_type_and_order['type_str'] = 'Constient'
+        column_type_and_order['type'] = enums.ColumnTypes.CONSINTENT
         column_type_and_order['day_first'] = False
     else:
-        column_type_and_order['type_str'] = 'All ambiguous'
+        column_type_and_order['type'] = enums.ColumnTypes.ALL_AMBIGUOUS
         column_type_and_order['day_first'] = None
 
     return column_type_and_order

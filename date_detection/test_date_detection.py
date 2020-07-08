@@ -27,7 +27,7 @@ def test_1():
     table = pandas.read_csv('data_for_tests/table_1.csv')
     result = date_detection.detect(table)
     print(result)
-    expected_result = '''{'DATE': {'type_str': 'Inconsistent', 'day_first': None}}'''
+    expected_result = '''{'DATE': {'type': <ColumnTypes.INCONSISTENT: 3>, 'day_first': None}}'''
     assert(expected_result == str(result))
 
 def test_2():
@@ -38,7 +38,7 @@ def test_2():
     table = pandas.read_csv('data_for_tests/table_2.csv')
     result = date_detection.detect(table)
     print(result)
-    expected_result = '''{'da____t__e': {'type_str': 'Constient', 'day_first': True}}'''
+    expected_result = '''{'da____t__e': {'type': <ColumnTypes.CONSINTENT: 1>, 'day_first': True}}'''
     assert(expected_result == str(result))
 
 def test_3():
@@ -62,7 +62,7 @@ def test_4():
     table = pandas.read_csv('data_for_tests/naukri_com.csv')
     result = date_detection.detect(table)
     print(result)
-    expected_result = '''{'Crawl Timestamp': {'type_str': 'Constient', 'day_first': False}}'''
+    expected_result = '''{'Crawl Timestamp': {'type': <ColumnTypes.CONSINTENT: 1>, 'day_first': False}}'''
     assert(expected_result == str(result))
 
 def test_5():
@@ -73,7 +73,7 @@ def test_5():
     table = pandas.read_csv('data_for_tests/orders.csv')
     result = date_detection.detect(table)
     print(result)
-    expected_result = '''{'Order Date': {'type_str': 'Constient', 'day_first': False}}'''
+    expected_result = '''{'Order Date': {'type': <ColumnTypes.CONSINTENT: 1>, 'day_first': False}}'''
     assert(expected_result == str(result))
 
 def test_6():
@@ -84,7 +84,7 @@ def test_6():
     table = pandas.read_csv('data_for_tests/austin_weather.csv')
     result = date_detection.detect(table)
     print(result)
-    expected_result = '''{'Date': {'type_str': 'Constient', 'day_first': False}}'''
+    expected_result = '''{'Date': {'type': <ColumnTypes.CONSINTENT: 1>, 'day_first': False}}'''
     assert(expected_result == str(result))
 
 def test_7():
@@ -95,7 +95,7 @@ def test_7():
     table = pandas.read_csv('data_for_tests/table_7.csv')
     result = date_detection.detect(table)
     print(result)
-    expected_result = '''{'date': {'type_str': 'Constient', 'day_first': True}, ' date__new': {'type_str': 'Constient', 'day_first': False}}'''
+    expected_result = '''{'date': {'type': <ColumnTypes.CONSINTENT: 1>, 'day_first': True}, ' date__new': {'type': <ColumnTypes.CONSINTENT: 1>, 'day_first': False}}'''
     assert(expected_result == str(result))
 
 print(test_1.__doc__)
