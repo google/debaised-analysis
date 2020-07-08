@@ -34,7 +34,6 @@ def test_1():
                                                ['batsman_team', 'season'],
                                                ['batsman_team', 'season'],
                                                ['total_runs'],
-                                               [('batsman_team', Filters.IN, ['Mumbai Indians', 'Chennai Super Kings'])],
                                                ['batsman_team', 'Mumbai Indians', 'Chennai Super Kings'],
                                                SummaryOperators.SUM)
     print(query_result)
@@ -57,7 +56,6 @@ def test_2():
                                                ['Person name', 'year'],
                                                ['Person name', 'year', 'month'],
                                                ['salary'],
-                                               [('Person name', Filters.IN, ['A', 'B'])] ,
                                                ['Person name', 'A', 'B'],
                                                SummaryOperators.SUM)
     print(query_result)
@@ -80,7 +78,6 @@ def test_3():
                                                ['batsman_team', 'innings'],
                                                ['batsman_team', 'innings'],
                                                ['total_runs'],
-                                               [('innings', Filters.IN, ['1st', '2nd'])],
                                                ['innings', '1st', '2nd'],
                                                SummaryOperators.SUM)
     print(query_result)
