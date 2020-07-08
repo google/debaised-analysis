@@ -59,6 +59,14 @@ else
   list_logs+=("test_slice_compare passed")
 fi
 
+if ! python3 test_time_compare.py;
+then
+  err "test_time_compare failed"
+  list_logs+=("test_time_compare failed")
+else
+  list_logs+=("test_time_compare passed")
+fi
+
 if ! python3 util/test_aspects.py;
 then
   err "util/test_aspects failed"
