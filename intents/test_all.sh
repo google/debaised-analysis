@@ -83,6 +83,14 @@ else
   list_logs+=("oversights/test_simpson_paradox passed")
 fi
 
+if ! python3 oversights/test_looking_at_tails.py;
+then
+  err "oversights/test_looking_at_tails failed"
+  list_logs+=("oversights/test_looking_at_tails failed")
+else
+  list_logs+=("oversights/test_looking_at_tails passed")
+fi
+
 echo 'All tests completed '
 echo 'Results -'
 
