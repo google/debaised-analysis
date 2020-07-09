@@ -14,9 +14,9 @@ limitations under the License.
 """
 
 """This module detects the oversight 'Looking at tails to find causes'
-when the top-k oversight is called.
+when the top-k intent is called.
 
-This oversight occurs when the user sorts according a metric and some other
+This oversight occurs when the user sorts according to a metric and some other
 metric which he has requested for remaing same for the entire list as it is
 in the top-k entries. Here the user might get misleaded by seeing the other
 metric - he might make wrong view that only in the top-k this metric looks
@@ -24,9 +24,6 @@ like this. But actually the metric is closeby for the entire list.
 
 Todo(when the date format is updated) - add the test for date columns
 """
-import sys
-sys.path.append(".")
-
 import math
 from util import constants
 
@@ -117,10 +114,10 @@ def _get_param_in_float_column(column, k):
     return deciding_parameter
 
 def _get_param_in_string_column(column, k):
-    """This function returns the parameter in .
+    """This function returns the parameter for the column containing strings.
     Column passed should contain binary/ternary variables
 
-    The paraeter used is the angele between tf(term frequency) vector of the topk
+    The parameter used is the angele between tf(term frequency) vector of the topk
     and the tf vector of the entire table
 
     Args:
