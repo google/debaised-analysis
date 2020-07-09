@@ -13,8 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-"""This module contains the slice-compare intent.
-The slice-compare intent can give the result so that user can easily
+"""This module contains the time-compare intent.
+The time-compare intent can give the result so that user can easily
 compare the data according to the way user want.
 Also it supports some operations like cropping based on date range,
 slicing(removing rows that do not follow the conditions), group by.
@@ -60,7 +60,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
         time_compare_column: Type-list of different data types
             first element denotes the column name by which we will do comparision.
             second and third element are a tuple of start and end date range.
-            last element is date_formate in which the date of columns present.
+            last element is date_format in which the date of columns present.
         summary_operator: Type-summary_operators enum members
             It denotes the summary operator, after grouping by dimensions.
             ex. SummaryOperators.MAX, SummaryOperators.SUM
@@ -90,8 +90,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 def _time_compare_results(table, metric, dimensions, time_compare_column,
                                              summary_operator, **kwargs):
 
-    """ This function returns both the results according to the intent
-    as well as the debiasing suggestions.
+    """ This function returns the results according to the intent.
     Some of the oversights considered in this intent are-
 
     Args:
@@ -122,7 +121,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
         time_compare_column: Type-list of different data types
             first element denotes the column name by which we will do comparision.
             second and third element are a tuple of start and end date range.
-            last element is date_formate in which the date of columns present.
+            last element is date_format in which the date of columns present.
         summary_operator: Type-summary_operators enum members
             It denotes the summary operator, after grouping by dimensions.
             ex. SummaryOperators.MAX, SummaryOperators.SUM
@@ -155,13 +154,13 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
     
     """ we shall have two list so that we can combine both the table and 
     after applying the groupby operation we can get the desired result."""
-    table_slice1 = aspects.apply_date_range(required_table.copy(), 
+    table_slice1 = aspects.apply_date_range(required_table, 
                                             time_compare_column[1], 
                                             time_compare_column[0], 
                                             time_compare_column[3])
     table_slice1[time_compare_column[0]] = time_compare_column[1][0] + " - " + time_compare_column[1][1]
 
-    table_slice2 = aspects.apply_date_range(required_table.copy(), 
+    table_slice2 = aspects.apply_date_range(required_table, 
                                             time_compare_column[2], 
                                             time_compare_column[0], 
                                             time_compare_column[3])
