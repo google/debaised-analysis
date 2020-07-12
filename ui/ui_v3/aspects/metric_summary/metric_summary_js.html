@@ -1,0 +1,71 @@
+<!-- Javascript functions for aspect: metric and summary -->
+
+<script>
+
+  //calling autocomplete function for metric column name
+  autoComplete(document.querySelector('#metric'));
+
+  // function called when user enters metric to check it's validity
+  function metricCheck(metricColumn, helperMetric) {
+    var metricColumnValue = metricColumn.value.trim();
+    // give error message if metric column is invalid
+    if(!isValidColumnName(metricColumnValue)) {
+      document.querySelector('#' + helperMetric).innerHTML = 'Please enter a valid column name';
+    }
+    else {
+      document.querySelector('#' + helperMetric).innerHTML = '';
+    }
+  }
+  
+  // calling updateMetric when user clicks UPDATE in METRIC-SUMMARY card 
+  document.querySelector('#update-metric').addEventListener('click', updateMetric);
+
+  // function to update the values filled for aspect: metric and summary
+  function updateMetric() {
+    var metricVal = document.querySelector('#metric').value.trim();
+    var summary = document.querySelector('#summary');
+    var summaryOperationVal = summary.options[summary.selectedIndex].value; 
+
+    // flag variable indicates validity of the inputs
+    // if any input is invalid flag is set to false 
+    var flag = true;
+    if(!isValidColumnName(metricVal))
+      flag = false;
+
+    // if user hasn't filled metric, replace madlib by placeholder
+    if(flag && metricVal === '') {
+        showMetric.innerHTML = placeholderMetric;
+        showMetric.classList.toggle('placeholder-active');
+        showMetric.classList.add('placeholder');
+        showMetric.classList.remove('value');
+        aspectMetric.classList.toggle('hide');
+        
+        metric='null';
+        summaryOperation = 'null';
+        done.classList.toggle('hide');
+    }
+    // else update metric,summary and madlib query with the values entered by the user if they are valid
+    else if(flag) {
+      // used to fill madlib 
+      var fillMetric = '';
+      summaryOperation = 'null';
+      if(summaryOperationVal !== 'None'){
+        fillMetric += summaryOperationVal + ' of ';
+        summaryOperation = summaryOperationVal;
+      }
+      fillMetric += metricVal;
+
+      metric = metricVal;
+      console.log("metric "+metric);
+      console.log("summary "+summaryOperation);
+      
+      showMetric.innerHTML = fillMetric;
+      showMetric.classList.toggle('placeholder-active');
+      showMetric.classList.remove('placeholder');
+      showMetric.classList.add('value');
+      aspectMetric.classList.toggle('hide');
+      done.classList.toggle('hide');
+    }
+  }  
+
+</script>

@@ -1,0 +1,302 @@
+<!-- Javascript function to find column headers from the header row selected -->
+<!-- Javascript function to close any card -->
+<!-- Javascript function to create madlib query using json -->
+<!-- Javascript function to check if the submitted query is valid -->
+
+<script>
+
+	// fetch headers when any intent is loaded and fill autocomplete values using them
+  window.onload = function() {
+    headers = document.querySelector('#headers').textContent;
+    headers = headers.split(',');
+    console.log('headers ',headers);
+    
+    // set autocomplete values to the headers fetched
+    updateAutoCompleteHeaders();
+          
+  }
+
+  // function to close card for given aspect
+  function closeCard(aspect) {
+    switch(aspect){
+      case 'dimension': 
+        showDimension.classList.toggle('placeholder-active');
+        aspectDimension.classList.toggle('hide');
+        break;
+
+      case 'metric': 
+        showMetric.classList.toggle('placeholder-active');
+        aspectMetric.classList.toggle('hide');
+        break;
+
+      case 'date': 
+        showDate.classList.toggle('placeholder-active');
+        aspectDate.classList.toggle('hide');
+        break;
+
+      case 'slice': 
+        showSlice.classList.toggle('placeholder-active');
+        aspectSlice.classList.toggle('hide');
+        break;
+
+      case 'compare_value': 
+        showCompareValue.classList.toggle('placeholder-active');
+        aspectCompareValue.classList.toggle('hide');
+        break;
+
+      case 'limit': 
+        showLimit.classList.toggle('placeholder-active');
+        aspectLimit.classList.toggle('hide');
+        break;
+
+      case 'sort-order': 
+        showSortOrder.classList.toggle('placeholder-active');
+        aspectSortOrder.classList.toggle('hide');
+        break;
+    }
+    // show the compute button once card closes
+    done.classList.toggle('hide');
+  }
+
+  // function to create madlib using the json received
+  function createQueryFromJson(jsonQuery) {
+  	// storing name of intent
+    var intent = jsonQuery['intent'];
+
+    // used to store badlib query created
+    var madlibQuery = '';
+
+    switch (intent) {
+      case 'show': 
+      	madlibQuery += 'Show ';	
+
+      	// adding metric and summary operation
+        if(jsonQuery.metric !== 'null') {
+          if(jsonQuery.summaryOperator !== 'null') {
+            madlibQuery += jsonQuery.summaryOperator + ' of ';
+          }
+          madlibQuery += jsonQuery.metric;
+        }
+        if(jsonQuery.metric !== 'null' && jsonQuery.dimensions !== 'null') {
+          madlibQuery += ' for ';
+        }
+
+        // adding dimension
+        if(jsonQuery.dimensions !== 'null') {
+          madlibQuery += jsonQuery.dimensions[0];
+          for(var i = 1; i < jsonQuery.dimensions.length; i++) {
+            madlibQuery += ', ' + jsonQuery.dimensions[i];
+          }
+        }
+
+        // adding slice
+        if(jsonQuery.slices !== 'null') {
+          madlibQuery += ' where ';
+          for(var i = 0; i < jsonQuery.slices.length; i++) {
+            madlibQuery += jsonQuery.slices[i].sliceCol + ' is ';
+            madlibQuery += jsonQuery.slices[i].sliceOp + ' ';
+            if(jsonQuery.slices[i].sliceOp === 'In' || jsonQuery.slices[i].sliceOp === 'Not in') {
+              var sliceVal = jsonQuery.slices[i].sliceVal;
+              madlibQuery += sliceVal[0];
+              for(var j = 1; j < sliceVal.length; j++) {
+                madlibQuery += ', ' + sliceVal[j];
+              }
+            }
+            else {
+              madlibQuery += jsonQuery.slices[i].sliceVal;
+            }
+            madlibQuery += ', ';
+          }
+          madlibQuery = madlibQuery.slice(0,madlibQuery.length - 2);
+        }
+
+        // adding date range
+        if(jsonQuery.dateRange !== 'null') {
+          madlibQuery += ' from ';
+          madlibQuery += jsonQuery.dateRange.dateCol;
+          madlibQuery += jsonQuery.dateRange.dateStart + ' to ' + jsonQuery.dateRange.dateEnd;
+        }
+
+        break;
+
+      case 'topk': 
+      	madlibQuery += 'Find the ';
+
+      	// adding limit(k)
+	      madlibQuery += 'top-' + jsonQuery.k + ' ';
+
+	      // adding dimensions
+	      if(jsonQuery.dimensions !== 'null') {
+	        madlibQuery += jsonQuery.dimensions[0];
+	        for(var i = 1; i < jsonQuery.dimensions.length; i++) {
+	          madlibQuery += ', ' + jsonQuery.dimensions[i];
+	        }
+	      }
+
+	      // adding sort order
+        madlibQuery += ' with ';
+	      if(jsonQuery.isAsc) 
+	        madlibQuery += 'minimum ';
+	      else
+	        madlibQuery += 'maximum ';
+
+	      // adding metric and summary operation
+	      if(jsonQuery.metric !== 'null') {
+	        if(jsonQuery.summaryOperator !== 'null') {
+	          madlibQuery += jsonQuery.summaryOperator + ' of ';
+         }
+	        madlibQuery += jsonQuery.metric;
+	      }
+
+	      // adding slice
+	      if(jsonQuery.slices !== 'null') {
+	        madlibQuery += ' where ';
+	        for(var i = 0; i < jsonQuery.slices.length; i++) {
+	          madlibQuery += jsonQuery.slices[i].sliceCol + ' is ';
+	          madlibQuery += jsonQuery.slices[i].sliceOp + ' ';
+	          if(jsonQuery.slices[i].sliceOp === 'In' || jsonQuery.slices[i].sliceOp === 'Not in') {
+             var sliceVal = jsonQuery.slices[i].sliceVal;
+	            madlibQuery += sliceVal[0];
+	            for(var j = 1; j < sliceVal.length; j++) {
+	              madlibQuery += ', ' + sliceVal[j];
+	            }
+	          }
+	          else {
+	            madlibQuery += jsonQuery.slices[i].sliceVal;
+	          }
+	          madlibQuery += ', ';
+	        }
+	        madlibQuery = madlibQuery.slice(0,madlibQuery.length - 2);
+	      }
+
+	      // adding date range
+	      if(jsonQuery.dateRange !== 'null') {
+	        madlibQuery += ' from ';
+	        madlibQuery += jsonQuery.dateRange.dateCol;
+	        madlibQuery += jsonQuery.dateRange.dateStart + ' to ' + jsonQuery.dateRange.dateEnd;
+	      }
+
+	      break;
+
+      case 'slice_compare': 
+      	madlibQuery += 'Compare the ';
+
+      	// adding metric and summary operation
+        if(jsonQuery.metric !== 'null') {
+          if(jsonQuery.summaryOperator !== 'null') {
+            madlibQuery += jsonQuery.summaryOperator + ' of ';
+          }
+          madlibQuery += jsonQuery.metric;
+        }
+
+        // adding comparison column and comparison values
+        madlibQuery += ' for the ';
+        madlibQuery += jsonQuery.comparisonValue[0] + ' ';
+        madlibQuery += jsonQuery.comparisonValue[1] + ' and ' + jsonQuery.comparisonValue[2];
+
+        // adding dimensions
+        if(jsonQuery.dimensions !== 'null') {
+          madlibQuery += ' by ';
+          madlibQuery += jsonQuery.dimensions[0];
+          for(var i = 1; i < jsonQuery.dimensions.length; i++) {
+            madlibQuery += ', ' + jsonQuery.dimensions[i];
+          }
+        }
+
+        // adding slice
+        if(jsonQuery.slices !== 'null') {
+          madlibQuery += ' where ';
+          for(var i = 0; i < jsonQuery.slices.length; i++) {
+            madlibQuery += jsonQuery.slices[i].sliceCol + ' is ';
+            madlibQuery += jsonQuery.slices[i].sliceOp + ' ';
+            if(jsonQuery.slices[i].sliceOp === 'In' || jsonQuery.slices[i].sliceOp === 'Not in') {
+              var sliceVal = jsonQuery.slices[i].sliceVal;
+              madlibQuery += sliceVal[0];
+              for(var j = 1; j < sliceVal.length; j++) {
+                madlibQuery += ', ' + sliceVal[j];
+              }
+            }
+            else {
+              madlibQuery += jsonQuery.slices[i].sliceVal;
+            }
+            madlibQuery += ', ';
+          }
+          madlibQuery = madlibQuery.slice(0,madlibQuery.length - 2);
+        }
+
+        // adding date range
+        if(jsonQuery.dateRange !== 'null') {
+          madlibQuery += ' from ';
+          madlibQuery += jsonQuery.dateRange.dateCol;
+          madlibQuery += jsonQuery.dateRange.dateStart + ' to ' + jsonQuery.dateRange.dateEnd;
+        }
+
+        break;
+    }
+    // returning the computed madlib query
+    return madlibQuery;
+  }
+
+  // function to check if the query submitted for an intent is valid
+  // true indicates valid and false indicates invalid
+  function isValidIntentInput(intentName) {
+  	// variable to store validity of inputs for intent
+    var valid = true;
+
+    // store the error message
+    var errorMessages = '';
+
+    switch(intentName) {
+      case "show": 
+      	if(dimensions.length === 0 && metric === 'null') {
+          errorMessages += '<div>Please select a value or column</div>';
+          valid = false;
+       	}
+       	break;
+                   
+      case "topk": 
+      	if(dimensions.length === 0 && metric === 'null') {
+          errorMessages += '<div>Please select a value and column</div>';
+          valid = false;
+        }
+        else if(dimensions.length === 0) {
+          errorMessages += '<div>Please select a value</div>';
+          valid = false;
+        }
+        else if(metric === 'null') {
+          errorMessages += '<div>Please select a column</div>';
+          valid = false;
+        }
+         
+        if(k === 'null') {
+          errorMessages += '<div>Please select K for top-k</div>';
+          valid = false;
+        }
+        break;
+                   
+      case "slice_compare": 
+      	if(metric === 'null') {
+          errorMessages += '<div>Please select data - column name and the operation</div>';
+          valid = false;
+        }
+        else if(summaryOperation === 'null') {
+          errorMessages += '<div>Please select operation for the data column</div>';
+          valid = false;
+        }
+       
+        if(comparisonValue === 'null') {
+          errorMessages += '<div>Please select values to compare</div>';
+          valid = false;
+        }
+        break;
+    }
+
+    // if input is not valid, give error message
+    if(!valid) {
+      document.querySelector(".error-messages").innerHTML = errorMessages;
+      document.querySelector(".alert").classList.remove("hide");
+    }
+    return valid;
+  }
+
+</script>

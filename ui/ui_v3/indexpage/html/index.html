@@ -1,0 +1,228 @@
+<!-- Home page of add-on -->
+
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap" rel="stylesheet">
+    <?!= include("css/buttons_icon_styling"); ?>
+    <?!= include("css/inputs_styling"); ?>
+    <?!= include("css/query_madlib_output_styling"); ?>
+    <?!= include("css/general_styling"); ?>
+    <?!= include("indexpage/css/index_css"); ?>
+  </head>
+  
+  <body>
+    
+    <div class="sidebar branding-below">
+    
+      <h3>Select Table</h3>
+      
+      <!-- Data range selection -->
+      <div class="card">
+        <div class="container">
+
+          <!-- Heading of card -->
+          <div class="heading-index flexbox">
+            <b>DATA RANGE</b>
+            <span class="icon-hover">
+              <span class="material-icons edit trigger">edit</span>
+              <br>
+              <span class="icon-hover-text hover-edit">Edit</span>
+            </span>
+          </div>
+  
+          <!-- Fields to display selected data and header range -->
+          <p>Data Range: 
+            <span id="data-range"></span>
+          </p>
+          <p>Header Range: 
+            <span id="header-range"></span>
+          </p>
+          
+          <!-- Dialog that opens on clicking edit -->
+          <div class="modal">
+            <div class="modal-content">
+            
+              <div class="heading-index">
+                <b>EDIT DATA RANGE</b>
+              </div>
+              
+              <form id="table-range" autocomplete="off">
+                
+                <div class="container-input">
+                  <div class="outer-input-div" tabindex="0">
+                    <label class="label-input" for="edit-data-range" data-shrink="true">Range</label>
+                    <div class="inner-input-div">
+                      <input 
+                          id="edit-data-range" 
+                          class="input-field" 
+                          style="width: 180px"  
+                          name="edit-data-range" 
+                          placeholder="ex: A1:F10" 
+                          type="text" 
+                          aria-invalid="false" 
+                          aria-describedby="helper-range" 
+                          oninput="updateCheckboxAndHeaderRange(this)" 
+                          onfocusout="checkRangeValidity(this)">
+                      <span class="icon-hover">
+                        <span 
+                            id="select-range"
+                            class="material-icons" 
+                            onclick="getSelectedRange(this)">
+                              border_all
+                        </span>
+                        <span class="icon-hover-text hover-range">Get data range</span>
+                      </span>
+                    </div>
+                  </div>
+                  <p id="helper-range" class="helper-text"></p>
+                </div>
+                
+                <div class="container-input">
+                  <div class="outer-input-div" tabindex="0">
+                    <label class="label-input" for="edit-header-row" data-shrink="true">Header Row</label>
+                    <div class="inner-input-div">
+                      <input 
+                          id="edit-header-row" 
+                          class="input-field" 
+                          style="min-width: 100px;"
+                          name="edit-header-row" 
+                          placeholder="ex: 1" 
+                          type="number"
+                          min="1"
+                          aria-invalid="false" 
+                          aria-describedby="helper-header-row" 
+                          oninput="setHeaderRange()">
+                      <span>&nbsp;&nbsp;&nbsp;</span>
+                      <span id="edit-header-range"></span>
+                    </div>
+                  </div>
+                  <p id="helper-header-row" class="helper-text"></p>
+                </div>
+                
+                <div class="chk-container">
+                  <div class="checkbox">
+                    <input id="select-entire-table" type="checkbox" onclick="selectEntireTable(this)">
+                    <label id="label-for-checkbox" for="select-entire-table">Select entire table</label>
+                  </div>
+                </div>
+                
+                <div class="update-cancel">
+                  <button id="cancel" class="btn default">Cancel</button>
+                  <button id="update" class="btn primary">Update</button>
+                </div>
+                
+              </form>
+              
+            </div><!-- Modal content ends -->
+          </div><!-- Modal ends -->
+
+        </div><!-- Card content ends -->
+      </div><!-- Date range selection ends -->
+      
+      <!-- Intent picker -->
+      <div id="expandable-panel">
+         
+        <h3><br><br>Pick Intent:</h3>
+        
+        <button class="collapsible" style="border-radius: 6px 6px 0 0" type="button">
+          Show
+          <span class="material-icons expand-icon">expand_more</span>
+        </button>
+        <div class="content">
+          <p>Displays data based on user's requirements.</p>
+          <span class="sample-query">Show sample query</span>
+          <div class="query-content">
+            Will be added soon!
+          </div>
+          <div style="padding: 7px 0;">
+            <div class="flex-right">
+              <button class="btn primary" onclick="loadIntent(this,'show')">Select</button>
+            </div>
+          </div>
+        </div>
+        
+        <button class="collapsible" type="button">
+          Top-k
+          <span class="material-icons expand-icon">expand_more</span>
+        </button>
+        <div class="content">
+          <p>Display <em>top-k</em> items based on provided criterion.</p>
+          <span class="sample-query">Show sample query</span>
+          <div class="query-content">
+            Will be added soon!
+          </div>
+          <div style="padding: 7px 0;">
+            <div class="flex-right">
+              <button class="btn primary" onclick="loadIntent(this,'topk')">Select</button>
+            </div>
+          </div>
+        </div>
+        
+        <button class="collapsible" type="button">
+          Trend
+          <span class="material-icons expand-icon">expand_more</span>
+        </button>
+        <div class="content">
+          <p>Coming soon!!</p>
+        </div>
+
+        <button class="collapsible" type="button">
+          Slice Compare
+          <span class="material-icons expand-icon">expand_more</span>
+        </button>
+        <div class="content">
+          <p>Compare 2 objects based on provided criterion.</p>
+          <span class="sample-query">Show sample query</span>
+          <div class="query-content">
+            Will be added soon!
+          </div>
+          <div style="padding: 7px 0;">
+            <div class="flex-right">
+              <button class="btn primary" onclick="loadIntent(this,'slice-compare')">Select</button>
+            </div>
+          </div>
+        </div>
+
+        <button class="collapsible" type="button">
+          Time Compare
+          <span class="material-icons expand-icon">expand_more</span>
+        </button>
+        <div class="content">
+          <p>Coming soon!!</p>
+        </div>
+
+        <button class="collapsible" type="button" style="border-radius: 0 0 6px 6px">
+          Growth
+          <span class="material-icons expand-icon">expand_more</span>
+        </button>
+        <div class="content">
+          <p>Coming soon!!</p>
+        </div>
+
+      </div> <!-- Intent picker ends -->
+      
+    </div>
+    
+    <!-- INCLUDING SCRIPT FILES -->
+  
+    <!-- Global javascript variables -->
+    <?!= include('global_variables_js'); ?>
+
+    <!-- Javascript functions for fetching Data Range as selected by user -->
+    <?!= include('indexpage/javascript/table_selector_js'); ?>  
+
+    <!-- Javascript functions specific to index page working --> 
+    <?!= include('indexpage/javascript/index_js'); ?> 
+    
+  </body>
+
+</html>
+
+

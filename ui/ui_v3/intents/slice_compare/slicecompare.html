@@ -1,0 +1,180 @@
+<!-- Html page for Slice-Compare Intent -->
+
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&family=Vollkorn:ital@1&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <?!= include("autocomplete/css/awesomplete_css"); ?>
+    <?!= include("css/buttons_icon_styling"); ?>
+    <?!= include("css/inputs_styling"); ?>
+    <?!= include("css/query_madlib_output_styling"); ?>
+    <?!= include("css/general_styling"); ?>
+  </head>
+  
+  <body>
+    
+    <!-- Loader -->
+    <div class="cover"> 
+      <div class="showbox">
+        <div class="loader">
+          <svg class="circular" viewBox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Back button to return to index/home page -->
+    <div id="back-to-home" onclick="backToHome(this)">
+      <button class="circle-button back-button"> 
+        <span id="back-loading" style="display: inherit;">
+          <svg class="add" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+          </svg>
+        </span>
+      </button>
+    </div>
+    
+    <!-- Back button to return to selected intent page -->
+    <div id="back-to-intent" class="hide" onclick="backToPreviousContent()">
+      <button class="circle-button back-button"> 
+        <span style="display: inherit;">
+          <svg class="add" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+          </svg>
+        </span>
+      </button>
+    </div>
+
+    <div class="sidebar branding-below" style="margin-top: 52px;">
+      
+      <!-- Intent description-->
+      <h4 id="description" style ="text-align:center; margin-top: 0;">
+        <em>Slice-Compare</em>: Compare 2 objects based on provided criterion
+      </h4>
+      
+      <!-- BEFORE SUBMITTING QUERY -->
+
+      <!-- Query for slice-compare intent -->
+      <div id="query" class="card">
+        <div class="container">
+          <h2>Query</h2> 
+          <p class="madlib">
+            <span>Compare the </span>
+            <span id="show-metric" class="placeholder show-aspect-card">&lt;data&gt;</span>
+            <span> for </span>
+            <span id="show-compare-value" class="placeholder show-aspect-card">&lt;value1 and value2&gt;</span>
+            <span> by </span>
+            <span id="show-dimension" class="placeholder show-aspect-card">&lt;column(s)&gt;</span>
+            <span> where </span>
+            <span id="show-slice" class="placeholder show-aspect-card">&lt;filter(s)&gt;</span>
+            <span> from </span>
+            <span id="show-date" class="placeholder show-aspect-card">&lt;date range&gt; </span> 
+         </p> 
+        </div>
+      </div>
+
+      <!-- Including card for METRIC -->
+      <?!= include('aspects/metric_summary/metric_summary'); ?>   
+      
+      <!-- Including card for COMPARISON VALUES -->
+      <?!= include('aspects/compare_value/compare_value'); ?> 
+            
+      <!-- Including card for DIMENSION -->
+      <?!= include('aspects/dimension/dimension'); ?>
+         
+      <!-- Including card for SLICE -->
+      <?!= include('aspects/slice/slice'); ?>
+    
+      <!-- Including card for DATE RANGE -->
+      <?!= include('aspects/date_range/date_range'); ?>
+
+      <!-- Alert: error -->
+      <div class="alert hide">
+        <div class="alert-icon">
+          <svg class="svg-error" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M11 15h2v2h-2zm0-8h2v6h-2zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"></path>
+          </svg>
+        </div>
+        <div class="alert-message">
+          <div class="error-heading">Error</div>
+          <div class="error-messages"></div>
+        </div>
+      </div>
+
+      <!-- Button to submit the query -->
+      <div style="display:flex; justify-content: flex-end">
+        <button id="done" class="btn primary" onclick="evaluateQuery('slice_compare')">Compute</button>
+      </div>
+
+
+      <!-- AFTER SUBMITTING QUERY -->
+
+      <!-- Final query submitted for slice-compare intent -->
+      <div id="query-after-compute" class="card card-hover hide">
+        <div class="container">
+          <h2>Query</h2> 
+          <p id="short-query" class="madlib"></p> 
+        </div>
+      </div>
+      
+      <!-- Including card for displaying OUTPUT and SUGGESTIONS -->
+      <?!= include('intents/output_suggestions_card'); ?>  
+
+    </div>
+
+    <!-- INCLUDING SCRIPT FILES -->
+  
+    <!-- Global javascript variables -->
+    <?!= include('global_variables_js'); ?>
+
+    <!-- Javascript functions for autocompletion -->
+    <?!= include("autocomplete/javascript/awesomplete_js"); ?>
+    <?!= include("autocomplete/javascript/autocomplete_functions"); ?>
+
+    <!-- ASPECTS -->
+    <!-- Javascript functions for adding dimensions -->
+    <?!= include('aspects/dimension/dimension_js'); ?>
+    
+    <!-- Javascript functions for adding metric and summary -->
+    <?!= include('aspects/metric_summary/metric_summary_js'); ?>
+
+    <!-- Javascript functions for adding slices -->
+    <?!= include('aspects/slice/slice_js'); ?>
+    
+    <!-- Javascript functions for adding date-range field -->
+    <?!= include('aspects/date_range/date_range_js'); ?>
+
+    <!-- Javascript functions for adding comparison values -->
+    <?!= include('aspects/compare_value/compare_value_js'); ?>
+
+    <!-- Javascript helper functions to perform repetitive tasks and keep code DRY -->
+    <?!= include('aspects/helper_functions_js'); ?>
+
+    <!-- INTENTS -->
+    <!-- Javascript functions for slice-compare intent -->
+    <?!= include('intents/slice_compare/slicecompare_js'); ?>
+
+    <!-- Javascript functions for extracting data filled by user and 
+    calling server-side apps script function to get the result -->
+    <?!= include('intents/javascript_functions/submit_query'); ?>
+
+    <!-- Javascript helper functions for intents -->
+    <?!= include('intents/javascript_functions/helper_functions'); ?>
+    
+    <!-- Javascript functions for inserting output in sheet -->
+    <?!= include('intents/javascript_functions/insert_in_sheet'); ?>
+
+    <!-- Javascript functions for returning to previous html page -->
+    <?!= include('intents/javascript_functions/back_to_previous'); ?>
+
+  </body>
+
+</html>

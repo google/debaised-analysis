@@ -1,0 +1,47 @@
+<!-- Javascript helper functions to perform repetitive tasks and keep code DRY -->
+<!-- Javascript function to add/delete any element -->
+<!-- Javascript function to hide error message when any card is opened-->
+<!-- Javascript function to check if any column name written is valid -->
+
+<script>
+   
+  /*
+   * function used for appending a new child element to a parent element. 
+   * the parent element is specified using the parentId argument. 
+   * the type of element to be created is specified using the elementTag argument. 
+   * the new element's ID is specified using the elementId argument. 
+   * the innerHTML of the new element is specified using the html argument. 
+   */
+  function addElement(parentId, elementTag, elementId, html) {
+    var p = document.getElementById(parentId);
+    var newElement = document.createElement(elementTag);
+    newElement.setAttribute('id', elementId);
+    newElement.innerHTML = html;
+    p.appendChild(newElement);
+  }
+  
+  // function used to remove the element calling it
+  function removeElement(elementId) {
+    // Removes an element from the document
+    var element = document.getElementById(elementId);
+    element.parentNode.removeChild(element);
+  }
+  
+  // function to hide the alert message when any card is opened
+  var showAspectCard = document.querySelectorAll('.show-aspect-card');
+  for (var i = 0; i < showAspectCard.length; i++) {
+    showAspectCard[i].addEventListener('click', function() {
+      document.querySelector('.alert').classList.add('hide');
+    });
+  }
+
+  // function to check if the column written is valid(i.e is one of the column headers)
+  function isValidColumnName(column) {
+    var index = headers.indexOf(column);
+    // index = -1 indicates column entered is not a valid column header
+    if(column === '' || index !== -1)
+      return true;
+    return false;
+  }
+  
+</script>

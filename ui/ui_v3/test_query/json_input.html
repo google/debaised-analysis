@@ -1,0 +1,70 @@
+<!-- Html page to submit queries using JSON -->
+
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <?!= include("css/buttons_icon_styling"); ?>
+    <?!= include("css/inputs_styling"); ?>
+    <?!= include("css/query_madlib_output_styling"); ?>
+    <?!= include("css/general_styling"); ?>
+  </head>
+
+  <body>
+
+    <div class="sidebar branding-below">
+
+        <h4 style ="text-align:center">
+          <em>Json Input</em>
+        </h4>
+        
+        <!-- To input the JSON for query -->
+        <textarea id="json-input" name="json-input" rows="8" cols="35"></textarea>
+
+        <!-- Button to submit the query -->
+        <div style="display:flex; justify-content: flex-end">
+          <button id="done" class="btn primary" onclick="processQuery()">Compute</button>
+        </div>
+       
+        <div class="block" id="result" name="result">
+        </div> 
+
+        <!-- Including card for displaying OUTPUT and SUGGESTIONS -->
+        <?!= include('intents/output_suggestions_card'); ?>  
+
+    </div>
+    
+    <!-- INCLUDING SCRIPT FILES -->
+
+    <!-- Global javascript variables -->
+    <?!= include('global_variables_js'); ?>
+
+    <!-- Javascript functions for extracting data filled by user and 
+    calling server-side apps script function to get the result -->
+    <?!= include('intents/javascript_functions/submit_query'); ?>
+    
+    <script>
+      
+      function processQuery(){
+        
+        document.getElementById("output").classList.add("hide");
+    
+        done.innerHTML = "Computing";   //change value of button
+        done.disabled = true;         //disable the button
+        done.classList.add("loading");
+      
+        var jsonInput = document.getElementById("json-input").value;
+        console.log("Json Input given by user " + jsonInput);
+        google.script.run
+              .withSuccessHandler(printOutput)      
+              .callGcpToGetQueryResultUsingJson(jsonInput);
+      }
+    
+    </script>
+  </body>
+</html>
+
+

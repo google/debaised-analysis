@@ -1,0 +1,65 @@
+<!-- METRIC AND SUMMARY OPERATION CARD -->
+
+<div id="aspect-metric" class="card hide">
+	<div class="container">
+
+    <h2>Values</h2>
+
+    <form autocomplete="off">
+    	
+      <div style="margin-bottom: 1.5rem;">
+        
+        <div class="container-input">
+          <div class="outer-input-div" tabindex="0" >
+            <label class="label-input" for="metric" data-shrink="true">Column Name</label>
+            <div class="inner-input-div">
+              <input 
+                  id="metric" 
+                  class="input-field"
+                  name="metric" 
+                  placeholder="column" 
+                  type="text"  
+                  aria-invalid="false" 
+                  aria-describedby="helper-metric" 
+                  onfocusout="metricCheck(this,'helper-metric')">
+            </div>
+          </div>
+          <p id="helper-metric" class="helper-text"></p>
+        </div>
+        
+        <div class="container-input">
+          <div class="outer-input-div" tabindex="0">
+            <label class="label-input" for="summary" data-shrink="true">Operation</label>
+            <div class="inner-input-div" style="padding: 0;">
+              <select id="summary" class="input-field input-dropdown" name="summary" aria-invalid="false">
+                <option>None</option>
+                <option>Sum</option>
+                <option>Mean</option>
+                <option>Count</option>
+                <option>Count Distinct</option>
+                <option>Standard Deviation</option>
+                <option>Variance</option>
+                <option>First</option>
+                <option>Last</option>
+                <option>Minimum</option>
+                <option>Maximum</option>
+              </select>
+              <svg class="dropdown-icon" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 10l5 5 5-5z"></path>
+              </svg>
+            </div>
+            <p id="helper-summary" class="helper-text"></p>
+          </div>
+        </div>
+        
+      </div>
+      
+      <div class="update-cancel">
+        <button class="btn default" onclick="closeCard('metric')">Cancel</button>
+        <button id="update-metric" class="btn primary">Update</button>
+      </div>
+
+    </form>
+
+	</div>
+</div>
