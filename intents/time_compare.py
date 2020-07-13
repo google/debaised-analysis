@@ -41,7 +41,7 @@ def time_compare(table, metric, dimensions, all_dimensions, time_compare_column,
             It is the name of column we want.
             'compare batsman A and B according to total_runs',
              dimension is 'batsman'. we group by dimensions.
-        all_dimension: Type-list of str
+        all_dimensions: Type-list of str
             It is the list of dimension columns in the initial table
         date_range: Type-tuple
             Tuple of start_date and end_date
