@@ -45,7 +45,7 @@ def looking_at_tails(result_table, k, metric):
         it can be compared with other oversight's parameter
 
     Returns:
-        suggestion : dictonary with keys 'suggestions', 'oversight_name',
+        suggestion : dictonary with keys 'suggestion', 'oversight_name',
                      'is_column_level_suggestion', 'col_list'.
     """
     # this oversight won't apply if all rows are included
@@ -83,7 +83,7 @@ def looking_at_tails(result_table, k, metric):
         return
     else:
         suggestion = {}
-        suggestion['suggestion'] = 'Values in these columns for the top-k rows are similar for other rows also'
+        suggestion['suggestion'] = 'Values in top-k rows of columns - ' + str([col['column'] for col in col_list])[1:-1] + ' are similar for other rows also'
         suggestion['oversight_name'] = 'Looking at tails to find causes'
         suggestion['is_column_level_suggestion'] = True
         suggestion['col_list'] = col_list

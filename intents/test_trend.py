@@ -22,7 +22,7 @@ from util.enums import *
 
 def test_1():
     """An example from the IPL dataset
-    question : trend of avg win_by_runs over date range 2008-05-08 to 2017-04-12
+    question : annual trend of avg win_by_runs over date range 2008-05-08 to 2017-04-12
     """
     table = pandas.read_csv('data/matches.csv')
     query_result = trend.trend(table, 'win_by_runs', Granularities.ANNUALLY,
