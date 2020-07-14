@@ -130,7 +130,7 @@ function getTable() {
   // Set jsonObj.rowRange as object with 3 keys header, rowStart and rowEnd
   jsonObj.rowRange = rowRangeObj;
 
-  // Selecting the entire table containing range selected by user
+  // Selecting the entire table containing range selected by user 
   var dataRange = selectTable(range.getRow(),
                               range.getLastRow(),
                               range.getColumn(),

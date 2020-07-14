@@ -165,7 +165,7 @@
     query += document.querySelector('#show-metric').textContent;
     query += ' for the ';
     query += document.querySelector('#show-compare-value').textContent;
-    if(dimensions.length>1)
+    if(dimensions.length>0)
       query += ' by ' + document.querySelector('#show-dimension').textContent;
     if(slices.length>0)
       query += ' where ' + document.querySelector('#show-slice').textContent;

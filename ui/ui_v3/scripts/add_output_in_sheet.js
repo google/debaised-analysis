@@ -183,21 +183,6 @@ function addOutputInCurrentSheet(outputCell,outputTable) {
                                  outputTable.length,
                                  outputTable[0].length);
   dataRange.setValues(outputTable);
-  
-//  //formatting output sheet's data
-//  dataRange
-//    .setFontFamily('Georgia')
-//    .setFontSize('12')
-//    .setBorder(true, true, true, true,true,null,null,SpreadsheetApp.BorderStyle.SOLID_MEDIUM);
-// 
-// //formatting output sheet's header
-//  var headerRange = sheet.getRange(outputRange.getRow(), outputRange.getColumn(), 1, outputTable[0].length);
-//  headerRange
-//    .setFontWeight('bold')
-//    .setFontColor('#ffffff')
-//    .setBackgroundColor('#073763')
-//    .setHorizontalAlignment('center');
-  
 }
 
 /**

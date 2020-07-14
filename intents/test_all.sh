@@ -59,6 +59,14 @@ else
   list_logs+=("test_slice_compare passed")
 fi
 
+if ! python3 test_time_compare.py;
+then
+  err "test_time_compare failed"
+  list_logs+=("test_time_compare failed")
+else
+  list_logs+=("test_time_compare passed")
+fi
+
 if ! python3 util/test_aspects.py;
 then
   err "util/test_aspects failed"
@@ -81,6 +89,14 @@ then
   list_logs+=("oversights/test_simpson_paradox failed")
 else
   list_logs+=("oversights/test_simpson_paradox passed")
+fi
+
+if ! python3 oversights/test_looking_at_tails.py;
+then
+  err "oversights/test_looking_at_tails failed"
+  list_logs+=("oversights/test_looking_at_tails failed")
+else
+  list_logs+=("oversights/test_looking_at_tails passed")
 fi
 
 echo 'All tests completed '

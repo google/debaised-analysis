@@ -23,29 +23,29 @@ function autoDetectTable() {
   var maxCols = range.getLastColumn();
   
   Logger.log('Range of the selected cells');
-  Logger.log(rowStart,rowEnd,colStart,colEnd,maxRows,maxCols);
+  Logger.log(rowStart, rowEnd, colStart, colEnd, maxRows, maxCols);
   
   var dataRange;
 
   // If range selected by user has more than 2 rows and area > 5
   // detect the selected range as the table range
   if(rowEnd-rowStart>=2 && (rowEnd-rowStart+1)*(colEnd-colStart+1)>5) {
-    dataRange = [rowStart,rowEnd,colStart,colEnd];
+    dataRange = [rowStart, rowEnd, colStart, colEnd];
   }
   // Else detect the table containing the selected range
   else {
-    dataRange =  selectTable(rowStart,rowEnd,colStart,colEnd,range.getValues(),maxRows,maxCols);
+    dataRange =  selectTable(rowStart, rowEnd, colStart, colEnd, range.getValues(), maxRows, maxCols);
   }
     
   Logger.log('Range of the detected table');
   Logger.log(dataRange);
 
   // Find the detected range's a1Notation
-  var rangeTable = sheet.getRange(dataRange[0],dataRange[2],dataRange[1]-dataRange[0]+1,dataRange[3]-dataRange[2]+1);
+  var rangeTable = sheet.getRange(dataRange[0], dataRange[2], dataRange[1]-dataRange[0]+1, dataRange[3]-dataRange[2]+1);
   var rangeString = rangeTable.getA1Notation();
 
   // Select the first row of the detected table as header row
-  var headerRange = sheet.getRange(dataRange[0],dataRange[2],1,dataRange[3]-dataRange[2]+1).getA1Notation();
+  var headerRange = sheet.getRange(dataRange[0], dataRange[2], 1, dataRange[3]-dataRange[2]+1).getA1Notation();
   var headerRow = dataRange[0];
 
   // Storing details about the detected table
@@ -72,7 +72,7 @@ function autoDetectTable() {
  * @param {number} maxCols The last column of the sheet containing data
  * @return {Array} The start row, end row, start column, end column of the detected table
  */
-function selectTable(rowStart,rowEnd,colStart,colEnd,values,maxRows,maxCols) {
+function selectTable(rowStart, rowEnd, colStart, colEnd, values, maxRows, maxCols) {
   /**
    * Flag is used to indicate if the detected range changes in current function call
    * Flag is set to true when the range changes
@@ -120,11 +120,11 @@ function selectTable(rowStart,rowEnd,colStart,colEnd,values,maxRows,maxCols) {
 
   // If the detected range is altered the function is called again
   if(flag) {
-    return selectTable(rowStart,rowEnd,colStart,colEnd,values,maxRows,maxCols);
+    return selectTable(rowStart, rowEnd, colStart, colEnd, values, maxRows, maxCols);
   }
   // Else return the detected range from the function
   else {
-    dataRange = [rowStart,rowEnd,colStart,colEnd];
+    dataRange = [rowStart, rowEnd, colStart, colEnd];
     return dataRange;
   }
 }
@@ -145,7 +145,7 @@ function getSelectedRange() {
   // and selecting first row of selected range as header
   var rangeString = range.getA1Notation(); 
   var headerRow = range.getRow();
-  var headerRange = sheet.getRange(range.getRow(),range.getColumn(),1,range.getWidth()).getA1Notation();
+  var headerRange = sheet.getRange(range.getRow(), range.getColumn(), 1, range.getWidth()).getA1Notation();
    
   var dataRange = {
      'rangeString': rangeString,
@@ -175,7 +175,7 @@ function getSelectedRange() {
   if(rowStartNew >= rowStartOld && rowEndNew <= rowEndOld) {
     if(colStartNew >= colStartOld && colEndNew <= colEndOld) {
       dataRange.headerRow = userProperties.getProperty('headerRow');
-      dataRange.headerRange = sheet.getRange(Number(dataRange.headerRow),range.getColumn(),1,range.getWidth()).getA1Notation();
+      dataRange.headerRange = sheet.getRange(Number(dataRange.headerRow), range.getColumn(), 1, range.getWidth()).getA1Notation();
     }
   }
   
@@ -209,11 +209,11 @@ function selectEntireTableFromGivenRange(rangeString) {
                               sheet.getDataRange().getLastRow(),
                               sheet.getDataRange().getLastColumn());
 
-  var table = sheet.getRange(dataRange[0],dataRange[2],dataRange[1]-dataRange[0]+1,dataRange[3]-dataRange[2]+1);
+  var table = sheet.getRange(dataRange[0], dataRange[2], dataRange[1]-dataRange[0]+1, dataRange[3]-dataRange[2]+1);
   var dataRange = {
    'rangeString': table.getA1Notation(),
    'headerRow': dataRange[0],
-   'headerRange': sheet.getRange(dataRange[0],dataRange[2],1,dataRange[3]-dataRange[2]+1).getA1Notation()
+   'headerRange': sheet.getRange(dataRange[0], dataRange[2], 1, dataRange[3]-dataRange[2]+1).getA1Notation()
   };
   return dataRange;
 }
@@ -236,7 +236,7 @@ function selectEntireTableFromGivenRange(rangeString) {
  * @return {number} updatedRangeObj.headerRow - The header row number of the range 
  * @return {string} updatedRangeObj.headerRange - The header range of the range
  */
-function setSelectedRange(rangeString,headerRow,headerRange) {
+function setSelectedRange(rangeString, headerRow, headerRange) {
 
   var inputSheet = SpreadsheetApp.getActiveSheet();
   var range = inputSheet.getRange(rangeString);
@@ -258,7 +258,7 @@ function setSelectedRange(rangeString,headerRow,headerRange) {
     updatedRangeObj['errorIn'] = 'header-row';
     updatedRangeObj['errorMessage'] = 'Please select a header above the range selected';
   }
-  else if( entireTable[0] !== headerRow && entireTable[0]+1 !== headerRow) {
+  else if(entireTable[0] !== headerRow && entireTable[0]+1 !== headerRow) {
     //TODO - change the error message
     updatedRangeObj['success'] = false;
     updatedRangeObj['errorIn'] = 'header-row';
@@ -275,10 +275,7 @@ function setSelectedRange(rangeString,headerRow,headerRange) {
     updatedRangeObj['success'] = true;
     range.activate();
     var userProperties = PropertiesService.getUserProperties();
-    userProperties.setProperty('inputSheet',inputSheet.getName());
-    userProperties.setProperty('rangeString',rangeString);
-    userProperties.setProperty('headerRow',headerRow);
-    userProperties.setProperty('headerRange',headerRange);
+    setUserProperties(inputSheet, rangeString, headerRow, headerRange);
     
     updatedRangeObj['inputSheet'] = userProperties.getProperty('inputSheet');
     updatedRangeObj['rangeString'] = userProperties.getProperty('rangeString');
@@ -324,4 +321,20 @@ function getFilterValues() {
   var range = SpreadsheetApp.getActiveSheet().getActiveRange(); 
   var values = range.getValues();
   return values;
+}
+
+/**
+ * Set user properties to the values given
+ *
+ * @param {Sheet} inputSheet The sheet in which user selects data
+ * @param {string} rangeString The A1Notation of range selected
+ * @param {number} headerRow The header row of range selected
+ * @param {string} headerRange The header range for the range selected
+ */
+function setUserProperties(inputSheet, rangeString, headerRow, headerRange) {
+   var userProperties = PropertiesService.getUserProperties();
+   userProperties.setProperty('inputSheet',inputSheet.getName());
+   userProperties.setProperty('rangeString',rangeString);
+   userProperties.setProperty('headerRow',headerRow);
+   userProperties.setProperty('headerRange',headerRange);
 }

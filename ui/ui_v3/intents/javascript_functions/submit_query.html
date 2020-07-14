@@ -23,11 +23,6 @@
     // intent name
     intent = intentName;       //intent for which query is submitted
     
-    //slice compare values - add dimension
-    if(comparisonValue !== 'null') {
-      dimensions.push(comparisonValue[0]);
-    }
-    
     // call server side function with the input values to submit query and receive output
     // call printOutput when server side function returns successfully
     google.script.run
