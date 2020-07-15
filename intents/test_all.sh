@@ -91,6 +91,14 @@ else
   list_logs+=("oversights/test_simpson_paradox passed")
 fi
 
+if ! python3 oversights/test_benchmark_set_too_different.py;
+then
+  err "oversights/test_benchmark_set_too_different failed"
+  list_logs+=("oversights/test_benchmark_set_too_different failed")
+else
+  list_logs+=("oversights/test_benchmark_set_too_different passed")
+fi
+
 echo 'All tests completed '
 echo 'Results -'
 
