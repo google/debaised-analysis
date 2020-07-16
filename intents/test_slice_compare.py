@@ -63,10 +63,10 @@ def test_2():
     expected_result = """   year Person name  salary
 0  2019           A   10239
 1  2019           B    8190"""
-    expected_suggestion = "['year', 'month', 'Person name'] these group of columns have different results than initial columns so you might also look for the given group of columns"
-
+    expected_suggestion = """{'suggestion': "['year', 'month', 'Person name'] these group of columns have different results than initial columns so you might also look for the given group of columns", 'oversight_name': "simpson's paradox", 'is_column_level_suggestion': True, 'col_list': {'column': 'Person name'}}"""
     assert(expected_result == query_result[0].to_string())
-    assert(expected_suggestion == query_result[1][0])
+    print(str(query_result[1][0]))
+    assert(expected_suggestion == str(query_result[1][0]))
 
 def test_3():
     """

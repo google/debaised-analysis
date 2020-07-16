@@ -46,7 +46,7 @@ def mean_vs_median(values):
     	values : Type-list of numbers could be floating points
     		It has the numbers for which the user finds the mean
     Returns:
-        A String that contains the suggestions.
+        suggestion : dictonary with keys 'suggestion', 'oversight_name'
     """
 
     skew_value = _skew(values)
@@ -55,7 +55,10 @@ def mean_vs_median(values):
     	and skew_value <= constants.UPPER_BOUND_SIMILARITY_MEAN_VS_MEDIAN):
     		return None
     else:
-    	return 'Median is very different from the Mean'
+    	suggestion = {}
+    	suggestion['suggestion'] = 'Median is very different from the Mean'
+    	suggestion['oversight_name'] = 'Mean vs Median'
+    	return suggestion
 
 def _skew(values):
 	""" This function calculates the skew value of the list

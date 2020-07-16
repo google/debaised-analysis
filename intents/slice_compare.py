@@ -112,7 +112,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
                                                  date_column_name = date_column_name,
                                                  date_range = date_range, 
                                                  date_format = date_format)
-    if len(simpson_paradox_suggestion) > 0:
+    if simpson_paradox_suggestion is not None :
         suggestions.append(simpson_paradox_suggestion)
 
     return (result_table, suggestions)

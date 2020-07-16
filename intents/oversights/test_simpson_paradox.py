@@ -33,8 +33,9 @@ def test_1():
                                                    SummaryOperators.SUM)
     print(query_result)
 
-    expected_result = "['month', 'Person name'] these group of columns have different results than initial columns so you might also look for the given group of columns"
-    assert(query_result == expected_result)
+    expected_result = """{'suggestion': "['month', 'Person name'] these group of columns have different results than initial columns so you might also look for the given group of columns", 'oversight_name': "simpson's paradox", 'is_column_level_suggestion': True, 'col_list': {'column': 'Person name'}}"""
+
+    assert(str(query_result) == expected_result)
 
 def test_2():
     """
@@ -48,8 +49,8 @@ def test_2():
                                                    SummaryOperators.MEAN)
     print(query_result)
 
-    expected_result = "['team_name'] these group of columns have different results than initial columns so you might also look for the given group of columns"
-    assert(query_result == expected_result)
+    expected_result = """{'suggestion': "['team_name'] these group of columns have different results than initial columns so you might also look for the given group of columns", 'oversight_name': "simpson's paradox", 'is_column_level_suggestion': True, 'col_list': {'column': 'team_name'}}"""
+    assert(str(query_result) == expected_result)
 
 print("\ncompare total salary of 'A' and 'B' for year 2019.")
 test_1()

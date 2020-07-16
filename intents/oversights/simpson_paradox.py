@@ -158,11 +158,17 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
             simpson_paradox_columns = new_grouping_dimensions
 
     if len(simpson_paradox_columns) > 0:
-        suggestion = str(simpson_paradox_columns)
-        suggestion = suggestion + ' these group of columns have different results than initial columns so you might also look for the given group of columns'
+        suggestion_str = str(simpson_paradox_columns)
+        suggestion_str = suggestion_str + ' these group of columns have different results than initial columns so you might also look for the given group of columns'
+        suggestion = {}
+        suggestion['suggestion'] = suggestion_str
+        suggestion['oversight_name'] = 'simpson\'s paradox'
+        suggestion['is_column_level_suggestion'] = True
+        suggestion['col_list'] = { "column" : column for column in simpson_paradox_columns}
+        # ToDo (Chandan) : Add 'confidence_score' as a key in items of 'col_list'
         return suggestion
     else:
-        return ""
+        return None
 
 def _check_dominent_percentage(table, dimensions, slice_compare_column,
                                                       summary_operator):
