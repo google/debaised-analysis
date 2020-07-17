@@ -146,7 +146,7 @@ def benchmark_set_too_different(table, metric, all_metric, slice_compare_column,
             """ for every suggestion we form a dictionary and 
                 append it to the list of dictionary."""
             suggestion_i = {}
-            suggestion_i['suggestion'] = slice1 + ' looks different from others on ' + metric + '. You might also want to look  at ' + columns_order[column_i] +' since ' + slice1 + ' also looks different on this.'
+            suggestion_i['suggestion'] = slice1 + ' looks different from others on ' + metric + '. You might also want to look at ' + columns_order[column_i] +' since ' + slice1 + ' also looks different on this.'
             suggestion_i['oversight_name'] = 'Benchmark set too different'
             suggestion_i['is_row_level_suggestion'] = True
             suggestion_i['row_list'] = column_i_suggestion_list
