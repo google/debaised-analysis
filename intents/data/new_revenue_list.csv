@@ -1,0 +1,15 @@
+country_name,company_name,month,revenue
+India,A,jan,100
+India,B,jan,150
+japan,A,jan,-100
+japan,A,feb,-100
+japan,A,mar,-100
+japan,A,apr,-100
+japan,A,may,-100
+japan,A,jun,-100
+japan,A,jul,-100
+japan,A,aug,-100
+japan,A,sep,-100
+japan,A,oct,-100
+japan,A,nov,-100
+japan,A,dec,1500

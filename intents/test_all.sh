@@ -83,12 +83,12 @@ else
   list_logs+=("oversights/test_mean_vs_median passed")
 fi
 
-if ! python3 oversights/test_simpson_paradox.py;
+if ! python3 oversights/test_simpsons_paradox.py;
 then
-  err "oversights/test_simpson_paradox failed"
-  list_logs+=("oversights/test_simpson_paradox failed")
+  err "oversights/test_simpsons_paradox failed"
+  list_logs+=("oversights/test_simpsons_paradox failed")
 else
-  list_logs+=("oversights/test_simpson_paradox passed")
+  list_logs+=("oversights/test_simpsons_paradox passed")
 fi
 
 if ! python3 oversights/test_looking_at_tails.py;
