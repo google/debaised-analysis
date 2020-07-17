@@ -21,6 +21,8 @@ Some of the operations are optional.
 """
 
 from oversights.regression_to_mean import regression_to_mean
+from oversights.looking_at_tails import looking_at_tails
+from oversights.duplicates_in_topk import duplicates_in_topk
 from util.enums import *
 from util import aspects
 
@@ -91,13 +93,32 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     suggestions = []
 
-    rmt_suggestion = regression_to_mean(table, metric, dimensions, is_asc, k,
-                                        date_column_name=date_column_name,
-                                        date_range=date_range,
-                                        date_format=date_format, slices=slices,
-                                        summary_operator=summary_operator)
+    duplicates_in_topk_suggestion = duplicates_in_topk(result_table, dimensions)
 
-    suggestions.append(rmt_suggestion)
+    if duplicates_in_topk_suggestion is not None:
+        suggestions.append(duplicates_in_topk_suggestion)
+    
+    else:
+        # Check for RMT suggestion only when no duplicates present.
+        rmt_suggestion = regression_to_mean(table, metric, dimensions, is_asc, k,
+                                            date_column_name=date_column_name,
+                                            date_range=date_range,
+                                            date_format=date_format, slices=slices,
+                                            summary_operator=summary_operator)
+
+        if rmt_suggestion is not None:
+            suggestions.append(rmt_suggestion)
+
+    results_without_k_condition = topk_results(table, metric, dimensions, is_asc, -1,
+                                               date_column_name=date_column_name,
+                                               date_range=date_range, date_format=date_format,
+                                               slices=slices,
+                                               summary_operator=summary_operator)
+
+    looking_at_tails_suggestion = looking_at_tails(results_without_k_condition, k, metric)
+
+    if looking_at_tails_suggestion is not None:
+        suggestions.append(looking_at_tails_suggestion)
 
     return (result_table, suggestions)
 
@@ -128,7 +149,8 @@ def topk_results(table, metric, dimensions, is_asc, k, **kwargs):
         is_asc: Type-Bool
             Denotes the sort order, True for ascending, False for Descending
         k: Type-int
-            It is the number of entries to be taken
+            It is the number of entries to be taken. Also k = -1 means taking
+            all entries
         date_range: Type-tuple
             Tuple of start_date and end_date
         date_column_name: Type-str
@@ -187,6 +209,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
     table = table.reset_index(drop=True)
 
     # selecting only the top-k
-    table = table.head(k)
+    if k != -1:
+        table = table.head(k)
 
     return table

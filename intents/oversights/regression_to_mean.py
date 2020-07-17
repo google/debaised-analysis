@@ -78,8 +78,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
             ex. SummaryOperators.MAX, SummaryOperators.SUM
 
     Returns:
-        A String that contains the suggestions.
-
+        suggestion : dictonary with keys 'suggestion', 'oversight_name'
     """
     date_column_name = kwargs.get('date_column_name', 'date')
     date_range = kwargs.get('date_range', None)
@@ -94,14 +93,10 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
                                      date_format=date_format, slices=slices,
                                      summary_operator=summary_operator)
 
-    current_topk_set = _convert_to_set(current_topk, dimensions)
-
-    # Checking if the result table contains duplicates
-    if len(current_topk_set) != current_topk.shape[0]:
-        return 'The results has duplicates, you forgot to apply group by'
-
     if date_range is None:
-        return 'No suggestions as date condition is not there.'
+        return
+
+    current_topk_set = _convert_to_set(current_topk, dimensions)
 
     # results of the other time interval may contain duplicates,
     # so setting the summary operator to MAX/MIN
@@ -127,14 +122,19 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
     set_intersect_suggestions = _set_intersect(previous_topk,
                                               current_topk, dimensions)
 
+    suggestion = {}
+    suggestion['oversight_name'] = 'Regression to the mean'
+
     if set_intersect_suggestions is not None:
-        return set_intersect_suggestions
+        suggestion['suggestion'] = set_intersect_suggestions
+        return suggestion
 
     rank_vector_suggestion = _similarity_between_ranks(previous_topk,
                                                       current_topk, dimensions)
 
     if rank_vector_suggestion is not None:
-        return rank_vector_suggestion
+        suggestion['suggestion'] = rank_vector_suggestion
+        return suggestion
 
     return None
 

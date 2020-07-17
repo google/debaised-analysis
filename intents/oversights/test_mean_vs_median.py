@@ -25,9 +25,9 @@ def test_1():
 	suggestion = mean_vs_median(values)
 	print(suggestion)
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
-	expected_suggestion = "Median is very different from the Mean"
+	expected_suggestion = """{'suggestion': 'Median is very different from the Mean', 'oversight_name': 'Mean vs Median'}"""
 
-	assert(suggestion == expected_suggestion)
+	assert(str(suggestion) == expected_suggestion)
 
 def test_2():
 	"""
@@ -41,9 +41,9 @@ def test_2():
 	suggestion = mean_vs_median(values)
 	print(suggestion)
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
-	expected_suggestion = None
+	expected_suggestion = 'None'
 
-	assert(suggestion == expected_suggestion)
+	assert(str(suggestion) == expected_suggestion)
 
 def test_3():
 	"""
@@ -56,9 +56,9 @@ def test_3():
 	suggestion = mean_vs_median(values)
 	print(suggestion)
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
-	expected_suggestion = "Median is very different from the Mean"
+	expected_suggestion = """{'suggestion': 'Median is very different from the Mean', 'oversight_name': 'Mean vs Median'}"""
 
-	assert(suggestion == expected_suggestion)	
+	assert(str(suggestion) == expected_suggestion)	
 
 def test_4():
 	"""
@@ -71,9 +71,9 @@ def test_4():
 	suggestion = mean_vs_median(values)
 	print(suggestion)
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
-	expected_suggestion = None
+	expected_suggestion = 'None'
 
-	assert(suggestion == expected_suggestion)		
+	assert(str(suggestion) == expected_suggestion)		
     
 def test_5():
 	"""
@@ -86,9 +86,9 @@ def test_5():
 	suggestion = mean_vs_median(values)
 	print(suggestion)
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
-	expected_suggestion = None
+	expected_suggestion = 'None'
 
-	assert(suggestion == expected_suggestion)	
+	assert(str(suggestion) == expected_suggestion)	
 
 def test_6():
 	"""
@@ -102,9 +102,9 @@ def test_6():
 	suggestion = mean_vs_median(values)
 	print(suggestion)
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
-	expected_suggestion = "Median is very different from the Mean"
+	expected_suggestion = """{'suggestion': 'Median is very different from the Mean', 'oversight_name': 'Mean vs Median'}"""
 
-	assert(suggestion == expected_suggestion)	
+	assert(str(suggestion) == expected_suggestion)	
 
 def test_7():
 	"""
@@ -118,9 +118,9 @@ def test_7():
 	suggestion = mean_vs_median(values)
 	print(suggestion)
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
-	expected_suggestion = "Median is very different from the Mean"
+	expected_suggestion = """{'suggestion': 'Median is very different from the Mean', 'oversight_name': 'Mean vs Median'}"""
 
-	assert(suggestion == expected_suggestion)	
+	assert(str(suggestion) == expected_suggestion)	
 
 def test_8():
 	"""
@@ -133,9 +133,9 @@ def test_8():
 	suggestion = mean_vs_median(values)
 	print(suggestion)
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
-	expected_suggestion = "Median is very different from the Mean"
+	expected_suggestion = """{'suggestion': 'Median is very different from the Mean', 'oversight_name': 'Mean vs Median'}"""
 
-	assert(suggestion == expected_suggestion)	
+	assert(str(suggestion) == expected_suggestion)	
 
 def test_9():
 	"""
@@ -149,9 +149,9 @@ def test_9():
 	suggestion = mean_vs_median(values)
 	print(suggestion)
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
-	expected_suggestion = "Median is very different from the Mean"
+	expected_suggestion = """{'suggestion': 'Median is very different from the Mean', 'oversight_name': 'Mean vs Median'}"""
 
-	assert(suggestion == expected_suggestion)		
+	assert(str(suggestion) == expected_suggestion)		
 
 def test_10():
 	"""
@@ -165,9 +165,9 @@ def test_10():
 	suggestion = mean_vs_median(values)
 	print(suggestion)
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
-	expected_suggestion = None
+	expected_suggestion = 'None'
 
-	assert(suggestion == expected_suggestion)		
+	assert(str(suggestion) == expected_suggestion)		
 
 print(test_1.__doc__)
 test_1()
