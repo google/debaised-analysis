@@ -109,6 +109,7 @@ def hello_http(request):
                                 )
         query_table_dataframe = query_result[0]
         suggestions = query_result[1]
+        
     elif intent == 'slice_compare':
         query_table_dataframe = slice_compare.slice_compare(query_table_dataframe,
                                                             metric, dimensions, [], [],
@@ -121,6 +122,17 @@ def hello_http(request):
     else:
         raise Exception("Intent name does not match")
 
+    # In updated suggestions, change_list is replaced with the json of
+    # the new query.
+    updated_suggestions = []
+    for suggestion in suggestions:
+        updated_suggestion = suggestion
+        if 'change_list' in suggestion.keys():
+            updated_suggestion['json'] = \
+            _convert_change_list_to_new_query_json(request_json, suggestion['change_list'])
+        updated_suggestions.append(updated_suggestion)
+
+    suggestions = updated_suggestions
     final_table = []
 
     # converting into a json object and returning
@@ -130,6 +142,30 @@ def hello_http(request):
     json_ret = {'outputTable' : final_table, 'suggestions' : suggestions}
     json_string = json.dumps(json_ret)
     return json_string
+
+def _convert_change_list_to_new_query_json(inp_json, change_list):
+    """
+    As the json for the new query would be very similar to the json of the
+    requested query, the oversights only return a list of changes to
+    be made in the current json.
+    This function takes as input the current json, applies the list of
+    changes & returns the new json.
+
+    Args:
+        inp_json: Type-dict
+            Json of the initial query
+        change_list: Type-dict
+            Changes to be made in the current json
+            keys - key in the json that needs to be updated
+            values - the updated value
+
+    Returns:
+        the json for the new query
+    """
+    for key in change_list.keys():
+        inp_json[key] = change_list[key]
+
+    return inp_json
 
 def _str_to_filter_enum(comparator):
     """
