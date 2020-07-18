@@ -39,3 +39,9 @@ SIMPSONS_PARADOX_DOMINANT_PERCENT_THRESHOLD = 75
 
 # threshold of disimilarity of two values in benchmark set too different.
 BSTD_DISIMILARITY_THRESHOLD = 0.20
+
+# top-down error similarity threshold value
+TOP_DOWN_ERROR_SIMILARITY_THRESHOLD = 0.05
+
+# top-down error dissimilarity threshold value
+TOP_DOWN_ERROR_DISSIMILARITY_THRESHOLD = 0.30
