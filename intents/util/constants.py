@@ -33,3 +33,9 @@ UPPER_BOUND_SIMILARITY_MEAN_VS_MEDIAN = 0.3
 LOOKING_AT_THE_TAILS_FLOAT_THRESHOLD = .7 
 # type is angle, as cosine similarity is used
 LOOKING_AT_THE_TAILS_STRING_THRESHOLD = 20
+
+# threshold value of simpson's-paradox.
+SIMPSONS_PARADOX_DOMINANT_PERCENT_THRESHOLD = 75
+
+# threshold of disimilarity of two values in benchmark set too different.
+BSTD_DISIMILARITY_THRESHOLD = 0.20
