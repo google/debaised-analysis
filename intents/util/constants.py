@@ -38,3 +38,9 @@ LOOKING_AT_THE_TAILS_STRING_THRESHOLD = 20
 # more than just topk ddetection
 # This is a very tight threshold to prevent same suggestion coming each time
 MORE_THAN_JUST_TOPK_THRESHOLD = 0.001
+
+# threshold value of simpson's-paradox.
+SIMPSONS_PARADOX_DOMINANT_PERCENT_THRESHOLD = 75
+
+# threshold of disimilarity of two values in benchmark set too different.
+BSTD_DISIMILARITY_THRESHOLD = 0.20
