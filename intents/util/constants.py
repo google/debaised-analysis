@@ -35,7 +35,7 @@ LOOKING_AT_THE_TAILS_FLOAT_THRESHOLD = .7
 LOOKING_AT_THE_TAILS_STRING_THRESHOLD = 20
 
 # threshold value of simpson's-paradox.
-SP_THRESHOLD = 75
+SIMPSONS_PARADOX_DOMINANT_PERCENT_THRESHOLD = 75
 
-# threshold of disimilarity of two values in rk set too different.
+# threshold of disimilarity of two values in benchmark set too different.
 BSTD_DISIMILARITY_THRESHOLD = 0.20

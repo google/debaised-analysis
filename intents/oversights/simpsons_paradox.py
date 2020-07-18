@@ -92,14 +92,13 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     table = aspects.slice_table(table, slice_list)
 
-    """removing all metric column except the one by which we will
-       do group_by operation"""
+    # removing all metric column except the one by which we do group_by operation
     required_columns = all_dimensions.copy()
     required_columns.append(metric)
     table = aspects.crop_other_columns(table, required_columns)
 
-    """operational_dimensions will contain list of all dimension
-       except slice_compare_column"""
+    # operational_dimensions contain list of all dimension except 
+    # slice_compare_column
     operational_dimensions = all_dimensions.copy()
     operational_dimensions.remove(slice_compare_column)
     
@@ -188,94 +187,61 @@ def _check_simpsons_paradox(initial_result_table, new_result_table, new_added_co
 
     suggestion_row_list = []
 
-    """ dominant percentage is the percentage of pairs where 
-        (first value - second value) is positive."""
+    # dominant percentage is the percentage of pairs where 
+    # (first value - second value) is positive.
 
     while initial_row_i < initial_num_rows:
+        positive_count = 0
+        total_count = 0
 
-        # check if it is the last row or there is only one slice for this group.
-        if initial_row_i == initial_num_rows - 1 or initial_table_matrix[initial_row_i][:dimensions_len] != initial_table_matrix[initial_row_i + 1][:dimensions_len]:
+        while new_row_i < new_num_rows and initial_table_matrix[initial_row_i][:dimensions_len] == new_table_matrix[new_row_i][:dimensions_len] :
+            new_difference = 0
 
-            initial_difference = 0
-            if initial_table_matrix[initial_row_i][dimensions_len] == slice1:
-                initial_difference = initial_table_matrix[initial_row_i][dimensions_len + 1]
-            else:
-                initial_difference = -initial_table_matrix[initial_row_i][dimensions_len + 1]
-            
-            # it stores the dominent percent for the initial table
-            initial_dominant_percent = 0
-            if initial_difference > 0:
-                initial_dominant_percent = 100
-
-            positive_count = 0
-            total_count = 0
-
-            # while the group data is same for both the table it will continue in the loop
-            while new_row_i < new_num_rows and initial_table_matrix[initial_row_i][:dimensions_len] == new_table_matrix[new_row_i][:dimensions_len] :
-                new_difference = 0
+            if new_row_i == new_num_rows - 1 or new_table_matrix[new_row_i][:dimensions_len + 1] != new_table_matrix[new_row_i + 1][:dimensions_len + 1]:
                 if new_table_matrix[new_row_i][dimensions_len + 1] == slice1:
                     new_difference = new_table_matrix[new_row_i][dimensions_len + 2]
                 else:
                     new_difference = -new_table_matrix[new_row_i][dimensions_len + 2]
-                
-                if new_difference > 0:
-                    positive_count = positive_count + 1
-                total_count = total_count + 1
-
+            else:
+                if new_table_matrix[new_row_i][dimensions_len + 1] == slice1:
+                    new_difference = new_table_matrix[new_row_i][dimensions_len + 2] - new_table_matrix[new_row_i + 1][dimensions_len + 2]
+                else:
+                    new_difference = new_table_matrix[new_row_i + 1][dimensions_len + 2] - new_table_matrix[new_row_i][dimensions_len + 2]
                 new_row_i = new_row_i + 1
 
-            new_dominant_percent = (positive_count / total_count) * 100
+            if new_difference > 0:
+                positive_count = positive_count + 1
+            total_count = total_count + 1
 
-            # Finally according to the difference between dominent percentage we shall
-            # add the debiasing suggestion.
-            if abs(initial_dominant_percent - new_dominant_percent) >= constants.SP_THRESHOLD:
-                suggestion_row_list.append(initial_row_i)
+            new_row_i = new_row_i + 1
+        # it stores the dominant percent for the new table
+        new_dominant_percent = (positive_count / total_count) * 100
+
+        initial_difference = 0
+
+        # True if it is the last row or there is only one slice for this group.
+        if initial_row_i == initial_num_rows - 1 or initial_table_matrix[initial_row_i][:dimensions_len] != initial_table_matrix[initial_row_i + 1][:dimensions_len]:
+            if initial_table_matrix[initial_row_i][dimensions_len] == slice1:
+                initial_difference = initial_table_matrix[initial_row_i][dimensions_len + 1]
+            else:
+                initial_difference = -initial_table_matrix[initial_row_i][dimensions_len + 1]
         else:
-            initial_difference = 0
             if initial_table_matrix[initial_row_i][dimensions_len] == slice1:
                 initial_difference = initial_table_matrix[initial_row_i][dimensions_len + 1] - initial_table_matrix[initial_row_i + 1][dimensions_len + 1]
             else:
                 initial_difference = initial_table_matrix[initial_row_i + 1][dimensions_len + 1] - initial_table_matrix[initial_row_i][dimensions_len + 1]
-            
-            # it stores the dominent percent for the initial table
-            initial_dominant_percent = 0
-            if initial_difference > 0:
-                initial_dominant_percent = 100
+            initial_row_i = initial_row_i + 1
 
-            positive_count = 0
-            total_count = 0
+        # it stores the dominant percent for the initial table
+        initial_dominant_percent = 0
+        if initial_difference > 0:
+            initial_dominant_percent = 100
 
-            # while the group data is same for both the table it will continue in the loop
-            while new_row_i < new_num_rows and initial_table_matrix[initial_row_i][:dimensions_len] == new_table_matrix[new_row_i][:dimensions_len] :
-                new_difference = 0
+        if abs(initial_dominant_percent - new_dominant_percent) >= constants.SIMPSONS_PARADOX_DOMINANT_PERCENT_THRESHOLD:
+            if initial_row_i > 0 and initial_table_matrix[initial_row_i][:dimensions_len] == initial_table_matrix[initial_row_i - 1][:dimensions_len]:
+                suggestion_row_list.append(initial_row_i - 1)
+            suggestion_row_list.append(initial_row_i)
 
-                if new_row_i == new_num_rows - 1 or new_table_matrix[new_row_i][:dimensions_len + 1] != new_table_matrix[new_row_i + 1][:dimensions_len + 1]:
-                    if new_table_matrix[new_row_i][dimensions_len + 1] == slice1:
-                        new_difference = new_table_matrix[new_row_i][dimensions_len + 2]
-                    else:
-                        new_difference = -new_table_matrix[new_row_i][dimensions_len + 2]
-                else:
-                    if new_table_matrix[new_row_i][dimensions_len + 1] == slice1:
-                        new_difference = new_table_matrix[new_row_i][dimensions_len + 2] - new_table_matrix[new_row_i + 1][dimensions_len + 2]
-                    else:
-                        new_difference = new_table_matrix[new_row_i + 1][dimensions_len + 2] - new_table_matrix[new_row_i][dimensions_len + 2]
-                    new_row_i = new_row_i + 1
-
-                if new_difference > 0:
-                    positive_count = positive_count + 1
-                total_count = total_count + 1
-
-                new_row_i = new_row_i + 1
-
-            new_dominant_percent = (positive_count / total_count) * 100
-
-            # Finally according to the difference between dominent percentage we shall
-            # add the debiasing suggestion.
-            if abs(initial_dominant_percent - new_dominant_percent) >= constants.SP_THRESHOLD:
-                suggestion_row_list.append(initial_row_i)
-                suggestion_row_list.append(initial_row_i + 1)
-
-            initial_row_i = initial_row_i + 1;
         initial_row_i = initial_row_i + 1
 
     if len(suggestion_row_list) == 0:
@@ -287,6 +253,3 @@ def _check_simpsons_paradox(initial_result_table, new_result_table, new_added_co
         new_suggestion['is_row_level_suggestion'] = True
         new_suggestion['row_list'] = suggestion_row_list
         return new_suggestion
-            
-
-        
