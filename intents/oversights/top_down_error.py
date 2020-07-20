@@ -52,7 +52,7 @@ def top_down_error(table, metric, all_dimensions, slice_compare_column,
             Tuple of start_date and end_date
         date_column_name: Type-str
             It is the name of column which contains date
-        date_format: Type-str
+        day_first: Type-str
             It is required by datetime.strp_time to parse the date in 
             the format Format Codes
 https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
@@ -76,14 +76,14 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     date_column_name = kwargs.get('date_column_name', 'date')
     date_range = kwargs.get('date_range', None)
-    date_format = kwargs.get('date_format', '%Y-%m-%d')
+    day_first = kwargs.get('day_first', '%Y-%m-%d')
 
     slices = kwargs.get('slices', None)
 
     dimensions = kwargs.get('dimensions', None)
 
     table = aspects.apply_date_range(table, date_range,
-                                     date_column_name, date_format)
+                                     date_column_name, day_first)
     
     slice_list = []
     if slices is not None:
@@ -190,7 +190,7 @@ def _check_top_down_error(result_table, new_result_table, new_added_column,
 
     # dominant percentage is the percentage of pairs where 
     # (first value - second value) is positive.
-            
+
     while row_i < num_rows:
         if row_i == num_rows - 1 or table_matrix[row_i][:dimensions_len] != \
                                     table_matrix[row_i + 1][:dimensions_len]:
@@ -222,8 +222,8 @@ def _check_top_down_error(result_table, new_result_table, new_added_column,
             if new_max_correlation >= \
             constants.TOP_DOWN_ERROR_DISSIMILARITY_THRESHOLD and \
             correlation <= constants.TOP_DOWN_ERROR_SIMILARITY_THRESHOLD:
-                suggestion_row_list.append(row_i)
-                suggestion_row_list.append(row_i + 1)
+                suggestion_row_list.append({'row': row_i, 'confidence_score':100})
+                suggestion_row_list.append({'row':row_i + 1, 'confidence_score':100})
             row_i = row_i + 1
 
         row_i = row_i + 1
