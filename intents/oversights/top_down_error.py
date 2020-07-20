@@ -203,7 +203,7 @@ def _check_top_down_error(result_table, new_result_table, new_added_column,
             while new_row_i < new_num_rows and \
                   table_matrix[row_i][:dimensions_len] == \
                   new_table_matrix[new_row_i][:dimensions_len]:
-                if new_row_i == new_row_i - 1 or \
+                if new_row_i == new_num_rows - 1 or \
                 new_table_matrix[new_row_i][:dimensions_len + 1] != \
                 new_table_matrix[new_row_i + 1][:dimensions_len + 1]:
                     max_disimilarity = constants.TOP_DOWN_ERROR_DISSIMILARITY_THRESHOLD
