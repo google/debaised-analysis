@@ -23,6 +23,7 @@ Some of the operations are optional.
 from oversights.regression_to_mean import regression_to_mean
 from oversights.looking_at_tails import looking_at_tails
 from oversights.duplicates_in_topk import duplicates_in_topk
+from oversights.more_than_just_topk import more_than_just_topk
 from util.enums import *
 from util import aspects
 
@@ -114,6 +115,11 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
                                                date_range=date_range, date_format=date_format,
                                                slices=slices,
                                                summary_operator=summary_operator)
+
+    more_than_just_topk_suggestion = more_than_just_topk(results_without_k_condition, k, metric)
+
+    if more_than_just_topk_suggestion is not None:
+        suggestions.append(more_than_just_topk_suggestion)
 
     looking_at_tails_suggestion = looking_at_tails(results_without_k_condition, k, metric)
 
