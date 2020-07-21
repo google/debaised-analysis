@@ -24,6 +24,7 @@ import pandas
 from util import aspects
 from util.enums import SummaryOperators, Filters
 from util import constants 
+
 def top_down_error(table, metric, all_dimensions, slice_compare_column, 
                             slice1, slice2, summary_operator, **kwargs):
     """This function will implement the top down error debaising
