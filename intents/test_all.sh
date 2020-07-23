@@ -91,6 +91,14 @@ else
   list_logs+=("oversights/test_simpsons_paradox passed")
 fi
 
+if ! python3 oversights/test_top_down_error.py;
+then
+  err "oversights/test_top_down_error failed"
+  list_logs+=("oversights/test_top_down_error failed")
+else
+  list_logs+=("oversights/test_top_down_error passed")
+fi
+
 if ! python3 oversights/test_looking_at_tails.py;
 then
   err "oversights/test_looking_at_tails failed"
