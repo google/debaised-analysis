@@ -52,7 +52,7 @@ def simpsons_paradox(table, metric, all_dimensions, slice_compare_column,
             Tuple of start_date and end_date
         date_column_name: Type-str
             It is the name of column which contains date
-        date_format: Type-str
+        day_first: Type-str
             It is required by datetime.strp_time to parse the date in the format
             Format Codes
 https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
@@ -76,14 +76,14 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     date_column_name = kwargs.get('date_column_name', 'date')
     date_range = kwargs.get('date_range', None)
-    date_format = kwargs.get('date_format', '%Y-%m-%d')
+    day_first = kwargs.get('day_first', '%Y-%m-%d')
 
     slices = kwargs.get('slices', None)
 
     dimensions = kwargs.get('dimensions', None)
 
     table = aspects.apply_date_range(table, date_range,
-                                     date_column_name, date_format)
+                                     date_column_name, day_first)
 
     slice_list = []
     if slices is not None:
@@ -221,10 +221,8 @@ def _check_simpsons_paradox(initial_result_table, new_result_table, new_added_co
 
         # True if it is the last row or there is only one slice for this group.
         if initial_row_i == initial_num_rows - 1 or initial_table_matrix[initial_row_i][:dimensions_len] != initial_table_matrix[initial_row_i + 1][:dimensions_len]:
-            if initial_table_matrix[initial_row_i][dimensions_len] == slice1:
-                initial_difference = initial_table_matrix[initial_row_i][dimensions_len + 1]
-            else:
-                initial_difference = -initial_table_matrix[initial_row_i][dimensions_len + 1]
+            initial_row_i = initial_row_i + 1
+            continue
         else:
             if initial_table_matrix[initial_row_i][dimensions_len] == slice1:
                 initial_difference = initial_table_matrix[initial_row_i][dimensions_len + 1] - initial_table_matrix[initial_row_i + 1][dimensions_len + 1]
@@ -239,8 +237,8 @@ def _check_simpsons_paradox(initial_result_table, new_result_table, new_added_co
 
         if abs(initial_dominant_percent - new_dominant_percent) >= constants.SIMPSONS_PARADOX_DOMINANT_PERCENT_THRESHOLD:
             if initial_row_i > 0 and initial_table_matrix[initial_row_i][:dimensions_len] == initial_table_matrix[initial_row_i - 1][:dimensions_len]:
-                suggestion_row_list.append(initial_row_i - 1)
-            suggestion_row_list.append(initial_row_i)
+                suggestion_row_list.append({'row':initial_row_i, 'confidence_score':100})
+            suggestion_row_list.append({'row':initial_row_i + 1, 'confidence_score':100})
 
         initial_row_i = initial_row_i + 1
 
