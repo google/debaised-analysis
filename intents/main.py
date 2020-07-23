@@ -166,6 +166,15 @@ def hello_http(request):
 
         suggestions = updated_suggestions
                                                                       
+        updated_suggestions = []
+        for suggestion in suggestions:
+            updated_suggestion = suggestion
+            if 'changelist' in suggestion.keys():
+                updated_suggestion['json'] = func(request_json, suggestion['changelist'])
+            updated_suggestions.append(updated_suggestion)
+
+        suggestions = updated_suggestions
+                                                                      
     elif intent == 'slice_compare':
         query_result = slice_compare.slice_compare(query_table_dataframe,
                                                    metric, all_dimensions,
