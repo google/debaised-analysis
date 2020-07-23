@@ -34,6 +34,11 @@ LOOKING_AT_THE_TAILS_FLOAT_THRESHOLD = .7
 # type is angle, as cosine similarity is used
 LOOKING_AT_THE_TAILS_STRING_THRESHOLD = 20
 
+# Threshold of abs(similarity) between any row and the kth row in
+# more than just topk ddetection
+# This is a very tight threshold to prevent same suggestion coming each time
+MORE_THAN_JUST_TOPK_THRESHOLD = 0.001
+
 # threshold value of simpson's-paradox.
 SIMPSONS_PARADOX_DOMINANT_PERCENT_THRESHOLD = 75
 
