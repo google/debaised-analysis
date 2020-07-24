@@ -214,7 +214,10 @@
     }
   }
 
-  // If range is edited uncheck the checkbox for selecting entire table and set the header range
+  /**
+   * If range is edited uncheck the checkbox for selecting entire table
+   * and set the header range
+   */
   function updateCheckboxAndHeaderRange() {
     // Uncheck the checkbox
     document.querySelector('#select-entire-table').checked = false;
@@ -223,7 +226,9 @@
     setHeaderRange();
   }
   
-  // Set the header range when header row or data range is edited
+  /**
+   * Set the header range when header row or data range is edited
+   */
   function setHeaderRange() {
     var headerRow = document.querySelector('#edit-header-row').value;    
     var dataRange = document.querySelector('#edit-data-range').value;
