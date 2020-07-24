@@ -1,0 +1,98 @@
+<!-- Javascript functions for : metrics of correlation -->
+
+<script>
+
+  // Adding autocompletion to the metric1 and metric2 column name
+  autoComplete(document.querySelector('#metric-correlation1'));
+  autoComplete(document.querySelector('#metric-correlation2'));
+
+   /**
+   * Check the validity of the metric column entered as input
+   * @param {HTMLInputElement} metricColumn - The input element for getting metric column name
+   * @param {string} helperMetric - The id of the element used to give error messages
+   */
+  function correlationMetricCheck(metricColumn, helperMetric) {
+    var metricColumnValue = metricColumn.value.trim();
+
+    // Give error message if the metric column is invalid
+    if(!isValidColumnName(metricColumnValue)) {
+      document.querySelector('#' + helperMetric).innerHTML = 'Please enter a valid column name';
+    }
+    else {
+      document.querySelector('#' + helperMetric).innerHTML = '';
+    }
+  }
+
+  /**
+   * Call the function to update metrics used in correlation 
+   * when user clicks UPDATE in METRICS of CORRELATION card 
+   */
+  document.querySelector('#update-metrics-correlation').addEventListener('click', updateMetricCorrelation);
+
+  /**
+   * Update the values filled for: metric of correlation
+   */
+  function updateMetricCorrelation() {
+    var metricVal1 = document.querySelector('#metric-correlation1').value.trim();
+    var metricVal2 = document.querySelector('#metric-correlation2').value.trim();
+
+    // Flag variable indicates the validity of the inputs, 
+    // It is set to false if the input is invalid
+    var flag = true;
+    if(!isValidColumnName(metricVal1) || !isValidColumnName(metricVal2))
+      flag = false;
+
+    // If both metrics are empty, replace madlib by placeholder
+    if(flag && metricVal1 === '' && metricVal2 === '') {
+      showMetricCorrelation.innerHTML = '&lt;value1 and value2&gt;';
+      showMetricCorrelation.classList.toggle('placeholder-active');
+      showMetricCorrelation.classList.add('placeholder');
+      showMetricCorrelation.classList.remove('value');
+      aspectMetricCorrelation.classList.toggle('hide');
+        
+      correlationMetrics = null;
+      done.classList.toggle('hide');
+    }
+
+    // Else update the metrics and madlib query with the entered values if they are valid
+    else if(flag) {
+
+      // Set flagMetricCorrelation to false if the any metric is empty and give error message
+      var flagMetricCorrelation = true;
+      if(metricVal1 === '') {
+        document.querySelector('#helper-metric-correlation1').innerHTML = 'Please enter a metric';
+        flagMetricCorrelation = false;
+      }
+      if(metricVal2 === '') {
+        document.querySelector('#helper-metric-correlation2').innerHTML = 'Please enter a metric';
+        flagMetricCorrelation = false;
+      }
+
+      // Update values if no metric is empty
+      if(flagMetricCorrelation) {
+        // Filling the madlib 
+        var fillMetricCorrelation = '';
+        fillMetricCorrelation += metricVal1 + ' and ';
+        fillMetricCorrelation += metricVal2;
+
+        // Updating the correlation metrics stored
+        var correlationMetricsObj = {
+          'metric1': metricVal1,
+          'metric2': metricVal2
+        };
+        correlationMetrics = correlationMetricsObj;
+
+        console.log("correlation metrics ", correlationMetrics);
+        
+        showMetricCorrelation.innerHTML = fillMetricCorrelation;
+        showMetricCorrelation.classList.toggle('placeholder-active');
+        showMetricCorrelation.classList.remove('placeholder');
+        showMetricCorrelation.classList.add('value');
+        aspectMetricCorrelation.classList.toggle('hide');
+
+        done.classList.toggle('hide');
+      }      
+    }
+  }
+
+</script>

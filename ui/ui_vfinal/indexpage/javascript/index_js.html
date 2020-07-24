@@ -1,0 +1,252 @@
+<!-- Functions for opening dialog box to select data range -->
+<!-- Functions for expanding/collapsing panels and showing sample query -->
+<!-- Function for loading the selected intent -->
+
+<script>
+
+  // Functions for closing and opening the dialog for selecting data range
+  var modal = document.querySelector('.modal');
+  var trigger = document.querySelector('.trigger');
+  var update = document.querySelector('#update');
+  var cancel = document.querySelector('#cancel');
+
+  trigger.addEventListener('click', addModal);
+  cancel.addEventListener('click', removeModal);
+  window.addEventListener('click', windowOnClick);
+  update.addEventListener('click', updateRange);
+
+  /**
+   * Show the dialog when user clicks edit
+   */
+  function addModal() {
+    modal.classList.add('show-modal');
+    document.querySelector('#select-entire-table').checked = false;
+
+    // Load data in dialog
+    if(!Object.keys(tableRange).length) {
+      document.querySelector('#select-entire-table-container').classList.add('hide');
+    }
+    else {
+      document.querySelector('#select-entire-table-container').classList.remove('hide');
+      document.querySelector('#edit-data-range').value = tableRange['rangeA1Notation'];
+      document.querySelector('#edit-header-row').value = parseInt(tableRange['headerRow']);
+      document.querySelector('#edit-header-range').innerHTML = tableRange['headerRange'];
+      document.querySelector('#entire-table-range').innerHTML = tableRange['entireTableRange'];
+    }
+  }
+  
+  /**
+   * Remove the dialog
+   */
+  function removeModal() {
+    modal.classList.remove('show-modal');
+  }
+
+  /**
+   * Close the dialog when user clicks window 
+   */
+  function windowOnClick(event) {
+      if (event.target === modal) {
+          removeModal();
+      }
+  }
+
+  /**
+   * Update selected data range by the user
+   */
+  function updateRange() {
+    var rangeA1Notation = document.querySelector('#edit-data-range').value;
+    var headerRow = document.querySelector('#edit-header-row').value;
+    var headerRange = document.querySelector('#edit-header-range').textContent;
+    
+    // Stop update if range or header is invalid
+    if(!checkRangeValidity(rangeA1Notation) || !checkHeaderValidity(headerRow)) {
+      return;
+    }
+    
+    headerRow = parseInt(headerRow);
+    this.disabled = true;
+    this.innerHTML = addOnText.tableRange.editDialog.primaryBtnActiveContent;
+    this.classList.add('loading');
+    
+    google.script.run
+          .withSuccessHandler(setUpdatedRange)    // setUpdatedRange called upon successful completion of server-side function
+          .withUserObject(this)                   // Pass argument to setUpdatedRange
+          .setSelectedRange(rangeA1Notation,headerRow,headerRange);  // Executes server-side function - setSelectedRange  
+  }
+
+  /**
+   * Store selected data range by the user if range and header row are valid
+   * @rparam {Object} updatedRange - The updated range details in case of success 
+   *                                 and error details in case of invalid input
+   * @param {boolean} updatedRange.success - Indicates validity of the range selected by user
+   * @param {string} updatedRange.errorIn - The field containing error: headerRow / range 
+   * @param {string} updatedRange.inputSheet - The name of the sheet containing selected range
+   * @param {string} updatedRange.rangeA1Notation - The A1Notation of the selected range 
+   * @param {number} updatedRange.headerRow - The header row number of the selected range 
+   * @param {string} updatedRange.headerRange - The header range of the selected range
+   * @param {string} updatedRange.entireTableRange - The A1Notation of the table range 
+   *                                                  containing the selected range
+   */ 
+  function setUpdatedRange(updatedRange) {
+    update.disabled = false;
+    update.innerHTML = addOnText.tableRange.editDialog.primaryBtnContent;
+    update.classList.remove('loading');
+    
+    // Remove previous error messages
+    document.querySelector('#helper-range').innerHTML = '';
+    document.querySelector('#helper-header-row').innerHTML = '';
+    
+    // If server side function indicates an error in any input, give appropriate error message
+    if(!updatedRange['success']) {
+      if(updatedRange['errorIn'] === 'headerRow') {
+        document.querySelector('#helper-header-row').innerHTML = 
+            addOnText.tableRange.errorMsgs.errorHeaderOnUpdate;
+      }
+      else {
+         document.querySelector('#helper-range').innerHTML = 
+            addOnText.tableRange.errorMsgs.errorRangeOnUpdate;
+      }
+      return;
+    }
+    
+    // Else store the updated result and close the dialog
+    tableRange.inputSheet = updatedRange.inputSheet;
+    tableRange.rangeA1Notation = updatedRange.rangeA1Notation;
+    tableRange.headerRow = updatedRange.headerRow;
+    tableRange.headerRange = updatedRange.headerRange;
+    tableRange.entireTableRange = updatedRange.entireTableRange;
+    document.querySelector(".alert").classList.add("hide");
+    removeModal();
+
+    // Show the updated data range in sidebar
+    document.querySelector('#data-range').innerHTML = updatedRange['inputSheet'] + '!' + updatedRange['rangeA1Notation']; 
+    document.querySelector('#header-range').innerHTML = updatedRange['headerRange']; 
+
+    // Call the function to detect date columns 
+    google.script.run.detectDate(tableRange['rangeA1Notation'], 
+                                 Number(tableRange['headerRow']), 
+                                 tableRange['inputSheet'], 
+                                 tableRange['entireTableRange']);
+
+    // Call the function to check if table cells have same formatting
+    google.script.run.checkTableCellsFormattingPattern(tableRange['inputSheet'],
+                                                       tableRange['rangeA1Notation'], 
+                                                       Number(tableRange['headerRow']));
+  }
+
+  /**
+   * Expand and collapse intents according to need  
+   */
+  var coll = document.getElementsByClassName('collapsible');
+  for (var i = 0; i < coll.length; i++) {
+    // Adding 'click' event listener to each collapsible/expandable panel
+    coll[i].addEventListener('click', function() {
+      this.classList.toggle('active');
+      var content = this.nextElementSibling;
+      var icon = this.lastElementChild;
+      
+      if (content.style.maxHeight){
+        content.style.maxHeight = null;
+      } 
+      else {
+        content.style.maxHeight = content.scrollHeight + 'px';
+      }
+      
+      icon.classList.toggle('expand-icon');
+      icon.classList.toggle('collapse-icon');
+    });
+  }
+
+  /**
+   * Show or hide sample query for intents 
+   */
+  var sampleQuery = document.getElementsByClassName('sample-query');
+  for (var i = 0; i < sampleQuery.length; i++) {
+    // Adding 'click' event listener to each sample query
+    sampleQuery[i].addEventListener('click', function() {
+      var query = this.nextElementSibling;
+      var content = this.parentElement;
+
+      if (query.style.maxHeight){
+        query.style.maxHeight = null;
+        this.textContent = addOnText.intentPicker.showSampleQuery;
+      } 
+      else {
+        query.style.maxHeight = query.scrollHeight + 'px';
+        content.style.maxHeight = content.scrollHeight + query.scrollHeight + 'px';
+        this.innerHTML = addOnText.intentPicker.hideSampleQuery;
+      }
+    });
+  }
+
+  /**
+   * Mapping madlibs of each intent and the sample query for easy understanding
+   */
+  var sampleQueryElements = document.getElementsByClassName('highlight-in-query');
+  for (var i = 0; i < sampleQueryElements.length; i++) {
+    sampleQueryElements[i].addEventListener('mouseover', function() {
+      var id = this.id;
+      var arr = id.split('-');
+      var id1 = arr[0] + '-' + arr[1] + '-' + 'placeholder';
+      var id2 = arr[0] + '-' + arr[1] + '-' + 'value';
+      document.getElementById(id1).classList.add('active-sample-query');
+      document.getElementById(id2).classList.add('active-sample-query');
+    });
+    sampleQueryElements[i].addEventListener('mouseout', function() {
+      var id = this.id;
+      var arr = id.split('-');
+      var id1 = arr[0] + '-' + arr[1] + '-' + 'placeholder';
+      var id2 = arr[0] + '-' + arr[1] + '-' + 'value';
+      document.getElementById(id1).classList.remove('active-sample-query');
+      document.getElementById(id2).classList.remove('active-sample-query');
+    });
+  }
+
+  /**
+   * Load the intent selected by user
+   * @param {HTMLInputElement} button - The button selected for loading intent
+   * @param {string} intentName - The name of the intent to be loaded
+   */
+  function loadIntent(button, intentName) {
+    // Give error message if the data range is empty
+    if(!Object.keys(tableRange).length) {
+      document.querySelector(".error-messages").innerHTML = addOnText.tableRange.errorMsgs.errorEmptyRange;
+      document.querySelector(".alert").classList.remove("hide");
+      return;
+    }
+    
+    // If data range is valid, load the selected intent
+    button.classList.add('loading');
+    button.innerHTML = addOnText.intentPicker.selectIntentBtnActive;
+    button.disabled = true;
+    document.querySelector(".alert").classList.add("hide");
+    
+    switch(intentName) {
+      case 'show':          
+        google.script.run.show();
+        break;
+
+      case 'topk':          
+        google.script.run.topK();
+        break;
+
+      case 'slice-compare': 
+        google.script.run.sliceCompare();
+        break;
+
+      case 'time-compare': 
+        google.script.run.timeCompare();
+        break;
+     
+      case 'trend': 
+        google.script.run.trend();
+        break;
+
+      case 'correlation': 
+        google.script.run.correlation();
+        break;
+    }
+  }
+
+</script>

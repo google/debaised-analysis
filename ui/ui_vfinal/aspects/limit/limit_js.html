@@ -1,0 +1,56 @@
+<!-- Javascript functions for aspect: limit -->
+
+<script>
+
+  /**
+   * Check the validity of the limit value entered as input
+   * @param {HTMLInputElement} limit - The input element for getting limit
+   * @param {string} helperLimit - The id of the element used to give error messages
+   */
+  function limitCheck(limit, helperLimit) {
+    var limitValue = limit.value.trim();
+    var limitInteger = parseInt(limitValue)
+
+    // Give error message if the limit is invalid
+    if(limitValue === '' || limitInteger <=0) {
+      document.querySelector('#' + helperLimit).innerHTML = 'Please enter a valid value for K';
+    }
+    else {
+      document.querySelector('#' + helperLimit).innerHTML = '';
+    }
+  }
+
+  /**
+   * Call the function to update limit when user clicks UPDATE in LIMIT(K) card
+   */
+  document.querySelector('#update-limit').addEventListener('click', updateLimit);
+   
+  /**
+   * Update the values filled for aspect: limit
+   */
+  function updateLimit() {
+    var limitVal = document.querySelector('#limit').value.trim();
+    var limitInt = parseInt(limitVal);
+    
+    // Update topk limit and madlib query with the entered value if the input is valid
+    if(limitVal !== '' && limitInt > 0){
+      // Filling the madlib 
+      limitVal = parseInt(limitVal);
+      var fillLimit = 'top-'+limitVal;
+
+      // Updating the topK limit stored
+      topKLimit = limitVal;
+      document.querySelector('#helper-limit').innerHTML = '';
+      console.log('limit ' + topKLimit);
+      
+      showLimit.innerHTML = fillLimit;
+      showLimit.classList.toggle('placeholder-active');
+      showLimit.classList.remove('placeholder');
+      showLimit.classList.add('value');
+      aspectLimit.classList.toggle('hide');
+      
+      done.classList.toggle('hide');
+    }
+  }
+
+</script>

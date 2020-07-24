@@ -1,0 +1,420 @@
+<!-- Javascript functions for aspect: slices -->
+
+<script>
+  
+  // Counter for slices created
+  var ids = 1;
+
+  // Adding autocompletion to the first slice column name
+  autoComplete(document.querySelector('#slice-col1'));
+
+  /**
+   * Add slices when user clicks the add icon
+   */
+  function addSlice() {
+    ids++;                       // Increment number of slices created
+    var sliceId = 'filt' + ids;  // Id of the created slice
+    
+    // Html of each created slice 
+    var html =  '<div style="display: flex; justify-content: space-between;">' +
+                  '<div class="box filter-container">' +
+                 
+                    '<div class="container-input">' +
+                      '<div class="outer-input-div" tabindex="0">' +
+                        '<label ' +
+                            'class="label-input" ' +
+                            'for="slice-col' + ids + '" '+ 
+                            'data-shrink="true">Filter Column</label>' +
+                        '<div class="inner-input-div">' +
+                          '<input ' +
+                              'id="slice-col' + ids + '" ' + 
+                              'class="input-field" ' +
+                              'name="slice-col" ' +
+                              'placeholder="column name" ' +
+                              'type="text" ' +
+                              'aria-invalid="false" ' +
+                              'aria-describedby="helper-slice-col' + ids + '" ' +
+                              'onfocusout="sliceCheck(this,\'helper-slice-col' + ids + '\')">' +
+                        '</div>' +
+                      '</div>' +
+                      '<p id="helper-slice-col' + ids + '" class="helper-text"></p>' +
+                    '</div>' +
+              
+                    '<div class="container-input">' +
+                      '<div class="outer-input-div" tabindex="0">' +
+                        '<label ' +
+                            'class="label-input" ' +
+                            'for="slice-op' + ids + '" '+ 
+                            'data-shrink="true">Filter Operation</label>' +
+                        '<div class="inner-input-div" style="padding: 0;">' +
+                          '<select ' +
+                              'id="slice-op' + ids + '" ' +
+                              'class="input-field input-dropdown" ' +
+                              'name="slice-op" ' +
+                              'aria-invalid="false" ' +
+                              'onfocusout="sliceValCompatible(\'slice-val' + ids + '\',' +
+                                                             '\'slice-op' + ids + '\',' +
+                                                             '\'helper-slice-val' + ids + '\')">' +
+                            '<option>Equal to</option>' +
+                            '<option>Not equal to</option>' +
+                            '<option>In</option>' +
+                            '<option>Not in</option>' +
+                            '<option>Less than</option>' +
+                            '<option>Less than equal to</option>' +
+                            '<option>Greater than</option>' +
+                            '<option>Greater than equal to</option>' +
+                          '</select>' +
+                          '<svg class="dropdown-icon" focusable="false" viewBox="0 0 24 24" aria-hidden="true">' +
+                            '<path d="M7 10l5 5 5-5z"></path>' +
+                          '</svg>' +
+                        '</div>' +
+                        '<p id="helper-slice-op' + ids + '" class="helper-text"></p>' +
+                      '</div>' +
+                    '</div>' +
+              
+                    '<div class="container-input">' +
+                      '<div class="outer-input-div" tabindex="0">' +
+                        '<label ' +
+                            'class="label-input" ' +
+                            'for="slice-val' + ids + '" '+ 
+                            'data-shrink="true">Filter Values</label>' +
+                        '<div class="inner-input-div">' +
+                          '<input ' +
+                              'id="slice-val' + ids + '" ' +
+                              'class="input-field" ' +
+                              'name="slice-val" ' +
+                              'placeholder="values separated by ," ' +
+                              'type="text" ' +
+                              'aria-invalid="false" ' + 
+                              'aria-describedby="helper-slice-val' + ids + '" ' +
+                              'oninput="filterIconChange(this)" ' +
+                              'onfocusout="sliceValCompatible(\'slice-val' + ids + '\',' +
+                                                             '\'slice-op' + ids + '\',' + 
+                                                             '\'helper-slice-val' + ids + '\')">' +
+                          '<span class="icon-hover">' +
+                            '<span ' +
+                              'id="select-filter-value' + ids + '" ' +
+                              'class="material-icons" ' +
+                              'style="cursor: pointer;" ' +
+                              'onclick="updateFilterValues(this,\'slice-val' + ids + '\')">' +
+                                'border_all' +
+                            '</span>' +
+                            '<span class="icon-hover-text hover-range">Get filter values</span>' +
+                          '</span>' +
+                        '</div>' +
+                      '</div>' +
+                      '<p id="helper-slice-val' + ids + '"class="helper-text"></p>' +
+                    '</div>' +
+              
+                  '</div>' +
+              
+                  '<button ' +
+                      'class="circle-button sub-button" ' +
+                      'style="margin-top:10px" ' +
+                      'onclick="removeElement(\'' + sliceId + '\')">' +
+                    '<span style="display: inherit;">' +
+                      '<svg class="minus" focusable="false" viewBox="0 0 24 24" aria-hidden="true">' +
+                        '<path d="M19 13H5v-2h14v2z"></path>' +
+                      '</svg>' +
+                    '</span>' +
+                  '</button>' +
+            
+                '</div>';
+ 
+    // Adding the slice created to slice's parent div      
+    addElement('slice-parent','div',sliceId,html);
+
+    // Adding autocompletion to the created slice column
+    autoComplete(document.querySelector('#slice-col'+ids));
+  }
+
+  /**
+   * Change the icon in slice values input field when the value entered changes
+   * The icon is set to select values from sheet if input values are empty and 
+   * delete/remove if the input values are filled
+   * @param {HTMLInputElement} filterValueField - The input element for getting slice values
+   */
+  function filterIconChange(filterValueField) {
+    if(filterValueField.value.trim() === '') {
+      filterValueField.nextElementSibling.firstElementChild.innerHTML = 'border_all';
+      filterValueField.nextElementSibling.lastElementChild.innerHTML = 'Get filter values';
+    }
+    else {
+      filterValueField.nextElementSibling.firstElementChild.innerHTML = 'highlight_off';
+      filterValueField.nextElementSibling.lastElementChild.innerHTML = 'Remove';
+    }
+  }
+
+  /**
+   * Call the required function based on the icon selected - select values or remove values
+   * @param {HTMLInputElement} btnSlice - The icon selected by the user
+   * @param {string} sliceValId - The id of the slice values element to update it's contents
+   */
+  function updateFilterValues(btnSlice,sliceValId) {
+    if(btnSlice.innerHTML.trim() === 'border_all') {
+      getFilterValues(btnSlice,sliceValId);
+    }
+    else {
+      deleteFilterValues(btnSlice,sliceValId);
+    }
+  }
+
+  /**
+   * Fill the selected filter values from sheet
+   * @param {HTMLInputElement} btnSlice - The icon selected by the user
+   * @param {string} sliceValId - The id of the slice values element to update it's contents
+   */
+  function getFilterValues(btnSlice,sliceValId) {
+    btnSlice.classList.add('loading');  
+    btnSlice.nextElementSibling.innerHTML = 'Selecting';
+    
+    // Storing the icon selected by the user and id of the slice values element 
+    // to pass it to the function: setFilterValues
+    var sliceValObj = {
+      'btnSlice' : btnSlice,
+      'sliceValId' : sliceValId
+    }
+    
+    google.script.run                          
+          .withSuccessHandler(setFilterValues) // setFilterValues called upon successful completion of server-side function
+          .withUserObject(sliceValObj)         // Pass argument to setFilterValues
+          .getFilterValues();                  // Executes server-side function - getFilterValues
+    return;
+  }
+
+  /**
+   * Receives the selected filter values from server-side function and updates them in the input field
+   * @param {Array} filterValues - The list of values selected from sheet
+   * @return {Object} sliceValObj - The object containing details about html elements to update
+   * @param {HTMLInputElement} sliceValObj.btnSlice - The icon selected by the user
+   * @param {string} sliceValObj.sliceValId - The id of the slice values element to update it's contents
+   */
+  function setFilterValues(filterValues,sliceValObj) {
+    var filter = '';
+    for(var i = 0; i < filterValues.length; i++) {
+      for(var j = 0; j < filterValues[0].length; j++) {
+        filter = filter.concat(filterValues[i][j]);
+        filter = filter.concat(', ');
+      }
+    }
+    if(filter.length > 1)
+      filter = filter.slice(0,filter.length - 2);
+    document.getElementById(sliceValObj.sliceValId).value = filter; 
+
+    sliceValObj.btnSlice.classList.remove('loading');
+
+    // Change the icon to remove values
+    sliceValObj.btnSlice.innerHTML = 'highlight_off';
+    sliceValObj.btnSlice.nextElementSibling.innerHTML = 'Remove'; 
+    document.querySelector('#' + sliceValObj.sliceValId).focus();
+  }
+  
+  /**
+   * Remove/delete the filter values from the input field
+   * @param {HTMLInputElement} btnSlice - The icon selected by the user
+   * @param {string} sliceValId - The id of the slice values element to update it's contents
+   */
+  function deleteFilterValues(btnSlice,sliceValId) {
+    btnSlice.classList.add('loading');  
+    btnSlice.nextElementSibling.innerHTML = 'Removing';
+    
+    document.getElementById(sliceValId).value = '';  
+    
+    btnSlice.classList.remove('loading'); 
+
+    // Change the icon to select values from sheet
+    btnSlice.innerHTML = 'border_all';         
+    btnSlice.nextElementSibling.innerHTML = 'Get filter values'; 
+    document.querySelector('#' + sliceValId).focus();
+  }
+
+  /**
+   * Check the validity of the slice column entered as input
+   * @param {HTMLInputElement} sliceColumn - The input element for getting slice column name
+   * @param {string} helperSlice - The id of the element used to give error messages
+   */
+  function sliceCheck(sliceColumn, helperSlice) {
+    var sliceColumnValue = sliceColumn.value.trim();
+
+    // Give error message if the slice column is invalid
+    if(!isValidColumnName(sliceColumnValue)) {
+      document.querySelector('#' + helperSlice).innerHTML = 'Please enter a valid slice column';
+    }
+    else {
+      document.querySelector('#' + helperSlice).innerHTML = '';
+    }
+  }
+ 
+  /**
+   * Find whether the slice operation and slice values entered are compatible
+   * @param {Array} sliceValue - The list of slice values entered
+   * @param {string} sliceOperation - The slice operation selected by user
+   */
+  function sliceValCompatibleUtil(sliceValue,sliceOperation) {
+    if(sliceValue.length === 1 && sliceValue[0] === '')
+      return true;
+     
+    // If slice operation is not (In,Not in),the length of sliceValue array 
+    // should not be greater than 1 
+    // For slice operations <, <=, >, >= : the slice value should be a number
+    if(sliceOperation !== 'In' && sliceOperation !== 'Not in') {
+      if(sliceValue.length > 1) {
+        return false;
+      }
+      if(sliceOperation !== 'Equal to' &&  sliceOperation !== 'Not equal to') {
+        if(isNaN(sliceValue[0])) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+  
+  /**
+   * Check the compatibility of the slice operation and slice values entered
+   * @param {string} sliceValueId - The id of the element containing slice values
+   * @param {string} sliceOperationId - The id of the element containing slice operation
+   * @param {string} helperSliceValue - The id of the element used to give error messages
+   */
+  function sliceValCompatible(sliceValueId, sliceOperationId, helperSliceValue) {
+    // Storing the slice values in an array
+    var sliceValueElement = document.querySelector('#' + sliceValueId);
+    var sliceValue = sliceValueElement.value.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+    for(var i = 0; i < sliceValue.length; i++)
+        sliceValue[i] = sliceValue[i].trim();
+    
+    // Storing the slice operation selected    
+    var sliceOperationElement = document.querySelector('#' + sliceOperationId);
+    var sliceOperation =  sliceOperationElement.options[sliceOperationElement.selectedIndex].value;
+
+    // Give error message if the slice value is not compatible with the operation selected
+    if(!sliceValCompatibleUtil(sliceValue,sliceOperation)) {
+      document.querySelector('#' + helperSliceValue).innerHTML = 
+          'Please enter a filter value compatible with the selected filter operation';
+    }
+    else {
+      document.querySelector('#' + helperSliceValue).innerHTML = '';
+    }
+  }
+
+  /**
+   * Call the function to update slices when user clicks UPDATE in SLICE card
+   */
+  document.querySelector('#update-slice').addEventListener('click', updateSlice);
+
+  /**
+   * Update the values filled for aspect: slice
+   */
+  function updateSlice() {
+    var sliceContainer = document.querySelectorAll('.filter-container');
+    var sliceCol =  document.getElementsByName('slice-col');
+    var sliceOp =  document.getElementsByName('slice-op');
+    var sliceValue =  document.getElementsByName('slice-val');
+    
+    var slicesVal = [];
+    var fillSlice = '';
+
+    // Flag variable indicates the validity of the inputs, 
+    // It is set to false if the input is invalid
+    var flag = true;
+    
+    for(var i = 0; i < sliceContainer.length; i++) {
+      var sliceObj = {
+        'sliceCol': sliceCol[i].value.trim(),
+        'sliceOp': sliceOp[i].options[sliceOp[i].selectedIndex].value,
+        'sliceVal': sliceValue[i].value.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
+      }
+      for(var j = 0; j < sliceObj.sliceVal.length; j++) { 
+        sliceObj.sliceVal[j] = sliceObj.sliceVal[j].trim();
+      }
+      
+      if(sliceObj.sliceCol !== '') {
+        // If slice column name is valid and slice values and operation are compatible
+        if(
+          isValidColumnName(sliceObj.sliceCol) && 
+          sliceValCompatibleUtil(sliceObj.sliceVal, sliceObj.sliceOp)
+        ) {
+          // Give error message if slice values are empty
+          if(sliceValue[i].value.trim() === '') {
+            document.querySelector('#helper-slice-val' + (i+1)).innerHTML = 'Please enter a slice value';
+            flag = false;
+          }
+          // Else store the results
+          else {
+            // Storing filter values
+            for(var j = 0; j < sliceObj.sliceVal.length; j++) {
+              if(sliceObj.sliceVal[j] !== '') {
+                if(!isNaN(sliceObj.sliceVal[j])) {
+                  sliceObj.sliceVal[j] = Number(sliceObj.sliceVal[j]);
+                }
+                else if(sliceObj.sliceVal[j].toLowerCase() === 'true') {
+                  sliceObj.sliceVal[j] = true;
+                }
+                else if(sliceObj.sliceVal[j].toLowerCase() === 'false') {
+                  sliceObj.sliceVal[j] = false;
+                }
+              }
+            }
+
+            // Remove blank values from filter values
+            var tempSliceVal = [];
+            var sliceValMadlib = '';
+            for(var j = 0; j <sliceObj.sliceVal.length; j++) {
+              if(sliceObj.sliceVal[j] !== '') {
+                tempSliceVal.push(sliceObj.sliceVal[j]);
+                sliceValMadlib += sliceObj.sliceVal[j] + ', ';
+              }
+            }
+            sliceObj.sliceVal = tempSliceVal;
+            sliceValMadlib = sliceValMadlib.slice(0,sliceValMadlib.length - 2);
+
+            // Storing filter values according to the operation selected
+            if(sliceObj.sliceOp !== 'In' && sliceObj.sliceOp !== 'Not in')
+              sliceObj.sliceVal = sliceObj.sliceVal[0];
+
+            slicesVal.push(sliceObj);
+            
+            // Constructing the madlib 
+            fillSlice += sliceObj.sliceCol + ' is ' + sliceObj.sliceOp + ' ' + sliceValMadlib +', ';
+          }
+        }
+        // else flag is set to false
+        else {
+          flag = false;
+          break;
+        }
+      }
+    }
+
+    // If all inputs are empty, replace madlib by placeholder
+    if(flag && slicesVal.length === 0) {
+      showSlice.innerHTML = '&lt;filter(s)&gt;';
+      showSlice.classList.toggle('placeholder-active');
+      showSlice.classList.add('placeholder');
+      showSlice.classList.remove('value');
+      aspectSlice.classList.toggle('hide');
+
+      slices = [];
+      done.classList.toggle('hide');
+    }
+
+    // Else update slices and madlib query with the entered values if they are valid
+    else if(flag) {
+      // Filling the madlib 
+      fillSlice = fillSlice.slice(0,fillSlice.length - 2);
+
+      // Updating the slices stored
+      slices = slicesVal;
+      console.log('slice ',slices);
+ 
+      showSlice.innerHTML = fillSlice;
+      showSlice.classList.toggle('placeholder-active');
+      showSlice.classList.remove('placeholder');
+      showSlice.classList.add('value');
+      aspectSlice.classList.toggle('hide');
+
+      done.classList.toggle('hide');
+    }
+  }
+
+</script>

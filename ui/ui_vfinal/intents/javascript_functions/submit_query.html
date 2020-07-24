@@ -1,0 +1,363 @@
+<!-- Javascript functions for using the data filled by user and 
+    calling server-side Apps Script function to get the results -->
+
+<script>
+
+  // The submit button - COMPUTE
+  var done = document.getElementById('done');  
+
+  /**
+   * Send the data filled by user to server side function to get the results of submitted query
+   * The function is called when user clicks the Comoute(submit button)
+   * @param {string} intentName - The name to the intent for which query is submitted
+   */
+  function evaluateQuery(intentName) {
+    // If input is not valid, give error messages and return - query is not submitted
+    if(!isValidIntentInput(intentName)) 
+      return;
+    
+    // If input is valid, hide error message if any
+    document.querySelector('.alert').classList.add('hide');
+
+    done.innerHTML = 'Computing'; 
+    done.disabled = true;       
+    document.querySelector('.cover').classList.add('remove-cover');
+    
+    // Intent name - for whih=ch the query is submitted
+    intent = intentName;   
+    
+    // Call server side function with the input values to submit query and receive output
+    // Call printOutput when server side function returns successfully to display the results
+    google.script.run
+          .withSuccessHandler(printOutput)
+          .evalQuery(              
+            intent,
+            metric,
+            summaryOperation,
+            isAsc,
+            topKLimit,
+            dimensions,
+            slices,
+            dateRange,
+            timeGranularity,
+            comparisonValue,
+            compareDateRange,
+            correlationMetrics,
+            dateColumnInfo);
+  }
+
+  /**
+   * Function called after server-side function - evalQuery returns successfully
+   * Stores the results received and calls a function to display the output
+   *
+   * @param {Object} queryResult - The results of the query submitted 
+   * @param {string} queryResult.status - Indicates whether gcp function returned results successfully
+   * @param {string} queryResult.jsonQuery - The json for the submitted query
+   * @param {Array} queryResult.outputTable - The output table of the query submitted 
+   * @param {Object[]} queryResult.suggestions - The list of suggestions related to the submitted query
+   * @param {?Array} queryResult.filtersPassed - The list of true-false values to insert output as column on filtering
+   * @param {?Array} queryResult.inTopK -  The list of true-false values to insert output as column in topk
+   */
+  function printOutput(queryResult) {
+    done.innerHTML = 'Compute';      
+    done.disabled = false;         
+    document.querySelector('.cover').classList.remove('remove-cover');
+
+    // Storing the output table, suggestions and other received results 
+    var status = queryResult['status'];
+    jsonQuery = queryResult['jsonQuery'];
+    outputTable = queryResult['outputTable'];
+    suggestions = queryResult['suggestions'];
+    filtersPassed = queryResult['filtersPassed'];
+    inTopK = queryResult['inTopK'];
+    
+    console.log('jsonQuery ', jsonQuery);
+    console.log('outputTable ', outputTable);
+    console.log('suggestions ', suggestions);
+    console.log('filtersPassed ', filtersPassed);
+    console.log('inTopK ', inTopK);
+
+    // Show compact madlib of submitted query and it's output
+    document.querySelector('#back-to-intent').classList.remove('hide');
+    document.querySelector('#query-after-compute').classList.remove('hide');
+
+    // Hide madlib of query written by user and compute button
+    document.querySelector('#back-to-home').classList.add('hide');
+    document.querySelector('#query').classList.add('hide');
+    document.querySelector('#done').classList.add('hide');
+
+    // Display the output in sidebar
+    createTableInSidebar(status);
+  }
+
+  /**
+   * Display the results of submitted query in sidebar
+   * @param {string} status - Indicates whether gcp function returned results successfully
+   */
+  function createTableInSidebar(status) {
+    // Create madlib query of the submitted query
+    document.querySelector('#short-query').innerHTML = createQueryFromJson(jsonQuery);
+
+    // Display error message if the gcp function fails 
+    if(status === 'fail') {
+      document.querySelector('#gcp-error').classList.remove('hide');
+      document.querySelector('#output').classList.add('hide');
+      document.querySelector('#debiasing-suggestions').classList.add('hide');
+      return;
+    }
+    
+    document.querySelector('#gcp-error').classList.add('hide');
+    
+    // Creating the output table
+    var table = '<table id="output-table">';
+    
+    // Table headers
+    var tableHead = '<thead>'+
+                      '<tr>';
+    for(var i = 0; i < outputTable[0].length; i++) {
+      tableHead += '<th>' + outputTable[0][i] + '</th>';
+    }
+    tableHead +=  '</tr>'+
+                '</thead>';
+    
+    // Table body
+    var tableBody = '<tbody>';
+    for(var i = 1; i < outputTable.length; i++) {
+        tableBody += '<tr>';
+        for(var j = 0; j < outputTable[i].length; j++) {
+            tableBody += '<td>' + outputTable[i][j] + '</td>';
+        }
+        tableBody += '</tr>';
+    }
+    tableBody += '</tbody>';
+    
+    table += tableHead;
+    table += tableBody;
+    table += '</table>';
+
+    // Displaying the result table to user
+    document.querySelector('#query-output').innerHTML = table;
+    document.querySelector('#output').classList.remove('hide');
+    
+    // Adding the option to insert output in sheet
+    document.querySelector('#output-location').classList.add('hide');
+    document.querySelector('#insert-in-new-sheet-container').classList.add('hide');
+    document.querySelector('#insert-in-sheet-container').classList.add('hide');
+    if(outputTable.length > 1) {
+      if(filtersPassed === null && inTopK === null) {
+        document.querySelector('#insert-in-new-sheet-container').classList.remove('hide');
+      }
+      else {
+        document.querySelector('#insert-in-sheet-container').classList.remove('hide');
+      }
+    }
+    
+    // Creating suggestions list
+    var messages = '';
+    for(var i = 0; i < suggestions.length; i++) {
+      messages += '<div class="suggestion-box">';
+      
+      // Adding suggestions text
+      messages += '<span class="suggestion-text">' + suggestions[i].suggestion + '</span>';
+      
+      messages += '<div class="flex-right">';
+      // If suggestion contains column list, add option to highlight columns in output table
+      if(suggestions[i].is_column_level_suggestion) {
+        messages += '<button ' +
+                      'class="btn primary suggestion-btn" ' + 
+                      'onclick=\'highlightColumns(this,' + JSON.stringify(suggestions[i].col_list) + ')\'>' +
+                         'Highlight in table' +
+                    '</button>';
+      }
+      // If suggestion contains row list, add option to highlight rows in output table
+      if(suggestions[i].is_row_level_suggestion) {
+        messages += '<button ' +
+                      'class="btn primary suggestion-btn" ' + 
+                      'onclick=\'highlightRows(this,' + JSON.stringify(suggestions[i].row_list) + ')\'>' +
+                         'Highlight in table' +
+                    '</button>';
+      }
+      // If suggestion contains json for alternate query, add option to run it
+      if('json' in suggestions[i]) {
+        console.log('suggestion json',JSON.stringify(suggestions[i].json));
+        messages += '<button ' +
+                      'class="btn primary suggestion-btn" ' + 
+                      'onclick=\'submitDebiasingQuery(' + JSON.stringify(suggestions[i].json) + ')\'>' +
+                         'Try this' +
+                    '</button>';
+      }
+      messages += '</div>';
+      
+      messages += '</div>';
+    }
+    document.querySelector('#suggestions-content').innerHTML = messages;
+    
+    // Specifying number of suggestions to the user
+    var suggestionsHeading = 'You have ' + suggestions.length + ' suggestions '
+    document.querySelector('#suggestions-heading').innerHTML = suggestionsHeading;
+
+    // If there are any suggestions, show the suggestions card
+    if(suggestions.length>0) {
+      document.querySelector('#suggestions-content').style.maxHeight = null;
+      document.querySelector('#suggestions-toggle-icon').classList.add('expand-icon');
+      document.querySelector('#suggestions-toggle-icon').classList.remove('collapse-icon');
+      document.querySelector('#debiasing-suggestions').classList.remove('hide');
+    }
+    // Else hide the suggestions card
+    else {
+      document.querySelector('#debiasing-suggestions').classList.add('hide');
+    }
+  }
+
+  /**
+   * Collapse and expand the suggestions card 
+   * @param {HTMLElement} collapsibleCard - The card to collapse / expand
+   */
+  function toggleCardState(collapsibleCard) {
+    var suggestionsContent = collapsibleCard.nextElementSibling;
+    var icon = collapsibleCard.lastElementChild;
+      
+    if (suggestionsContent.style.maxHeight){
+      suggestionsContent.style.maxHeight = null;
+    } 
+    else {
+      suggestionsContent.style.maxHeight = suggestionsContent.scrollHeight + 'px';
+    }
+      
+    icon.classList.toggle('expand-icon');
+    icon.classList.toggle('collapse-icon');
+  }
+
+  /**
+   * Submit the suggested query
+   * @param {string} jsonQuery - The json of submitted query
+   */
+  function submitDebiasingQuery(jsonOfQuery) {
+    document.querySelector('.cover').classList.add('remove-cover');
+    
+    // Adding the previous query and output shown in the stack
+    var queryObject = {
+      'jsonQuery': jsonQuery,
+      'outputTable': outputTable,
+      'suggestions': suggestions,
+      'filtersPassed': filtersPassed,
+      'inTopK': inTopK
+    };
+    stack.push(queryObject);
+    
+    // Calling gcp function to receive output of the suggested query
+    google.script.run
+          .withSuccessHandler(submitDebiasingQuerySuccessHandler)
+          .callGcpToGetQueryResult(JSON.stringify(jsonOfQuery));   
+  }
+  
+  /**
+   * Function called after server-side function - callGcpToGetQueryResult returns successfully
+   * Stores the results received and calls a function to display the output
+   *
+   * @param {Object} queryResult - The results of the query submitted 
+   * @param {string} queryResult.status - Indicates whether gcp function returned results successfully
+   * @param {string} queryResult.jsonQuery - The json for the submitted query
+   * @param {Array} queryResult.outputTable - The output table of the query submitted 
+   * @param {Object[]} queryResult.suggestions - The list of suggestions related to the submitted query
+   * @param {?Array} queryResult.filtersPassed - The list of true-false values to insert output as column on filtering
+   * @param {?Array} queryResult.inTopK -  The list of true-false values to insert output as column in topk
+   */
+  function submitDebiasingQuerySuccessHandler(queryResult) {
+    // Storing the output table, suggestions and other received results 
+    var status = queryResult['status'];
+    jsonQuery = queryResult['jsonQuery'];
+    outputTable = queryResult['outputTable'];
+    suggestions = queryResult['suggestions'];
+    filtersPassed = queryResult['filtersPassed'];
+    inTopK = queryResult['inTopK'];
+    
+    console.log('jsonQuery ',jsonQuery);
+    console.log('outputTable ',outputTable);
+    console.log('suggestions ',suggestions);
+    console.log('filtersPassed ',filtersPassed);
+    console.log('inTopK ',inTopK);
+
+    document.querySelector('.cover').classList.remove('remove-cover');
+
+    // Scrolling to top of sidebar
+    document.querySelector('#description').scrollIntoView();
+
+    // Display the output in sidebar
+    createTableInSidebar(status);
+  }
+
+  /**
+   * Highlight the columns mentioned in columnsList in the output table in sidebar
+   * @param {HTMLElement} highlightBtn - The button selected to highlight columns
+   * @param {Object} columnsList - The columns to be highlighted
+   * @param {string} columnsList.column - The headers of columns to highlight
+   * @param {string} columnsList.confidence_score - The confidence score of the oversight for each column
+   */
+  function highlightColumns(highlightBtn, columnsList) {
+    var btnContent = highlightBtn.textContent;
+    var msg1 = 'Highlight in table';
+    var msg2 = 'Remove highlight';
+    if(btnContent === msg1) {
+      highlightBtn.textContent = msg2;
+    }
+    else {
+      highlightBtn.textContent = msg1;
+    }
+  
+    // Create list of columns to highlight
+    var columnNames = [];
+    for(var i = 0; i < columnsList.length; i++) { 
+      columnNames.push(columnsList[i].column);
+    }
+    
+    // Highlight specified columns in the output table
+    var sidebarTable = document.querySelector('#output-table');
+    for(var j = 0; j < outputTable[0].length ; j++) {
+      var index = columnNames.indexOf(outputTable[0][j]);
+      if(index !== -1) {
+        for(var i = 1; i < sidebarTable.rows.length; i++) {
+          sidebarTable.rows[i].cells[j].classList.toggle('highlight-table-cell');
+        }
+      }
+    }
+  }
+  
+  /**
+   * Highlight the rows mentioned in rowsList in the output table in sidebar
+   * @param {HTMLElement} highlightBtn - The button selected to highlight rows
+   * @param {Object} rowsList - The rows to be highlighted
+   * @param {string} rowsList.row - The indexes of rows to highlight
+   * @param {string} rowsList.confidence_score - The confidence score of the oversight for each row
+   */
+  function highlightRows(highlightBtn, rowsList) {
+    var btnContent = highlightBtn.textContent;
+    var msg1 = 'Highlight in table';
+    var msg2 = 'Remove highlight';
+    if(btnContent === msg1) {
+      highlightBtn.textContent = msg2;
+    }
+    else {
+      highlightBtn.textContent = msg1;
+    }
+  
+    // Create list of rows to highlight
+    var rowNumbers = [];
+    for(var i = 0; i < rowsList.length; i++) { 
+      rowNumbers.push(rowsList[i].row);
+    }
+
+    // Highlight specified rows in the output table
+    var sidebarTable = document.querySelector('#output-table');
+    for(var i = 0; i < rowNumbers.length; i++) {
+      var rowNumber = rowNumbers[i];
+      var row = sidebarTable.rows[rowNumber];
+      console.log(rowNumber, row);
+      for(var j = 0; j < row.cells.length; j++) {
+        console.log(sidebarTable.rows[rowNumber].cells[j]);
+        row.cells[j].classList.toggle('highlight-table-cell');
+      }
+    }
+  }
+
+</script>

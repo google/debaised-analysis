@@ -1,0 +1,37 @@
+<!-- Javascript functions for aspect: sort-order -->
+
+<script>
+
+  /**
+   * Call the function to update sort-order when user clicks UPDATE in SORT-ORDER card
+   */
+  document.querySelector('#update-sort-order').addEventListener('click', updateSortOrder);
+   
+  /**
+   * Update the values filled for aspect: sort order
+   */
+  function updateSortOrder() {
+    var sortOrderVal = document.getElementsByName('sort-order');
+
+    // Filling the madlib and updating the sort order stored
+    var fillSortOrder;
+    if(sortOrderVal[0].checked) {
+      isAsc = false;
+      fillSortOrder = 'maximum';
+    }
+    else {
+      isAsc = true;
+      fillSortOrder = 'minimum'; 
+    }
+    console.log('sort order ' + fillSortOrder);
+      
+    showSortOrder.innerHTML = fillSortOrder;
+    showSortOrder.classList.toggle('placeholder-active');
+    showSortOrder.classList.remove('placeholder');
+    showSortOrder.classList.add('value');
+    aspectSortOrder.classList.toggle('hide');
+    
+    done.classList.toggle('hide');
+  }
+
+</script>

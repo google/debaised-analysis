@@ -1,0 +1,180 @@
+<!-- Functions to open and close cards for trend intent-->
+
+<script>
+  
+  // Cards for aspects
+  var aspectMetric = document.querySelector('#aspect-metric');
+  var aspectGranularity = document.querySelector('#aspect-granularity');
+  var aspectSlice = document.querySelector('#aspect-slice');
+  var aspectDate = document.querySelector('#aspect-date');
+
+  // Placeholders for aspects
+  var showMetric = document.querySelector('#show-metric');
+  var showGranularity = document.querySelector('#show-granularity');
+  var showSlice = document.querySelector('#show-slice');
+  var showDate = document.querySelector('#show-date');
+
+  // Adding event listener to each placeholder to open the card corresponding to it
+  showMetric.addEventListener('click', showMetricFunc);
+  showGranularity.addEventListener('click', showGranularityFunc);
+  showSlice.addEventListener('click', showSliceFunc);
+  showDate.addEventListener('click', showDateFunc);
+  
+  var placeholderMetric = '&lt;values&gt;';
+  
+  /**
+   * To open the metric and summary card
+   */
+  function showMetricFunc() {
+    // Open metric card and close other cards
+    aspectMetric.classList.toggle('hide');
+    aspectGranularity.classList.add('hide');
+    aspectSlice.classList.add('hide');
+    aspectDate.classList.add('hide');
+
+    // Add active class to placeholder for metric 
+    // and remove active class from other placeholders
+    showMetric.classList.toggle('placeholder-active');
+    showGranularity.classList.remove('placeholder-active');
+    showSlice.classList.remove('placeholder-active');
+    showDate.classList.remove('placeholder-active');
+    showMetric.classList.remove('madlib-error');
+    
+    // Hide the compute button if card is open
+    if(aspectMetric.classList.contains('hide')) {
+      done.classList.remove('hide');
+    }
+    else {
+      done.classList.add('hide');
+    }
+  }
+  
+  /**
+   * To open the date granularity card
+   */
+  function showGranularityFunc() {
+    // Open granularity card and close other cards
+    aspectMetric.classList.add('hide');
+    aspectGranularity.classList.toggle('hide');
+    aspectSlice.classList.add('hide');
+    aspectDate.classList.add('hide');
+
+    // Add active class to placeholder for granularity 
+    // and remove active class from other placeholders
+    showMetric.classList.remove('placeholder-active');
+    showGranularity.classList.toggle('placeholder-active');
+    showSlice.classList.remove('placeholder-active');
+    showDate.classList.remove('placeholder-active');
+    showGranularity.classList.remove('madlib-error');
+    
+    // Hide the compute button if card is open
+    if(aspectGranularity.classList.contains('hide')) {
+      done.classList.remove('hide');
+    }
+    else {
+      done.classList.add('hide');
+    }
+  }
+  
+  /**
+   * To open the slice/filters card
+   */
+  function showSliceFunc() {
+    // Open slice card and close other cards
+    aspectMetric.classList.add('hide');
+    aspectGranularity.classList.add('hide');
+    aspectSlice.classList.toggle('hide');
+    aspectDate.classList.add('hide');
+
+    // Add active class to placeholder for slice
+    // and remove active class from other placeholders
+    showMetric.classList.remove('placeholder-active');
+    showGranularity.classList.remove('placeholder-active');
+    showSlice.classList.toggle('placeholder-active');
+    showDate.classList.remove('placeholder-active');
+    
+    // Hide the compute button if card is open
+    if(aspectSlice.classList.contains('hide')) {
+      done.classList.remove('hide');
+    }
+    else {
+      done.classList.add('hide');
+    }
+  }
+  
+  /**
+   * To open the date range card
+   */
+  function showDateFunc() {
+    // Open date range card and close other cards
+    aspectMetric.classList.add('hide');
+    aspectGranularity.classList.add('hide');
+    aspectSlice.classList.add('hide');
+    aspectDate.classList.toggle('hide');
+
+    // Add active class to placeholder for date range
+    // and remove active class from other placeholders
+    showMetric.classList.remove('placeholder-active');
+    showGranularity.classList.remove('placeholder-active');
+    showSlice.classList.remove('placeholder-active');
+    showDate.classList.toggle('placeholder-active');
+    showDate.classList.remove('madlib-error');
+    
+    // Hide the compute button if card is open
+    if(aspectDate.classList.contains('hide')) {
+      done.classList.remove('hide');
+    }
+    else {
+      done.classList.add('hide');
+    }
+  }
+
+  /**
+   * To prefill the date column and start and end dates if there is only 
+   * 1 consistent date column
+   */
+  function autoFillTrendDate() {
+    var size = 0;
+    var dateColumnName;
+    for (var dateColumn in dateColumnInfo) {
+      if (dateColumnInfo.hasOwnProperty(dateColumn)) {
+        if((dateColumnInfo[dateColumn]['type'] === 'CONSISTENT') && (headers.indexOf(dateColumn) !== -1)) {
+          dateColumnName = dateColumn;
+          size++;
+        }
+      }
+    }
+
+    // If there is only 1 consistent date column, prefill that date column
+    if(size === 1) {
+      var minDate, maxDate;
+      var dayFirst = dateColumnInfo[dateColumnName]['day_first'];
+      if(dayFirst) {
+        minDate = dateColumnInfo[dateColumnName]['min_date']['day_first_true'];
+        maxDate = dateColumnInfo[dateColumnName]['max_date']['day_first_true'];
+      }
+      else {
+        minDate = dateColumnInfo[dateColumnName]['min_date']['day_first_false'];
+        maxDate = dateColumnInfo[dateColumnName]['max_date']['day_first_false'];
+      }
+      document.querySelector('#date-column').value = dateColumnName; 
+      document.querySelector('#date-start').value = minDate;
+      document.querySelector('#date-end').value = maxDate;
+      
+      // Updating madlib and the stored value of date range
+      var fillDate = dateColumnName + ' ' + minDate + ' to ' + maxDate;
+      var dateRangeObj = {
+        'dateCol': dateColumnName,
+        'dateStart': minDate,
+        'dateEnd': maxDate
+      }
+      dateRange = dateRangeObj;
+      console.log("date range ", dateRange);
+        
+      showDate.innerHTML = fillDate;
+      showDate.classList.remove('placeholder');
+      showDate.classList.add('value');
+    }
+  }
+  
+</script>

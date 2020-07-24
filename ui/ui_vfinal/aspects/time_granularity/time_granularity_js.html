@@ -1,0 +1,34 @@
+<!-- Javascript functions for aspect: time granularity -->
+
+<script>
+
+  /**
+   * Call the function to update time granularity when user clicks UPDATE in  
+   * TIME-GRANULARITY card 
+   */
+  document.querySelector('#update-granularity').addEventListener('click', updateGranularity);
+
+  /**
+   * Update the values filled for aspect: time-granularity
+   */
+  function updateGranularity() {
+    var granularity = document.querySelector('#granularity');
+    var granularityVal = granularity.options[granularity.selectedIndex].value; 
+    
+    // Filling the madlib 
+    var fillGranularity = granularityVal;
+
+    // Updating the time granularity stored
+    timeGranularity = granularityVal;
+    console.log('granularity ' + timeGranularity);
+    
+    showGranularity.innerHTML = fillGranularity;
+    showGranularity.classList.toggle('placeholder-active');
+    showGranularity.classList.remove('placeholder');
+    showGranularity.classList.add('value');
+    aspectGranularity.classList.toggle('hide');
+
+    done.classList.toggle('hide');
+  }  
+
+</script>

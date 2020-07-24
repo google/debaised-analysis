@@ -1,0 +1,294 @@
+<!-- Functions for prefilling table range field and fetching table range as selected by user  -->
+
+<script>
+
+  /**
+   * Invoked when home page loads to show the pre computed table
+   */
+  window.onload = function() {
+    var autodetectedRange = document.querySelector('#autodetectedRange').textContent.split(',');
+    if(autodetectedRange[0] !== 'none') {
+      tableRange['inputSheet'] = autodetectedRange[0];
+      tableRange['rangeA1Notation'] = autodetectedRange[1];
+      tableRange['headerRow'] = autodetectedRange[2];
+      tableRange['headerRange'] = autodetectedRange[3]; 
+      tableRange['entireTableRange'] = autodetectedRange[4];
+
+      // Update data range
+      document.getElementById('data-range').innerHTML = tableRange['inputSheet'] + '!' + tableRange['rangeA1Notation'];   
+      // Update header row
+      document.getElementById('header-range').innerHTML = tableRange['headerRange']; 
+
+      // Call the function to detect date columns 
+      google.script.run.detectDate(tableRange['rangeA1Notation'], 
+                                   Number(tableRange['headerRow']), 
+                                   tableRange['inputSheet'], 
+                                   tableRange['entireTableRange']);
+
+      // Call the function to check if table cells have same formatting
+      google.script.run.checkTableCellsFormattingPattern(tableRange['inputSheet'],
+                                                         tableRange['rangeA1Notation'], 
+                                                         Number(tableRange['headerRow']));
+    }
+    console.log("Autodetected Data Range ",tableRange);
+  }
+  
+  /**
+   * Get the range selected by user
+   * @param {HTMLElement} rangePicker - The icon selected for getting the selected range
+   */
+  function getSelectedRange(rangePicker) {
+    rangePicker.nextElementSibling.innerHTML = addOnText.tableRange.editDialog.selectRangeIcon.onClick;    
+    rangePicker.classList.add('loading');
+
+    // Uncheck the checkbox used to select entire table 
+    document.querySelector('#select-entire-table').checked = false;
+
+    // updateSelectedRangeInDialog is called upon successful completion of server-side function
+    google.script.run     
+          .withSuccessHandler(updateSelectedRangeInDialog) 
+          .withUserObject(rangePicker)       // Pass argument to updateSelectedRange
+          .getSelectedRange();               // Executes server-side function - getSelectedRange
+    return;
+  }
+
+  /**
+   * Get the range selected by user
+   * Called when server-side function - getSelectedRange returns successfully
+   * Receives updated data range and displays it to the user
+   *
+   * @param {Object} dataRange - The selected table range's details
+   * @param {string} dateRange.rangeA1Notation - The A1Notation of the range selected
+   * @param {number} dateRange.headerRow - The header row number of the range selected
+   * @param {string} dateRange.headerRange - The header range of the range selected
+   * @param {HTMLElement} rangePicker - The icon selected for getting the selected range
+   */
+  function updateSelectedRangeInDialog(dataRange,rangePicker) {
+    document.getElementById('edit-data-range').value = dataRange['rangeA1Notation'];   
+    document.getElementById('edit-header-row').value = parseInt(dataRange['headerRow'],10);   
+    document.getElementById('edit-header-range').textContent = dataRange['headerRange'];
+    document.getElementById('edit-data-range').focus();
+
+    document.querySelector('#helper-range').innerHTML = '';
+    document.querySelector('#helper-header-row').innerHTML = '';
+
+    rangePicker.nextElementSibling.innerHTML = addOnText.tableRange.editDialog.selectRangeIcon.onHover;   
+    rangePicker.classList.remove('loading');
+  }
+
+  /**
+   * Select the entire table as specifed
+   * Invoked when user checks the checkbox
+   * @param {HTMLInputElement} checkbox - The checkbox for selecting entire table'a range
+   */
+  function selectEntireTable(checkbox) {
+    // If user selects the checkbox, call server side function to receive updated data range
+    if(checkbox.checked) {
+      document.querySelector('#label-for-checkbox').classList.add('loading');
+      document.querySelector('#update').disabled = true;
+      
+      // setRangeToEntireTable called upon successful completion of server-side function
+      google.script.run
+            .withSuccessHandler(setRangeToEntireTable)  
+            .selectEntireTable(tableRange['entireTableRange']); // Executes server-side function: selectEntireTable
+    }
+  }
+
+  /**
+   * Receives entire table range and display it to the user
+   * @param {Object} dataRange - The object containing table range's details
+   * @param {string} dateRange.rangeA1Notation - The A1Notation of the range selected
+   * @param {number} dateRange.headerRow - The header row number of the range selected 
+   * @param {string} dateRange.headerRange - The header range of the range selected
+   */
+  function setRangeToEntireTable(dataRange) {
+    document.querySelector('#label-for-checkbox').classList.remove('loading');
+    document.querySelector('#update').disabled = false;
+          
+    // Update the fields with the received data range
+    document.querySelector('#edit-data-range').value = dataRange['rangeA1Notation'];    
+    document.querySelector('#edit-header-row').value = parseInt(dataRange['headerRow']);
+    document.querySelector('#edit-header-range').textContent = dataRange['headerRange'];
+  }
+
+  /**
+   * Check the validity of the range entered by user,
+   * @param {HTMLInputElement} range - The input element for getting range from user
+   * @param {string} helperRange - The id of the element used to give error messages
+   */
+  function rangeCheck(range, helperRange) {
+    var a1Notation = range.value;
+
+    // Give an error message if a1notation of range is not valid
+    if(!checkRangeValidity(a1Notation)) {
+      document.querySelector('#' + helperRange).innerHTML = addOnText.tableRange.errorMsgs.errorRange;
+    }
+    else {
+      document.querySelector('#' + helperRange).innerHTML = '';
+    }
+  }
+
+  /**
+   * Check if the A1Notation of the range entered by user is valid
+   * @param {string} a1Notation - The range entered by user
+   * @return {boolean} - True indicates the range is valid and false indicates invalid
+   */
+  function checkRangeValidity(a1Notation) {
+    /**
+     * Separate a1notation into 2 parts 
+     * before ':' is start cell
+     * after ':' is end cell (blank is case of no ':')
+     */
+    var index = a1Notation.indexOf(':');
+    var startCell = '';
+    var endCell = '';
+    if(index != -1) {
+      startCell = a1Notation.slice(0,index);
+      endCell = a1Notation.slice(index+1);
+    }
+    else {
+      startCell = a1Notation;
+    }
+    
+    // If start cell is of the form: B5 - valid
+    if(/(([a-zA-Z]+)([0-9]+))$/.test(startCell)) {
+      // If end cell is of the form: D20 / D / 20 or there is no end cell, range is valid
+      if(
+        (/(([a-zA-Z]+)([0-9]*))$/.test(endCell)) || 
+        (/(([0-9]+))$/.test(endCell)) || 
+        (index === -1 && endCell === '')
+      ) {
+        return true;
+      }
+      return false;
+    }
+    // Else if start cell is of the form: B - valid
+    else if(/(([a-zA-Z]+))$/.test(startCell)) {
+      // If end cell is of the form: D20 / D, range is valid
+      if(/(([a-zA-Z]+)([0-9]*))$/.test(endCell)) {
+        return true;
+      }
+      return false;
+    }
+    // Else if start cell is of the form: 5 - valid
+    else if(/(([0-9]+))$/.test(startCell)) {
+      // If end cell is of the form: D20 / 20, range is valid
+      if((/(([a-zA-Z]+)([0-9]+))$/.test(endCell)) || (/(([0-9]+))$/.test(endCell))) {
+        return true;
+      }
+      return false;
+    }
+    // Else the range is not valid
+    return false;
+  }
+  
+  /**
+   * Check the validity of the header row entered by user,
+   * @param {HTMLInputElement} headerRow - The input element for getting header row from user
+   * @param {string} helperHeaderRow- The id of the element used to give error messages
+   */
+  function headerCheck(headerRow, helperHeaderRow) {
+    var headerRowValue = headerRow.value.trim();
+
+    // Give error message if header row is blank or less than equal to 0
+    if(!checkHeaderValidity(headerRowValue)) {
+      document.querySelector('#' + helperHeaderRow).innerHTML = addOnText.tableRange.errorMsgs.errorHeader;
+    }
+    else {
+      document.querySelector('#' + helperHeaderRow).innerHTML = '';
+    }
+  }
+  
+  /**
+   * Check if the header row number entered by user is valid
+   * @param {number} headerRowValue - The row number entered by the user
+   * @return {boolean} - True indicates the header row is valid and false indicates invalid
+   */
+  function checkHeaderValidity(headerRowValue) {
+    var headerRowInteger = parseInt(headerRowValue);
+    if(headerRowValue === '' || headerRowInteger <=0) {
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+
+  // If range is edited uncheck the checkbox for selecting entire table and set the header range
+  function updateCheckboxAndHeaderRange() {
+    // Uncheck the checkbox
+    document.querySelector('#select-entire-table').checked = false;
+    
+    // Set header range
+    setHeaderRange();
+  }
+  
+  // Set the header range when header row or data range is edited
+  function setHeaderRange() {
+    var headerRow = document.querySelector('#edit-header-row').value;    
+    var dataRange = document.querySelector('#edit-data-range').value;
+    
+    document.querySelector('#edit-header-range').textContent = '';
+    
+    // Set header range only when both data range and header row are valid
+    if(!checkRangeValidity(dataRange) || !checkHeaderValidity(headerRow)) {
+      return;
+    }
+
+    /**
+     * Separate a1notation into 2 parts 
+     * before ':' is start cell
+     * after ':' is end cell (blank is case of no ':')
+     */
+    var index = dataRange.indexOf(':');
+    var startCell = '';
+    var endCell = '';
+    if(index != -1) {
+      startCell = dataRange.slice(0,index);
+      endCell = dataRange.slice(index+1);
+    }
+    else {
+      startCell = dataRange;
+    }
+
+    // Convert header row from string to number
+    headerRow = parseInt(headerRow);
+    
+    // Start column for header range
+    var startColumn = '';
+    for(var i = 0; i < startCell.length; i++) {
+      if(isNaN(startCell[i])) {
+        startColumn += startCell[i];
+      }
+      else {
+        break;
+      }
+    }
+    
+    // End column for header range
+    var endColumn = '';
+    for(var i = 0; i < endCell.length; i++) {
+      if(isNaN(endCell[i])) {
+        endColumn += endCell[i];
+      }
+      else {
+        break;
+      }
+    }
+    
+    if(startColumn === '' && endColumn === '') {
+      startColumn = 'A';
+    }
+    
+    // Constructing header range
+    var headerRange = '';
+    headerRange += startColumn + headerRow;
+    if(endColumn !== startColumn && index !== -1) {
+      headerRange += ':' + endColumn + headerRow;
+    }
+    
+    // Display header range to the user   
+    document.querySelector('#edit-header-range').textContent = headerRange;
+  }
+  
+</script>

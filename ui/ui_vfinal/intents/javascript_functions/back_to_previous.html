@@ -1,0 +1,55 @@
+<!-- Javascript functions for returning to previous page -->
+
+<script>
+
+  /**
+   * Load the contents of previous query or return to the intent page
+   */
+  function backToPreviousContent() {
+    // If a query was run before the current query, show the results of previous query
+    if(stack.length > 0) {
+      var previousQuery = stack.pop();
+      
+      jsonQuery = previousQuery['jsonQuery'];
+      outputTable = previousQuery['outputTable'];
+      suggestions = previousQuery['suggestions'];
+      filtersPassed = previousQuery['filtersPassed'];
+      inTopK = previousQuery['inTopK'];
+      
+      createTableInSidebar('success');
+    }
+    // Else return to the intent page where user enters query
+    else
+      backToIntent();
+  }
+
+  /**
+   * To return to the selected intent page
+   */
+  function backToIntent() {
+    // Hide the compact madlib query, it's output and suggestions
+    document.querySelector('#back-to-intent').classList.add('hide');
+    document.querySelector('#query-after-compute').classList.add('hide');
+    document.querySelector('#output').classList.add('hide');
+    document.querySelector('#debiasing-suggestions').classList.add('hide');
+    document.querySelector('#gcp-error').classList.add('hide');
+
+    // Show the page where user can enter his desired query and compute it
+    document.querySelector('#back-to-home').classList.remove('hide');
+    document.querySelector('#query').classList.remove('hide');
+    document.querySelector('#done').classList.remove('hide');
+  }
+
+  /**
+   * To return to the home/index page
+   * @param {HTMLInputElement} btnHome - The back icon to give it loading effect
+   */
+  function backToHome(btnHome) {
+    btnHome.style.opacity = 0.5;
+    document.querySelector('#back-loading').classList.add('loading');
+
+    // Calling server side function to load the home page
+    google.script.run.reloadHomePage();
+  }
+
+</script>
