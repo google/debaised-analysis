@@ -14,11 +14,11 @@ function testQueryProcessingFunctions() {
 
   testGetTableData();
 
-  testCallGcpToGetQueryResult1();
-  testCallGcpToGetQueryResult2();
+  testCallGcpToGetQueryResult_onSuccess();
+  testCallGcpToGetQueryResult_onFailure();
 
-  testCheckJsonValidity1();
-  testCheckJsonValidity2();
+  testCheckJsonValidity_isValid();
+  testCheckJsonValidity_isInvalid();
 }
 
 /**
@@ -375,7 +375,7 @@ function testGetTableData() {
  * When gcp function executes successfully 
  * Query: Show Sum of Units for Item from OrderDate 2019-01-06 to 2019-07-12
  */
-function testCallGcpToGetQueryResult1() {
+function testCallGcpToGetQueryResult_onSuccess() {
   // Call the function to test
   var receivedOutput = IntentsUi.callGcpToGetQueryResult(jsonQueryShow);    
   var generatedOutput = {
@@ -392,7 +392,7 @@ function testCallGcpToGetQueryResult1() {
   };
  
   // Checking if generated output is same as expected output
-  assertEquals(expectedOutput, generatedOutput, 'callGcpToGetQueryResult1');
+  assertEquals(expectedOutput, generatedOutput, 'callGcpToGetQueryResult_onSuccess');
 }
 
 /**
@@ -400,7 +400,7 @@ function testCallGcpToGetQueryResult1() {
  *
  * When gcp function fails
  */
-function testCallGcpToGetQueryResult2() {
+function testCallGcpToGetQueryResult_onFailure() {
   // Call the function to test
   var receivedOutput = IntentsUi.callGcpToGetQueryResult({});    
   var generatedOutput = {
@@ -415,31 +415,31 @@ function testCallGcpToGetQueryResult2() {
   };
  
   // Checking if generated output is same as expected output
-  assertEquals(expectedOutput, generatedOutput, 'callGcpToGetQueryResult2');
+  assertEquals(expectedOutput, generatedOutput, 'callGcpToGetQueryResult_onFailure');
 }
 
 /**
  * Test: checkJsonValidity(text)
  * When the json is valid
  */
-function testCheckJsonValidity1() {
+function testCheckJsonValidity_isValid() {
   // Call the function to test
   var generatedOutput = IntentsUi.checkJsonValidity(jsonQueryShow);
   var expectedOutput = true;
   
   // Checking if generated output is same as expected output
-  assertEquals(expectedOutput, generatedOutput, 'checkJsonValidity1');
+  assertEquals(expectedOutput, generatedOutput, 'checkJsonValidity_isValid');
 } 
 
 /**
  * Test: checkJsonValidity(text)
  * When the json is invalid
  */
-function testCheckJsonValidity2() {
+function testCheckJsonValidity_isInvalid() {
   // Call the function to test
   var generatedOutput = IntentsUi.checkJsonValidity('{"dateCol":"OrderDate"}');
   var expectedOutput = true;
   
   // Checking if generated output is same as expected output
-  assertEquals(expectedOutput, generatedOutput, 'checkJsonValidity2');
+  assertEquals(expectedOutput, generatedOutput, 'checkJsonValidity__isInvalid');
 } 

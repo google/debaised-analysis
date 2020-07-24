@@ -1,27 +1,27 @@
-// Tests for error check fucntions on client-side javascript
+// Tests for error check functions on client-side javascript
 
 /**
  * Master test function for testing the error checks 
  * written on cliend-side javacript
  */
 function testErrorCheckFunctions() {
-  testIsValidColumnName1();
-  testIsValidColumnName2();
+  testIsValidColumnName_isValid();
+  testIsValidColumnName_isInvalid();
   
-  testIsValidDateColumn1();
-  testIsValidDateColumn2();
+  testIsValidDateColumn_isValid();
+  testIsValidDateColumn_isInvalid();
   
-  testSliceValCompatible1();
-  testSliceValCompatible2();
+  testSliceValCompatible_isCompatible();
+  testSliceValCompatible_isIncompatible();
   
-  testCheckRangeValidity1();
-  testCheckRangeValidity2();
+  testCheckRangeValidity_isValid();
+  testCheckRangeValidity_isInvalid();
   
-  testCheckHeaderValidity1();
-  testCheckHeaderValidity2();
+  testCheckHeaderValidity_isValid();
+  testCheckHeaderValidity_isInvalid();
   
-  testSetHeaderRange1();
-  testSetHeaderRange2();
+  testSetHeaderRange_isValidRangeAndHeader();
+  testSetHeaderRange_isInvalidRangeAndHeader();
 }
 
 /**
@@ -34,26 +34,26 @@ var dateColumnNames = ['OrderDate'];
  * Test: isValidColumnName(column)
  * When column specified is one of the headers
  */
-function testIsValidColumnName1() {
+function testIsValidColumnName_isValid() {
   // Call the function to test
   var generatedOutput = isValidColumnName('Item');
   var expectedOutput = true;
   
   // Checking if generated output is same as expected output
-  assertEquals(expectedOutput, generatedOutput, 'isValidColumnName1');
+  assertEquals(expectedOutput, generatedOutput, 'isValidColumnName_isValid');
 }
 
 /**
  * Test: isValidColumnName(column)
  * When column specified is not one of the headers
  */
-function testIsValidColumnName2() {
+function testIsValidColumnName_isInvalid() {
   // Call the function to test
   var generatedOutput = isValidColumnName('Items');
   var expectedOutput = false;
   
   // Checking if generated output is same as expected output
-  assertEquals(expectedOutput, generatedOutput, 'isValidColumnName2');
+  assertEquals(expectedOutput, generatedOutput, 'isValidColumnName_isInvalid');
 }
 
 /**
@@ -61,6 +61,8 @@ function testIsValidColumnName2() {
  * (i.e is one of the table's column header)
  * @param {string} column The column to be checked for validity
  * @return {boolean} True indictes valid and false indicates invalid
+ * 
+ * Client side js function of project <can't be called from script>
  */
 function isValidColumnName(column) {
   // Column entered is not considered valid if the index = -1
@@ -74,26 +76,26 @@ function isValidColumnName(column) {
  * Test: isValidDateColumn(dateColumnValue)
  * When column specified is one of the date columns
  */
-function testIsValidDateColumn1() {
+function testIsValidDateColumn_isValid() {
   // Call the function to test
   var generatedOutput = isValidDateColumn('OrderDate');
   var expectedOutput = true;
   
   // Checking if generated output is same as expected output
-  assertEquals(expectedOutput, generatedOutput, 'isValidDateColumn1');
+  assertEquals(expectedOutput, generatedOutput, 'isValidDateColumn_isValid');
 }
 
 /**
  * Test: isValidDateColumn(dateColumnValue)
  * When column specified is not one of the date columns
  */
-function testIsValidDateColumn2() {
+function testIsValidDateColumn_isInvalid() {
   // Call the function to test
   var generatedOutput = isValidDateColumn('Rep');
   var expectedOutput = false;
   
   // Checking if generated output is same as expected output
-  assertEquals(expectedOutput, generatedOutput, 'isValidDateColumn2');
+  assertEquals(expectedOutput, generatedOutput, 'isValidDateColumn_isInvalid');
 }
 
 /**
@@ -101,6 +103,8 @@ function testIsValidDateColumn2() {
  * (i.e is one of the table's date column)
  * @param {string} dateColumnValue The column to be checked for validity as a date column
  * @return {boolean} True indictes valid and false indicates invalid
+ * 
+ * Client side js function of project <can't be called from script>
  */
 function isValidDateColumn(dateColumnValue) {
   // Date column entered is not considered valid if the index = -1
@@ -114,34 +118,36 @@ function isValidDateColumn(dateColumnValue) {
  * Test: sliceValCompatibleUtil(sliceValue,sliceOperation)
  * When slice values and slice operation are compatible
  */
-function testSliceValCompatible1() {
+function testSliceValCompatible_isCompatible() {
   // Call the function to test
   var generatedOutput = sliceValCompatibleUtil([5.85], 'Less than');
   var expectedOutput = true;
   
   // Checking if generated output is same as expected output
-  assertEquals(expectedOutput, generatedOutput, 'sliceValCompatible1');
+  assertEquals(expectedOutput, generatedOutput, 'sliceValCompatible_isCompatible');
 }
 
 /**
  * Test: sliceValCompatibleUtil(sliceValue,sliceOperation)
  * When slice values and slice operation are not compatible
  */
-function testSliceValCompatible2() {
+function testSliceValCompatible_isIncompatible() {
   // Call the function to test
   var generatedOutput = sliceValCompatibleUtil(['East', 'West'], 'Equal to');
   var expectedOutput = false;
   
   // Checking if generated output is same as expected output
-  assertEquals(expectedOutput, generatedOutput, 'sliceValCompatible2');
+  assertEquals(expectedOutput, generatedOutput, 'sliceValCompatible_isIncompatible');
 }
 
 /**
-* Find whether the slice operation and slice values entered are compatible
-* @param {Array} sliceValue - The list of slice values entered
-* @param {string} sliceOperation - The slice operation selected by user
-* @return {boolean} True indicates compatible and false indicates incompatible
-*/
+ * Find whether the slice operation and slice values entered are compatible
+ * @param {Array} sliceValue - The list of slice values entered
+ * @param {string} sliceOperation - The slice operation selected by user
+ * @return {boolean} True indicates compatible and false indicates incompatible
+ * 
+ * Client side js function of project <can't be called from script>
+ */
 function sliceValCompatibleUtil(sliceValue,sliceOperation) {
   if(sliceValue.length === 1 && sliceValue[0] === '')
     return true;
@@ -166,32 +172,35 @@ function sliceValCompatibleUtil(sliceValue,sliceOperation) {
  * Test: checkRangeValidity(a1Notation)
  * When the A1Notation given is valid
  */
-function testCheckRangeValidity1() {
+function testCheckRangeValidity_isValid() {
   // Call the function to test
   var generatedOutput = checkRangeValidity('C5:20');
   var expectedOutput = true;
   
   // Checking if generated output is same as expected output
-  assertEquals(expectedOutput, generatedOutput, 'checkRangeValidity1');
+  assertEquals(expectedOutput, generatedOutput, 'checkRangeValidity_isValid');
 }
 
 /**
  * Test: checkRangeValidity(a1Notation)
  * When the A1Notation given is not valid
  */
-function testCheckRangeValidity2() {
+function testCheckRangeValidity_isInvalid() {
   // Call the function to test
   var generatedOutput = checkRangeValidity('C:20');
   var expectedOutput = false;
   
   // Checking if generated output is same as expected output
-  assertEquals(expectedOutput, generatedOutput, 'checkRangeValidity2');
+  assertEquals(expectedOutput, generatedOutput, 'checkRangeValidity_isInvalid');
 }
 
 /**
  * Check if the A1Notation of the range entered by user is valid
  * @param {string} a1Notation - The range entered by user
  * @return {boolean} - True indicates the range is valid and false indicates invalid
+ * 
+ * Client side js function of project <can't be called from script>
+ * TODO: Test checkRangeValidity with more cases
  */
 function checkRangeValidity(a1Notation) {
   /**
@@ -249,32 +258,34 @@ function checkRangeValidity(a1Notation) {
  * Test: checkheaderValidity(headerRowValue)
  * When the header row given is valid
  */
-function testCheckHeaderValidity1() {
+function testCheckHeaderValidity_isValid() {
   // Call the function to test
   var generatedOutput = checkHeaderValidity('3');
   var expectedOutput = true;
   
   // Checking if generated output is same as expected output
-  assertEquals(expectedOutput, generatedOutput, 'checkHeaderValidity1');
+  assertEquals(expectedOutput, generatedOutput, 'checkHeaderValidity_isValid');
 } 
 
 /**
  * Test: checkheaderValidity(headerRowValue)
  * When the header row given is not valid
  */
-function testCheckHeaderValidity2() {
+function testCheckHeaderValidity_isInvalid() {
   // Call the function to test
   var generatedOutput = checkHeaderValidity('-3');
   var expectedOutput = false;
   
   // Checking if generated output is same as expected output
-  assertEquals(expectedOutput, generatedOutput, 'checkHeaderValidity2');
+  assertEquals(expectedOutput, generatedOutput, 'checkHeaderValidity_isInvalid');
 }  
 
 /**
  * Check if the specified header row is valid
  * @param {string} headerRowValue The header row to be checked for validity
  * @return {boolean} True indictes valid and false indicates invalid 
+ * 
+ * Client side js function of project <can't be called from script>
  */
 function checkHeaderValidity(headerRowValue) {
   // Header row is not considered valid if it less than equal to 0 or empty
@@ -291,26 +302,26 @@ function checkHeaderValidity(headerRowValue) {
  * Test: setHeaderRange(headerRow, dataRange)
  * When headerRow and dataRange are valid
  */
-function testSetHeaderRange1() {
+function testSetHeaderRange_isValidRangeAndHeader() {
   // Call the function to test
   var generatedOutput = setHeaderRange('3', 'C5:F20');
   var expectedOutput = 'C3:F3';
   
   // Checking if generated output is same as expected output
-  assertEquals(expectedOutput, generatedOutput, 'setHeaderRange1');
+  assertEquals(expectedOutput, generatedOutput, 'setHeaderRange_isValidRangeAndHeader');
 } 
 
 /**
  * Test: setHeaderRange(headerRow, dataRange)
  * When one of headerRow and dataRange is not valid
  */
-function testSetHeaderRange2() {
+function testSetHeaderRange_isInvalidRangeAndHeader() {
   // Call the function to test
   var generatedOutput = setHeaderRange('3', '5:E');
   var expectedOutput = '';
   
   // Checking if generated output is same as expected output
-  assertEquals(expectedOutput, generatedOutput, 'setHeaderRange2');
+  assertEquals(expectedOutput, generatedOutput, 'setHeaderRange_isInvalidRangeAndHeader');
 } 
   
 /**
@@ -318,6 +329,9 @@ function testSetHeaderRange2() {
  * @param {string} headerRow The headerRow selected by user
  * @param {string} dataRange The a1Notation of data range selected by user
  * @return {string} headerRange The header range constructed using given values
+ * 
+ * Client side js function of project <can't be called from script>
+ * TODO: Test setHeaderRange with more cases
  */
 function setHeaderRange(headerRow, dataRange) {
   var headerRange = '';

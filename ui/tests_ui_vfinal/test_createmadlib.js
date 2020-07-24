@@ -100,10 +100,12 @@ function testCreateQueryFromJsonCorrelation() {
 }
  
 /**
-* Create madlib for the query using the json received
-* @param {string} jsonQuery - The json of submitted query
-* @return {string} madlibQuery - The query constructed from the json
-*/
+ * Create madlib for the query using the json received
+ * @param {string} jsonQuery - The json of submitted query
+ * @return {string} madlibQuery - The query constructed from the json
+ * 
+ * Client side js function of project <can't be called from script>
+ */
 function createQueryFromJson(jsonQuery) {
   jsonQuery = JSON.parse(jsonQuery);
   
