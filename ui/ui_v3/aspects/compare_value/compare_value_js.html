@@ -1,0 +1,105 @@
+<!-- Javascript functions for slice-compare: comparison values -->
+
+<script>
+
+  // calling autocomplete function for comparison column name
+  autoComplete(document.querySelector('#compare-value-column'));  
+
+  // function called when user enters a comparison column to check it's validity
+  function compareValueCheck(compareValueColumn, helperCompareValue) {
+    var compareValueColumnValue = compareValueColumn.value.trim();
+    // give error message if comparison column is invalid
+    if(!isValidColumnName(compareValueColumnValue)) {
+      document.querySelector('#' + helperCompareValue).innerHTML = 'Please enter a valid comparison column';
+    }
+    else {
+      document.querySelector('#' + helperCompareValue).innerHTML = '';
+    }
+  }
+  
+  // function called to select *(everything) for value2
+  function selectAllValuesForValue2(checkbox) {
+    if(checkbox.checked) {
+      document.querySelector('#compare-value2').value = 'All possible values';
+    }
+  }
+  
+  // function to uncheck the checkbox if value2 is altered
+  function uncheckSelectAllValuesCheckbox() {
+    document.querySelector('#select-all-values').checked = false;
+  }
+
+  // calling updateCompareValue when user clicks UPDATE in COMPARISON VALUES card
+  document.querySelector('#update-compare-value').addEventListener('click', updateCompareValue);
+  
+  // function to update the values filled for : comparison values
+  function updateCompareValue() {
+    var compareColumn = document.querySelector('#compare-value-column').value.trim();
+    var compareValue1 = document.querySelector('#compare-value1').value.trim();
+    var compareValue2 = document.querySelector('#compare-value2').value.trim();
+
+    // if checkbox is selected value1 is compare with evrything
+    if(document.querySelector('#select-all-values').checked)
+      compareValue2 = '*';
+    
+    // flag variable indicates validity of the inputs
+    // if any input is invalid flag is set to false 
+    var flag = true;
+    if(!isValidColumnName(compareColumn))
+      flag = false;
+
+    // if user hasn't filled comparison column and updates, replace madlib by placeholder
+    if(flag && compareColumn === '') {
+      showCompareValue.innerHTML = '&lt;value1 and value2&gt;';
+      showCompareValue.classList.toggle('placeholder-active');
+      showCompareValue.classList.add('placeholder');
+      showCompareValue.classList.remove('value');
+      aspectCompareValue.classList.toggle('hide');
+      
+      comparisonValue='null';
+      done.classList.toggle('hide');
+
+    }
+    // else update comparison value list and madlib query with the values entered by the user if they are valid
+    else if(flag) {
+      // flagCompareValue ensures value1 and value2 are not empty
+      var flagCompareValue = true;
+      if(compareValue1 === '') {
+        document.querySelector('#helper-compare-value1').innerHTML = 'Please enter a valid value1';
+        flagCompareValue = false;
+      }
+      else {
+        document.querySelector('#helper-compare-value1').innerHTML = '';
+      }
+      
+      if(compareValue2 === '') {
+        document.querySelector('#helper-compare-value2').innerHTML = 'Please enter a valid value2';
+        flagCompareValue = false;
+      }
+      else {
+        document.querySelector('#helper-compare-value2').innerHTML = '';
+      }
+      
+      // if all fields are valid, update
+      if(flagCompareValue) {
+        // used to fill madlib 
+        var compareValue2Madlib = compareValue2;
+        if(compareValue2 === '*')
+          compareValue2Madlib = 'everything'
+        var fillComparisonValue = compareColumn + ' ' + compareValue1 + ' and ' + compareValue2Madlib;
+
+        comparisonValue = [compareColumn, compareValue1, compareValue2];
+        console.log('comparison values key',comparisonValue);
+        
+        showCompareValue.innerHTML = fillComparisonValue;
+        showCompareValue.classList.toggle('placeholder-active');
+        showCompareValue.classList.remove('placeholder');
+        showCompareValue.classList.add('value');
+        aspectCompareValue.classList.toggle('hide');
+  
+        done.classList.toggle('hide');
+      }
+    }
+  }
+  
+</script>

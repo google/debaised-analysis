@@ -1,0 +1,280 @@
+<!-- Styles inputs: textfield, dropdown, radio-button, checkbox -->
+
+<style>
+
+	/* INPUTS STYLING */
+
+  /* FORM */
+  .form {
+    background-color: #fff;
+    box-shadow: 2px 2px 16px 3px rgba(0, 0, 0, 0.4);
+    padding: 2rem 3rem 4rem;
+  }
+  
+  /* TEXTFIELD */
+  .container-input {
+    border: 0; 
+    display: inline-flex; 
+    flex-direction: column; 
+    margin: 8px; 
+    min-width: 110px; 
+    padding: 0; 
+    position: relative; 
+    vertical-align: top;
+  }
+
+  .outer-input-div:focus {
+    outline: 0;
+  }
+
+  .outer-input-div:focus-within .label-input {
+    color: #1976d2;
+  }
+
+  .outer-input-div:focus-within .inner-input-div:after {
+    transform: scaleX(1);
+  }
+
+  .inner-input-div {
+    align-items: center;
+    box-sizing: border-box;
+    color: rgba(0,0,0,0.87);
+    cursor: text;
+    display: inline-flex;
+    font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    letter-spacing: 0.00938em;
+    line-height: 1.1876em;
+    margin-top: 16px; 
+    padding: 3px 0 4px 0;
+    position: relative; 
+    width: 100%; 
+  }
+
+  .inner-input-div:before {
+    border-bottom: 1px solid rgba(0,0,0, 0.42);
+    bottom: 0;
+    content: "\00a0";
+    left: 0;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    transition: border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  }
+
+  .inner-input-div:hover:before {
+    border-bottom: 2px solid rgba(0,0,0,0.87);
+  }
+
+  .inner-input-div:after {
+    border-bottom: 2px solid #1976d2;
+    bottom: 0;
+    content: '';
+    left: 0;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    transform: scaleX(0);
+    transition: transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  }
+
+  .label-input {
+    color: rgba(0,0,0,0.54); 
+    display: block; 
+    font-size: 1rem; 
+    font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif; 
+    font-weight: 400; 
+    letter-spacing: 0.00938em;
+    left: 0; 
+    line-height: 1;
+    padding: 0; 
+    position: absolute; 
+    top:0; 
+    transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms; 
+    transform: translate(0, 1.5px) scale(0.75); 
+    transform-origin: top left;  
+  }
+
+  .input-field {
+    animation-duration: 10ms;
+    animation-name: mui-auto-fill-cancel;
+    background: none;
+    border: 0;
+    box-sizing: content-box;
+    color: currentColor;
+    display: block;
+    font: inherit;
+    font-size: 0.9rem;
+    height: 1.1876em;
+    letter-spacing: inherit;
+    margin: 0;
+    min-width: 0;
+    outline: 0;
+    padding: 6px 0 7px;
+    -webkit-tap-highlight-color: transparent;
+    width: 100%; 
+  }
+
+  .helper-text {
+    color: #d23f31;
+    font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    font-weight: 400;
+    font-size: 0.75rem;
+    letter-spacing: 0.03333em;
+    line-height: 1.66;
+    margin: 0;
+    margin-top: 3px;
+    text-align: left;
+  }
+
+  input[type="text"], 
+  input[type="number"], 
+  input[type="date"] {
+    background: none;
+    border: 0;
+    font-size: 0.9rem;
+    padding: 3px 0 3px 0;
+  }
+
+  input[type="text"]:focus, 
+  input[type="number"]:focus, 
+  input[type="date"]:focus {
+    border: 0;
+    box-shadow: none;
+  }
+
+  select:focus {
+    border-radius: 0;
+    background-color: rgba(0, 0, 0, 0.05);
+    outline: none;
+  }
+
+  /* DROPDOWN */
+  .dropdown-icon {
+    color: rgba(0, 0, 0, 0.54);
+    display: inline-block;
+    flex-shrink: 0;
+    fill: currentColor;
+    font-size: 1.5rem;
+    height: 1em;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    top: calc(50% - 12px);
+    user-select: none;
+    width: 1em;
+  }
+
+  .input-dropdown {
+    border-radius: 0;
+    cursor: pointer;
+    min-width: 16px;
+    padding-right: 24px;
+    user-select: none;
+    -webkit-appearance: none;
+  }
+  
+  select:hover, select:focus {
+    background-image: none;
+    border: none;
+  }
+
+  option {
+    background: white;
+  }
+
+  /*option:focus {
+  	background: rgba(0,0,0,0.1);
+    border: none;
+  }*/
+
+   /* CHECKBOX */
+  .chk-container {
+    margin: 6px;
+  }
+  
+  .checkbox {
+    margin: 1em 0;
+    position: relative;
+    text-align: left;
+  }
+
+  .checkbox.checkbox-inline {
+    display: inline-block;
+  }
+
+  .checkbox label {
+    clear: both;
+    cursor: pointer;
+    display: inline;
+    line-height: 1.25em;
+    padding-left: 1px;
+    vertical-align: top;
+  }
+
+  .checkbox label:not(:empty) {
+    padding-left: 0.5em;
+  }
+
+  .checkbox label:before, 
+  .checkbox label:after {
+    content: "";
+    left: 0;
+    position: absolute;
+    top: 0;
+  }
+
+  .checkbox label:before {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.54);
+    border-radius: 0.125em;
+    cursor: pointer;
+    height: 1em;
+    transition: background .3s;
+    width: 1em;
+  }
+
+  .checkbox input[type="checkbox"] {
+    display: block;
+    float: left;
+    font-size: inherit;
+    margin: 0;
+    outline: 0;
+    visibility: hidden;
+    width: 1.25em;
+  }
+
+  .checkbox input[type="checkbox"]:checked + label:before {
+    background: #0f9d58;
+    border: 1px solid #0f9d58;
+  }
+
+  .checkbox input[type="checkbox"]:hover + label:before {
+    border: 1px solid #0f9d58;
+  }
+
+  .checkbox input[type="checkbox"]:checked + label:after {
+    border: 0.125em solid #fff;
+    border-right-style: none;
+    border-top-style: none;
+    height: 0.3em;
+    left: -1px;
+    top: -1px;
+    transform: translate(0.25em, 0.3365384615em) rotate(-45deg);
+    width: 0.7em;
+  }
+
+  /* RADIO BUTTON */
+  input[type=radio]:checked {
+    border: 2px solid #188038;
+  }
+  
+  input[type=radio]:checked:after {
+    background: #188038;
+    left: 2px;
+    top: 2px;
+  }
+
+</style> 

@@ -1,0 +1,128 @@
+<!-- Javascript functions for aspect: dimensions -->
+
+<script>
+
+  var idd = 1;  // counter for dimensions created
+  
+  // calling autocomplete function for dimension column1
+  autoComplete(document.querySelector('#dimension1'));
+  
+  // function to add dimension when user clicks add button
+  function addDimension() {
+    idd++;                          //increment number of dimensions created
+    var dimensionId = 'dim' + idd;  //id of the dimension that will be created
+    
+    // html for each dimension created             
+    var html =  '<div class="flexbox" style="margin-bottom: 1rem;">' +
+                  '<div class="container-input">' +
+                    '<div class="outer-input-div" tabindex="0">' +
+                      '<label ' +
+                          'class="label-input" ' +
+                          'for="dimension' + idd + '" '+ 
+                          'data-shrink="true">Column Name</label>' +
+                      '<div class="inner-input-div">' +
+                        '<input ' + 
+                             'id="dimension' + idd + '" ' +
+                             'class="input-field" ' +
+                             'name="dimension" ' +
+                             'placeholder="column name" ' +
+                             'type="text" ' +
+                             'aria-invalid="false" ' + 
+                             'aria-describedby="helper-dimension' + idd + '" ' +
+                             'onfocusout="dimensionCheck(this,\'helper-dimension' + idd + '\')">' +
+                      '</div>' +
+                    '</div>' +
+                    '<p id="helper-dimension' + idd + '" class="helper-text"></p>' +
+                  '</div>' +
+                  '<button ' +
+                      'class="circle-button sub-button" ' +
+                      'onclick="removeElement(\'' + dimensionId + '\')">' +
+                    '<span style="display: inherit;">' +
+                      '<svg class="minus" focusable="false" viewBox="0 0 24 24" aria-hidden="true">' +
+                        '<path d="M19 13H5v-2h14v2z"></path>' +
+                      '</svg>' +
+                    '</span>' +
+                  '</button>' +
+                '</div>';
+
+    // adding the dimension created in dimension's parent div
+    addElement('dimension-parent','div',dimensionId,html); 
+
+    //calling autocomplete function for the dimension column added
+    autoComplete(document.querySelector('#dimension'+idd));
+  }
+  
+  // function called when user enters a dimension column to check it's validity
+  function dimensionCheck(dimensionColumn, helperDimension) {
+    var dimensionColumnValue = dimensionColumn.value.trim();
+    // give error message if dimension column is invalid
+    if(!isValidColumnName(dimensionColumnValue)) {
+      document.querySelector('#' + helperDimension).innerHTML = 'Please enter a valid column name';
+    }
+    else {
+      document.querySelector('#' + helperDimension).innerHTML = '';
+    }
+  }
+
+  // calling updateDimension when user clicks UPDATE in DIMENSION card
+  document.querySelector('#update-dimension').addEventListener('click', updateDimension);
+  
+  // function to update the values filled for aspect: dimension
+  function updateDimension() {
+    var dimensionsElement = document.getElementsByName('dimension');
+    var dimensionsVal = [];
+    
+    // used to fill madlib 
+    var fillDimension = ''; 
+
+    // flag variable indicates validity of the inputs
+    // if any input is invalid flag is set to false 
+    var flag = true;        
+
+    for(var i = 0; i < dimensionsElement.length; i++) {
+      var column = dimensionsElement[i].value.trim();
+      if(column !== '') {
+        // if input is valid
+        if(isValidColumnName(column)) {
+          dimensionsVal.push(column);
+          //constructing madlib
+          fillDimension += column + ', ';
+        }
+        // else set flag to false to indicate invalid input
+        else {
+          flag = false;
+          break;
+        }
+      }
+    }
+    
+    // if user hasn't filled any values and updates, replace madlib by placeholder
+    if(flag && dimensionsVal.length === 0) {
+      showDimension.innerHTML = placeholderDimension;
+      showDimension.classList.toggle('placeholder-active');
+      showDimension.classList.add('placeholder');
+      showDimension.classList.remove('value');
+      aspectDimension.classList.toggle('hide');
+
+      dimensions = [];
+      done.classList.toggle('hide');
+    }
+    // else update dimensions and madlib query with the values entered by the user if they are valid
+    else if(flag) { 
+      fillDimension = fillDimension.slice(0,fillDimension.length - 2);
+      dimensions = dimensionsVal;
+      console.log('dimensions key '+dimensions);
+
+      showDimension.innerHTML = fillDimension;
+      showDimension.classList.toggle('placeholder-active');
+      showDimension.classList.remove('placeholder');
+      showDimension.classList.add('value');
+      aspectDimension.classList.toggle('hide');
+
+      done.classList.toggle('hide');
+    }
+  }
+  
+
+
+</script>

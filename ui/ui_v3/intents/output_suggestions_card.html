@@ -1,0 +1,77 @@
+<!-- OUTPUT CARD -->
+
+<!-- Card for displaying output of query submitted -->
+<div id="output" class="card hide">
+  <div class="container">
+
+    <!-- Heading -->
+    <h2>Output Table</h2>
+
+    <!-- Result table -->
+    <div id="result">
+      <div id="query-output" class="style-output">
+      </div>
+    </div>
+    
+    <!-- Button to insert output in sheet -->
+    <div style="display:flex; justify-content: flex-end">
+      <button id="add-sheet" class="btn primary" onclick="addOutputSheet(this)">Insert</button>
+    </div>
+    
+    <!-- Asking user where to insert the output -->
+    <div id="output-location" class="style-output hide">
+      <div style="margin: 8px;">
+
+        <p style="color: rgba(0,0,0,0.54);">Insert to</p>
+        
+        <input id="new-sheet" name="output-sheet" type="radio" value="new-sheet" checked>
+        <label for="new-sheet">New sheet</label><br>
+        <input id="current-sheet" name="output-sheet" type="radio" value="current-sheet">
+        <label for="current-sheet">Existing sheet</label><br>
+        
+        <div id="output-location2" class="container-input" style="width: 188px;">
+          <div class="outer-input-div" tabindex="0">
+            <label class="label-input" for="output-range" data-shrink="true">Output range</label>
+            <div class="inner-input-div" style="margin-top: 10px;">
+              <input 
+                  id="output-range" 
+                  class="input-field"
+                  style="font-size: 0.8rem;" 
+                  name="output-range"  
+                  placeholder="ex: A50" 
+                  type="text"
+                  aria-invalid="false" 
+                  aria-describedby="helper-output-range">
+              <span class="icon-hover">
+                <span 
+                    id="select-output-range" 
+                    class="material-icons" 
+                    style="cursor: pointer;" 
+                    onclick="getSelectedCell(this)">
+                      border_all
+                </span>
+                <span class="icon-hover-text hover-range">Get data range</span>
+              </span>
+            </div>
+          </div>
+          <p id="helper-output-range" class="helper-text"></p>
+        </div>
+        
+        <div style="display:flex; justify-content: flex-end">
+          <button id="btn-add-output" class="btn primary" onclick="addOutputInSheet(this)">Insert</button>
+        </div>
+        
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Card for displaying suggestions related to the query submitted -->
+<div id="debiasing-suggestions" class="card hide">
+  <div class="container">
+    <h2>Suggestions</h2>
+    <div id="query-suggestions">
+    </div>
+  </div>
+</div>

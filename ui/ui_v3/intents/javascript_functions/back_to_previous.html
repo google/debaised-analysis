@@ -1,0 +1,54 @@
+<!-- Javascript functions for returning to previous page -->
+
+<script>
+
+  // function to load the results of previous query
+  function backToPreviousContent() {
+    // if a query was run before the current query, show the previous run query
+    if(stack.length > 0) {
+      var previousQuery = stack.pop();
+      document.querySelector('#short-query').innerHTML = previousQuery['madlibQuery'];
+      document.querySelector('#query-output').innerHTML = previousQuery['outputTable'];
+      document.querySelector('#query-suggestions').innerHTML = previousQuery['suggestions'];
+      if(previousQuery['suggestions'].length>0) {
+        document.querySelector('#debiasing-suggestions').classList.remove('hide');
+      }
+      else {
+        document.querySelector('#debiasing-suggestions').classList.add('hide');
+      }
+    }
+    // else return to the intent page where user enters query
+    else
+      backToIntent();
+  }
+
+  // function to return to selected intent page
+  function backToIntent() {
+    // hide the compact madlib query, it's output and suggestions
+    document.querySelector('#back-to-intent').classList.add('hide');
+    document.querySelector('#query-after-compute').classList.add('hide');
+    document.querySelector('#output').classList.add('hide');
+    document.querySelector('#debiasing-suggestions').classList.add('hide');
+
+    // showing the page where user can enter his desried query and compute
+    document.querySelector('#back-to-home').classList.remove('hide');
+    document.querySelector('#query').classList.remove('hide');
+    document.querySelector('#done').classList.remove('hide');
+    
+    // insert option
+    document.querySelector('#output-location').classList.add('hide');
+    document.querySelector('#add-sheet').classList.remove('hide');
+  }
+  
+  // function to return to home/index page
+  function backToHome(btnHome) {
+    // adding loading effect
+    btnHome.style.opacity = 0.5;
+    document.querySelector('#back-loading').classList.add('loading');
+
+    // calling server side function to load the home page
+    google.script.run
+          .launch();
+  }
+
+</script>

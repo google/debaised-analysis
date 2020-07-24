@@ -1,0 +1,36 @@
+<!-- Javascript functions for aspect: limit -->
+
+<script>
+
+  // calling updateLimit when user clicks UPDATE in LIMITS (K) card
+  document.querySelector('#update-limit').addEventListener('click', updateLimit);
+   
+  // function to update the values filled for aspect: limit
+  function updateLimit() {
+    var limitVal = document.querySelector('#limit').value;
+    
+    // if user doesn't provide any value for k, give an error message
+    if(limitVal === '') {
+      document.querySelector('#helper-limit').innerHTML = 'Please enter a valid value for K';
+    }
+    // else update limit(k) and madlib query with the value of K entered by the user
+    else {
+      //used to fill madlib
+      limitVal = parseInt(limitVal);
+      var fillLimit = 'top-'+limitVal;
+
+      k = limitVal;
+      document.querySelector('#helper-limit').innerHTML = '';
+      console.log('limit '+k);
+      
+      showLimit.innerHTML = fillLimit;
+      showLimit.classList.toggle('placeholder-active');
+      showLimit.classList.remove('placeholder');
+      showLimit.classList.add('value');
+      aspectLimit.classList.toggle('hide');
+      
+      done.classList.toggle('hide');
+    }
+  }
+
+</script>

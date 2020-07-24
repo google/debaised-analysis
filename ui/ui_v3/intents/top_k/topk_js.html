@@ -1,0 +1,220 @@
+<!-- Functions to open and close cards for top-k intent-->
+<!-- Function to create submitted madlib query for top-k intent -->
+
+<script>
+
+  // cards for aspects
+  var aspectMetric = document.querySelector('#aspect-metric');
+  var aspectDimension = document.querySelector('#aspect-dimension');
+  var aspectSlice = document.querySelector('#aspect-slice');
+  var aspectDate = document.querySelector('#aspect-date');
+  var aspectSortOrder = document.querySelector('#aspect-sort-order');
+  var aspectLimit = document.querySelector('#aspect-limit');
+
+  // placeholders for aspects
+  var showMetric = document.querySelector('#show-metric');
+  var showDimension = document.querySelector('#show-dimension');
+  var showSlice = document.querySelector('#show-slice');
+  var showDate = document.querySelector('#show-date');
+  var showSortOrder = document.querySelector('#show-sort-order');
+  var showLimit = document.querySelector('#show-limit');
+
+  // adding event listener to each placeholder to open the card corresponding to it
+  showMetric.addEventListener('click', showMetricFunc);
+  showDimension.addEventListener('click', showDimensionFunc);
+  showSlice.addEventListener('click', showSliceFunc);
+  showDate.addEventListener('click', showDateFunc);
+  showSortOrder.addEventListener('click', showSortOrderFunc);
+  showLimit.addEventListener('click', showLimitFunc);
+  
+  var placeholderMetric = '&lt;column&gt;';
+  var placeholderDimension = '&lt;value(s)&gt;';
+  
+  // function to open metric and summary card
+  function showMetricFunc() {
+    // open metric card and close other cards
+    aspectMetric.classList.toggle('hide');
+    aspectDimension.classList.add('hide');
+    aspectSlice.classList.add('hide');
+    aspectDate.classList.add('hide');
+    aspectLimit.classList.add('hide');
+    aspectSortOrder.classList.add('hide');
+
+    // add active class to placeholder for metric 
+    // and remove active class from other placeholders
+    showMetric.classList.toggle('placeholder-active');
+    showDimension.classList.remove('placeholder-active');
+    showSlice.classList.remove('placeholder-active');
+    showDate.classList.remove('placeholder-active');
+    showLimit.classList.remove('placeholder-active');
+    showSortOrder.classList.remove('placeholder-active');
+    
+    // hide the compute button if card is open
+    if(aspectMetric.classList.contains('hide')) {
+      done.classList.remove('hide');
+    }
+    else {
+      done.classList.add('hide');
+    }
+  }
+  
+  // function to open dimension card
+  function showDimensionFunc() {
+    // open dimensions card and close other cards
+    aspectMetric.classList.add('hide');
+    aspectDimension.classList.toggle('hide');
+    aspectSlice.classList.add('hide');
+    aspectDate.classList.add('hide');
+    aspectLimit.classList.add('hide');
+    aspectSortOrder.classList.add('hide');
+
+    // add active class to placeholder for dimension
+    // and remove active class from other placeholders
+    showMetric.classList.remove('placeholder-active');
+    showDimension.classList.toggle('placeholder-active');
+    showSlice.classList.remove('placeholder-active');
+    showDate.classList.remove('placeholder-active');
+    showLimit.classList.remove('placeholder-active');
+    showSortOrder.classList.remove('placeholder-active');
+    
+    // hide the compute button if card is open
+    if(aspectDimension.classList.contains('hide')) {
+      done.classList.remove('hide');
+    }
+    else {
+      done.classList.add('hide');
+    }
+  }
+  
+  // function to open slice card
+  function showSliceFunc() {
+    // open slice card and close other cards
+    aspectMetric.classList.add('hide');
+    aspectDimension.classList.add('hide');
+    aspectSlice.classList.toggle('hide');
+    aspectDate.classList.add('hide');
+    aspectLimit.classList.add('hide');
+    aspectSortOrder.classList.add('hide');
+
+    // add active class to placeholder for slice
+    // and remove active class from other placeholders
+    showMetric.classList.remove('placeholder-active');
+    showDimension.classList.remove('placeholder-active');
+    showSlice.classList.toggle('placeholder-active');
+    showDate.classList.remove('placeholder-active');
+    showLimit.classList.remove('placeholder-active');
+    showSortOrder.classList.remove('placeholder-active');
+    
+    // hide the compute button if card is open
+    if(aspectSlice.classList.contains('hide')) {
+      done.classList.remove('hide');
+    }
+    else {
+      done.classList.add('hide');
+    }
+  }
+  
+  // function to open date card
+  function showDateFunc() {
+    // open date-range card and close other cards
+    aspectMetric.classList.add('hide');
+    aspectDimension.classList.add('hide');
+    aspectSlice.classList.add('hide');
+    aspectDate.classList.toggle('hide');
+    aspectLimit.classList.add('hide');
+    aspectSortOrder.classList.add('hide');
+
+    // add active class to placeholder for date-range
+    // and remove active class from other placeholders
+    showMetric.classList.remove('placeholder-active');
+    showDimension.classList.remove('placeholder-active');
+    showSlice.classList.remove('placeholder-active');
+    showDate.classList.toggle('placeholder-active');
+    showLimit.classList.remove('placeholder-active');
+    showSortOrder.classList.remove('placeholder-active');
+    
+    // hide the compute button if card is open
+    if(aspectDate.classList.contains('hide')) {
+      done.classList.remove('hide');
+    }
+    else {
+      done.classList.add('hide');
+    }
+  }
+  
+  // function to open limit card
+  function showLimitFunc() {
+    // open limit(k) card and close other cards
+    aspectMetric.classList.add('hide');
+    aspectDimension.classList.add('hide');
+    aspectSlice.classList.add('hide');
+    aspectDate.classList.add('hide');
+    aspectLimit.classList.toggle('hide');
+    aspectSortOrder.classList.add('hide');
+
+    // add active class to placeholder for limit(k)
+    // and remove active class from other placeholders
+    showMetric.classList.remove('placeholder-active');
+    showDimension.classList.remove('placeholder-active');
+    showSlice.classList.remove('placeholder-active');
+    showDate.classList.remove('placeholder-active');
+    showLimit.classList.toggle('placeholder-active');
+    showSortOrder.classList.remove('placeholder-active');
+    
+    // hide the compute button if card is open
+    if(aspectLimit.classList.contains('hide')) {
+      done.classList.remove('hide');
+    }
+    else {
+      done.classList.add('hide');
+    }
+  }
+  
+  // function to open sort order card
+  function showSortOrderFunc() {
+    // open sort-order card and close other cards
+    aspectMetric.classList.add('hide');
+    aspectDimension.classList.add('hide');
+    aspectSlice.classList.add('hide');
+    aspectDate.classList.add('hide');
+    aspectLimit.classList.add('hide');
+    aspectSortOrder.classList.toggle('hide');
+
+    // add active class to placeholder for sort order
+    // and remove active class from other placeholders
+    showMetric.classList.remove('placeholder-active');
+    showDimension.classList.remove('placeholder-active');
+    showSlice.classList.remove('placeholder-active');
+    showDate.classList.remove('placeholder-active');
+    showLimit.classList.remove('placeholder-active');
+    showSortOrder.classList.toggle('placeholder-active');
+    
+    // hide the compute button if card is open
+    if(aspectSortOrder.classList.contains('hide')) {
+      done.classList.remove('hide');
+    }
+    else {
+      done.classList.add('hide');
+    }
+  }
+            
+  // create final submitted query by user
+  function createQuery() {
+    // store madlib for submitted top-k query
+    var query = '';
+    query += 'Find the ';
+    query += document.querySelector('#show-limit').textContent;
+    if(dimensions.length>0)
+    query += ' ' + document.querySelector('#show-dimension').textContent;
+    query += ' with ';
+    query += document.querySelector('#show-sort-order').textContent;
+    if(metric !== 'null')
+    query += ' ' + document.querySelector('#show-metric').textContent;
+    if(slices.length>0)
+    query += ' where ' + document.querySelector('#show-slice').textContent;
+    if(dateRange !== 'null')
+    query += ' from ' + document.querySelector('#show-date').textContent;
+    return query;
+  }
+  
+</script>
