@@ -1,0 +1,90 @@
+<!-- DATE RANGE CARD -->
+
+<div id="aspect-date" class="card hide">
+  <div class="container">
+    
+      <h2>Date Range</h2>
+
+      <form autocomplete="off">
+        
+        <div class="container-input">
+          <div class="outer-input-div" tabindex="0">
+            <label class="label-input" for="date-column" data-shrink="true">Date Column</label>
+            <div class="inner-input-div">
+              <input 
+                  id="date-column" 
+                  class="input-field" 
+                  name="date-column" 
+                  placeholder="column name" 
+                  type="text" 
+                  aria-invalid="false" 
+                  aria-describedby="helper-date-col" 
+                  onfocusout="dateCheck(this,'helper-date-col')">
+            </div>
+          </div>
+          <p id="helper-date-col" class="helper-text"></p>
+        </div>
+        
+        <div id="date-format-box" class="hide" style="margin: 8px;">
+          <p style="color: rgba(0,0,0,0.54);">Which looks right ?</p>
+          <input 
+              id="day-first" 
+              name="date-format" 
+              type="radio" 
+              value="true" 
+              onclick="setStartEndDate(this.value)" 
+              checked>
+          <label for="day-first">29/10/2020</label><br>
+          <input 
+              id="month-first" 
+              name="date-format" 
+              type="radio" 
+              value="false" 
+              onclick="setStartEndDate(this.value)">
+          <label for="month-first">10/29/2020</label><br>
+        </div>
+        
+        <div>
+          <div class="container-input">
+            <div class="outer-input-div" tabindex="0">
+              <label class="label-input" for="date-start" data-shrink="true">Start Date</label>
+              <div class="inner-input-div">
+                <input 
+                  id="date-start" 
+                  class="input-field"
+                  name="date-start" 
+                  type="date" 
+                  aria-invalid="false" 
+                  aria-describedby="helper-date-start" 
+                  oninvalid="event.preventDefault();">
+              </div>
+            </div>
+            <p id="helper-date-start" class="helper-text"></p>
+          </div>
+          <div class="container-input">
+            <div class="outer-input-div" tabindex="0">
+              <label class="label-input" for="date-end" data-shrink="true">End Date</label>
+              <div class="inner-input-div">
+                <input 
+                    id="date-end" 
+                    class="input-field" 
+                    name="date-end" 
+                    type="date" 
+                    aria-invalid="false" 
+                    aria-describedby="helper-date-end" 
+                    oninvalid="event.preventDefault();">
+              </div>
+            </div>
+            <p id="helper-date-end" class="helper-text"></p>
+          </div>
+        </div>
+
+        <div class="update-cancel" style="margin-top: 1rem;">
+          <button class="btn default" onclick="closeCard('date')">Cancel</button>
+          <button id="update-date" class="btn primary">Update</button>
+        </div>
+        
+      </form>
+      
+  </div>
+</div>

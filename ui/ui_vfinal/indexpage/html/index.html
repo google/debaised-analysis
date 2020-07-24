@@ -1,0 +1,527 @@
+<!-- Home page of add-on -->
+
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap" rel="stylesheet">
+    <?!= include("css/buttons_icon_styling"); ?>
+    <?!= include("css/inputs_styling"); ?>
+    <?!= include("css/query_madlib_output_styling"); ?>
+    <?!= include("css/general_styling"); ?>
+    <?!= include("indexpage/css/index_css"); ?>
+  </head>
+  
+  <body>
+    
+    <div class="sidebar branding-below">
+    
+      <h3><?= addOnText.tableRange.selectTableHeading ?></h3>
+      
+      <!-- Data range selection -->
+      <div class="card">
+        <div class="container">
+
+          <!-- Heading of card -->
+          <div class="heading-index flexbox">
+            <b><?= addOnText.tableRange.dataRangeHeading ?></b>
+            <span class="icon-hover">
+              <span class="material-icons edit trigger">edit</span>
+              <br>
+              <span class="icon-hover-text hover-edit"><?= addOnText.tableRange.editHoverText ?></span>
+            </span>
+          </div>
+  
+          <!-- Fields to display selected data and header range -->
+          <p><?= addOnText.tableRange.dataRangeLabel ?>
+            <span id="data-range"></span>
+          </p>
+          <p><?= addOnText.tableRange.headerRangeLable ?>
+            <span id="header-range"></span>
+          </p>
+          
+          <!-- Dialog that opens on clicking edit -->
+          <div class="modal">
+            <div class="modal-content">
+            
+              <div class="heading-index">
+                <b><?= addOnText.tableRange.editDialog.dialogHeading ?></b>
+              </div>
+              
+              <form id="table-range" autocomplete="off">
+                
+                <div class="container-input">
+                  <div class="outer-input-div" tabindex="0">
+                    <label class="label-input" for="edit-data-range" data-shrink="true">
+                      <?= addOnText.tableRange.editDialog.rangeLabel ?>
+                    </label>
+                    <div class="inner-input-div">
+                      <input 
+                          id="edit-data-range" 
+                          class="input-field" 
+                          style="width: 180px"  
+                          name="edit-data-range" 
+                          placeholder="<?= addOnText.tableRange.editDialog.rangePlaceholder ?>" 
+                          type="text" 
+                          aria-invalid="false" 
+                          aria-describedby="helper-range" 
+                          oninput="updateCheckboxAndHeaderRange()" 
+                          onfocusout="rangeCheck(this,'helper-range')">
+                      <span class="icon-hover">
+                        <span 
+                            id="select-range"
+                            class="material-icons" 
+                            onclick="getSelectedRange(this)">
+                              border_all
+                        </span>
+                        <span class="icon-hover-text hover-range">
+                            <?= addOnText.tableRange.editDialog.selectRangeIcon.onHover ?>
+                         </span>
+                      </span>
+                    </div>
+                  </div>
+                  <p id="helper-range" class="helper-text"></p>
+                </div>
+                
+                <div class="container-input">
+                  <div class="outer-input-div" tabindex="0">
+                    <label class="label-input" for="edit-header-row" data-shrink="true">
+                      <?= addOnText.tableRange.editDialog.headerRowLabel ?>
+                    </label>
+                    <div class="inner-input-div">
+                      <input 
+                          id="edit-header-row" 
+                          class="input-field" 
+                          style="min-width: 100px;"
+                          name="edit-header-row" 
+                          placeholder="<?= addOnText.tableRange.editDialog.headerRowPlaceholder ?>" 
+                          type="number"
+                          min="1"
+                          aria-invalid="false" 
+                          aria-describedby="helper-header-row" 
+                          oninput="setHeaderRange()"
+                          onfocusout="headerCheck(this,'helper-header-row')"
+                          oninvalid="event.preventDefault();">
+                      <span>&nbsp;&nbsp;&nbsp;</span>
+                      <span id="edit-header-range"></span>
+                    </div>
+                  </div>
+                  <p id="helper-header-row" class="helper-text"></p>
+                </div>
+                
+                <div id="select-entire-table-container" class="chk-container">
+                  <div class="checkbox">
+                    <input id="select-entire-table" type="checkbox" onclick="selectEntireTable(this)">
+                    <label id="label-for-checkbox" for="select-entire-table">
+                      <span><?= addOnText.tableRange.editDialog.selectEntireTableLabel ?>&nbsp;&nbsp;</span>
+                      <span id="entire-table-range"></span>
+                    </label>
+                  </div>
+                </div>
+                
+                <div class="update-cancel">
+                  <button id="cancel" class="btn default">
+                    <?= addOnText.tableRange.editDialog.secondaryBtnContent ?>
+                   </button>
+                  <button id="update" class="btn primary">
+                    <?= addOnText.tableRange.editDialog.primaryBtnContent ?>
+                   </button>
+                </div>
+                
+              </form>
+              
+            </div><!-- Modal content ends -->
+          </div><!-- Modal ends -->
+
+        </div><!-- Card content ends -->
+      </div><!-- Date range selection ends -->
+      
+      <!-- Alert: error -->
+      <div class="alert hide">
+        <div class="alert-icon">
+          <svg class="svg-error" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M11 15h2v2h-2zm0-8h2v6h-2zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"></path>
+          </svg>
+        </div>
+        <div class="alert-message">
+          <div class="error-heading"><?= addOnText.errorAlertHeading ?></div>
+          <div class="error-messages"></div>
+        </div>
+      </div>
+      
+      <!-- Intent picker -->
+      <div id="expandable-panel">
+         
+        <h3><br><br><?= addOnText.intentPicker.pickIntentHeading ?></h3>
+        
+        <button class="collapsible flexbox" style="border-radius: 6px 6px 0 0" type="button">
+          <?= addOnText.intents.show.intentName ?>
+          <span class="material-icons expand-icon">expand_more</span>
+        </button>
+        <div class="content">
+          <p><?= addOnText.intents.show.description ?></p>
+          <span class="sample-query"><?= addOnText.intentPicker.showSampleQuery ?></span>
+          <div class="query-content">
+            <p>
+              <span><?= addOnText.intents.show.queryFilledWords.show ?></span>
+              <span id="show-metric-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.show.queryPlaceholders.metric ?>
+              </span>
+              <span><?= addOnText.intents.show.queryFilledWords.for ?></span>
+              <span id="show-dimension-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.show.queryPlaceholders.dimension ?>
+              </span>
+              <span><?= addOnText.intents.show.queryFilledWords.where?></span>
+              <span id="show-slice-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.show.queryPlaceholders.slice ?> 
+              </span>
+              <span><?= addOnText.intents.show.queryFilledWords.from ?></span>
+              <span id="show-date-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.show.queryPlaceholders.dateRange ?> 
+              </span>  
+            </p>
+            <p>
+              <span><?= addOnText.intents.show.queryFilledWords.show ?></span>
+              <span id="show-metric-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.show.querySampleValues.metric ?> 
+              </span>
+              <span><?= addOnText.intents.show.queryFilledWords.for ?></span>
+              <span id="show-dimension-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.show.querySampleValues.dimension ?> 
+              </span>
+              <span><?= addOnText.intents.show.queryFilledWords.where?></span>
+              <span id="show-slice-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.show.querySampleValues.slice ?> 
+              </span>
+              <span><?= addOnText.intents.show.queryFilledWords.from ?></span>
+              <span id="show-date-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.show.querySampleValues.dateRange ?> 
+              </span> 
+            </p>
+          </div>
+          <div style="padding: 7px 0;">
+            <div class="flex-right">
+              <button class="btn primary" onclick="loadIntent(this,'show')">
+                <?= addOnText.intentPicker.selectIntentBtn ?> 
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <button class="collapsible flexbox" type="button">
+          <?= addOnText.intents.topK.intentName ?>
+          <span class="material-icons expand-icon">expand_more</span>
+        </button>
+        <div class="content">
+          <p><?= addOnText.intents.topK.description ?></p>
+          <span class="sample-query"><?= addOnText.intentPicker.showSampleQuery ?></span>
+          <div class="query-content">
+            <p>
+              <span><?= addOnText.intents.topK.queryFilledWords.findThe ?></span>
+              <span id="topk-limit-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.topK.queryPlaceholders.limit ?> 
+              </span>
+              <span><?= addOnText.intents.topK.queryFilledWords.space ?></span>
+              <span id="topk-dimension-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.topK.queryPlaceholders.dimension ?> 
+              </span>
+              <span><?= addOnText.intents.topK.queryFilledWords.with ?></span>
+              <span id="topk-sortorder-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.topK.queryPlaceholders.sortOrder ?> 
+              </span>
+              <span><?= addOnText.intents.topK.queryFilledWords.space ?></span>
+              <span id="topk-metric-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.topK.queryPlaceholders.metric ?> 
+              </span>
+              <span><?= addOnText.intents.topK.queryFilledWords.where ?></span>
+              <span id="topk-slice-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.topK.queryPlaceholders.slice ?> 
+              </span>
+              <span><?= addOnText.intents.topK.queryFilledWords.from ?></span>
+              <span id="topk-date-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.topK.queryPlaceholders.dateRange ?> 
+              </span> 
+            </p>
+            <p>
+              <span><?= addOnText.intents.topK.queryFilledWords.findThe ?></span>
+              <span id="topk-limit-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.topK.querySampleValues.limit ?> 
+              </span>
+              <span><?= addOnText.intents.topK.queryFilledWords.space ?></span>
+              <span id="topk-dimension-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.topK.querySampleValues.dimension ?> 
+              </span>
+              <span><?= addOnText.intents.topK.queryFilledWords.with ?></span>
+              <span id="topk-sortorder-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.topK.querySampleValues.sortOrder ?> 
+              </span>
+              <span><?= addOnText.intents.topK.queryFilledWords.space ?></span>
+              <span id="topk-metric-value" class="highlight-in-query sample-query-value"> 
+                <?= addOnText.intents.topK.querySampleValues.metric ?> 
+              </span>
+              <span><?= addOnText.intents.topK.queryFilledWords.where ?></span>
+              <span id="topk-slice-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.topK.querySampleValues.slice ?> 
+              </span>
+              <span><?= addOnText.intents.topK.queryFilledWords.from ?></span>
+              <span id="topk-date-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.topK.querySampleValues.dateRange ?> 
+              </span> 
+            </p>
+          </div>        
+          <div style="padding: 7px 0;">
+            <div class="flex-right">
+              <button class="btn primary" onclick="loadIntent(this,'topk')">
+                <?= addOnText.intentPicker.selectIntentBtn ?> 
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <button class="collapsible flexbox" type="button">
+          <?= addOnText.intents.sliceCompare.intentName ?>
+          <span class="material-icons expand-icon">expand_more</span>
+        </button>
+        <div class="content">
+          <p><?= addOnText.intents.sliceCompare.description ?></p>
+          <span class="sample-query"><?= addOnText.intentPicker.showSampleQuery ?></span>
+          <div class="query-content">
+            <p>
+              <span><?= addOnText.intents.sliceCompare.queryFilledWords.compareThe ?></span>
+              <span id="slicecompare-metric-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.sliceCompare.queryPlaceholders.metric ?> 
+              </span>
+              <span><?= addOnText.intents.sliceCompare.queryFilledWords.for ?></span>
+              <span id="slicecompare-comparevalue-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.sliceCompare.queryPlaceholders.compareValue ?> 
+              </span>
+              <span><?= addOnText.intents.sliceCompare.queryFilledWords.by ?></span>
+              <span id="slicecompare-dimension-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.sliceCompare.queryPlaceholders.dimension ?> 
+              </span>
+              <span><?= addOnText.intents.sliceCompare.queryFilledWords.where ?></span>
+              <span id="slicecompare-slice-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.sliceCompare.queryPlaceholders.slice ?> 
+              </span>
+              <span><?= addOnText.intents.sliceCompare.queryFilledWords.from ?></span>
+              <span id="slicecompare-date-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.sliceCompare.queryPlaceholders.dateRange ?> 
+              </span> 
+            </p>
+            <p>
+              <span><?= addOnText.intents.sliceCompare.queryFilledWords.compareThe ?></span>
+              <span id="slicecompare-metric-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.sliceCompare.querySampleValues.metric ?> 
+              </span>
+              <span><?= addOnText.intents.sliceCompare.queryFilledWords.for ?></span>
+              <span id="slicecompare-comparevalue-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.sliceCompare.querySampleValues.compareValue ?> 
+              </span>
+              <span><?= addOnText.intents.sliceCompare.queryFilledWords.by ?></span>
+              <span id="slicecompare-dimension-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.sliceCompare.querySampleValues.dimension ?> 
+              </span>
+              <span><?= addOnText.intents.sliceCompare.queryFilledWords.where ?></span>
+              <span id="slicecompare-slice-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.sliceCompare.querySampleValues.slice ?> 
+              </span>
+              <span><?= addOnText.intents.sliceCompare.queryFilledWords.from ?></span>
+              <span id="slicecompare-date-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.sliceCompare.querySampleValues.dateRange ?> 
+              </span> 
+            </p>          
+          </div>
+          <div style="padding: 7px 0;">
+            <div class="flex-right">
+              <button class="btn primary" onclick="loadIntent(this,'slice-compare')">
+                <?= addOnText.intentPicker.selectIntentBtn ?> 
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <button class="collapsible flexbox" type="button">
+          <?= addOnText.intents.timeCompare.intentName ?>
+          <span class="material-icons expand-icon">expand_more</span>
+        </button>
+        <div class="content">
+          <p><?= addOnText.intents.timeCompare.description ?></p>
+          <span class="sample-query"><?= addOnText.intentPicker.showSampleQuery ?></span>
+          <div class="query-content">
+            <p>
+              <span><?= addOnText.intents.timeCompare.queryFilledWords.compareThe ?></span>
+              <span id="timecompare-metric-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.timeCompare.queryPlaceholders.metric ?> 
+              </span>
+              <span><?= addOnText.intents.timeCompare.queryFilledWords.for ?></span>
+              <span id="timecompare-comparedaterange-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.timeCompare.queryPlaceholders.compareDateRange ?> 
+              </span>
+              <span><?= addOnText.intents.timeCompare.queryFilledWords.by ?></span>
+              <span id="timecompare-dimension-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.timeCompare.queryPlaceholders.dimension ?> 
+              </span>
+              <span><?= addOnText.intents.timeCompare.queryFilledWords.where ?></span>
+              <span id="timecompare-slice-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.timeCompare.queryPlaceholders.slice ?> 
+              </span>
+            </p>
+            <p>
+              <span><?= addOnText.intents.timeCompare.queryFilledWords.compareThe ?></span>
+              <span id="timecompare-metric-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.timeCompare.querySampleValues.metric ?> 
+              </span>
+              <span><?= addOnText.intents.timeCompare.queryFilledWords.for ?></span>
+              <span id="timecompare-comparedaterange-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.timeCompare.querySampleValues.compareDateRange ?> 
+              </span>
+              <span><?= addOnText.intents.timeCompare.queryFilledWords.by ?></span>
+              <span id="timecompare-dimension-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.timeCompare.querySampleValues.dimension ?> 
+              </span>
+              <span><?= addOnText.intents.timeCompare.queryFilledWords.where ?></span>
+              <span id="timecompare-slice-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.timeCompare.querySampleValues.slice ?> 
+              </span>
+            </p>          
+          </div>
+          <div style="padding: 7px 0;">
+            <div class="flex-right">
+              <button class="btn primary" onclick="loadIntent(this,'time-compare')">
+                <?= addOnText.intentPicker.selectIntentBtn ?> 
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <button class="collapsible flexbox" type="button">
+          <?= addOnText.intents.trend.intentName ?>
+          <span class="material-icons expand-icon">expand_more</span>
+        </button>
+        <div class="content">
+          <p><?= addOnText.intents.trend.description ?></p>
+          <span class="sample-query"><?= addOnText.intentPicker.showSampleQuery ?></span>
+          <div class="query-content">
+            <p>
+              <span id="trend-granularity-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.trend.queryPlaceholders.timeGranularity ?> 
+              </span>
+              <span><?= addOnText.intents.trend.queryFilledWords.trendOf ?></span>
+              <span id="trend-metric-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.trend.queryPlaceholders.metric ?> 
+              </span> 
+              <span><?= addOnText.intents.trend.queryFilledWords.where ?></span>
+              <span id="trend-slice-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.trend.queryPlaceholders.slice ?> 
+              </span>
+              <span> from </span>
+              <span id="trend-date-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.trend.queryPlaceholders.dateRange ?> 
+              </span> 
+            </p>
+            <p>
+              <span id="trend-granularity-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.trend.querySampleValues.timeGranularity ?> 
+              </span>
+              <span><?= addOnText.intents.trend.queryFilledWords.trendOf ?></span>
+              <span id="trend-metric-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.trend.querySampleValues.metric ?> 
+              </span>
+              <span><?= addOnText.intents.trend.queryFilledWords.where ?></span>             
+              <span id="trend-slice-value" class="highlight-in-query sample-query-value"> 
+                <?= addOnText.intents.trend.querySampleValues.slice ?> 
+              </span>
+              <span><?= addOnText.intents.trend.queryFilledWords.from ?></span>
+              <span id="trend-date-value" class="highlight-in-query sample-query-value"> 
+                <?= addOnText.intents.trend.querySampleValues.dateRange ?> 
+              </span> 
+            </p>
+          </div>
+          <div style="padding: 7px 0;">
+            <div class="flex-right">
+              <button class="btn primary" onclick="loadIntent(this,'trend')">
+                <?= addOnText.intentPicker.selectIntentBtn ?> 
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <button class="collapsible flexbox" style="border-radius: 0 0 6px 6px" type="button">
+          <?= addOnText.intents.correlation.intentName ?>
+          <span class="material-icons expand-icon">expand_more</span>
+        </button>
+        <div class="content">
+          <p><?= addOnText.intents.correlation.description ?></p>
+          <span class="sample-query"><?= addOnText.intentPicker.showSampleQuery ?></span>
+          <div class="query-content">
+            <p>
+              <span><?= addOnText.intents.correlation.queryFilledWords.correlationBetween ?></span>
+              <span id="correlation-metricscorrelation-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.correlation.queryPlaceholders.metricsCorrelation ?> 
+              </span>
+              <span><?= addOnText.intents.correlation.queryFilledWords.forEach ?></span>
+              <span id="correlation-dimension-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.correlation.queryPlaceholders.dimension ?> 
+              </span>
+              <span><?= addOnText.intents.correlation.queryFilledWords.where ?></span>
+              <span id="correlation-slice-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.correlation.queryPlaceholders.slice ?> 
+              </span>
+              <span><?= addOnText.intents.correlation.queryFilledWords.from ?></span>
+              <span id="correlation-date-placeholder" class="highlight-in-query sample-query-placeholder">
+                <?= addOnText.intents.correlation.queryPlaceholders.dateRange ?> 
+              </span> 
+            </p>
+            <p>
+              <span><?= addOnText.intents.correlation.queryFilledWords.correlationBetween ?></span>
+              <span id="correlation-metricscorrelation-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.correlation.querySampleValues.metricsCorrelation ?> 
+              </span>
+               <span><?= addOnText.intents.correlation.queryFilledWords.forEach ?></span>
+              <span id="correlation-dimension-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.correlation.querySampleValues.dimension ?> 
+              </span>
+              <span><?= addOnText.intents.correlation.queryFilledWords.where ?></span>
+              <span id="correlation-slice-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.correlation.querySampleValues.slice ?> 
+              </span>
+              <span><?= addOnText.intents.correlation.queryFilledWords.from ?></span>
+              <span id="correlation-date-value" class="highlight-in-query sample-query-value">
+                <?= addOnText.intents.correlation.querySampleValues.dateRange ?> 
+              </span> 
+            </p>
+          </div>
+          <div style="padding: 7px 0;">
+            <div class="flex-right">
+              <button class="btn primary" onclick="loadIntent(this,'correlation')">
+                <?= addOnText.intentPicker.selectIntentBtn ?> 
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div> <!-- Intent picker ends -->
+      
+    </div>
+    
+    <!-- INCLUDING SCRIPT FILES -->
+  
+    <!-- Global javascript variables -->
+    <?!= include('global_variables_js'); ?>
+    <!-- Add On strings/text -->
+    <?!= include('addon_strings_js'); ?>
+
+    <!-- Javascript functions for fetching Data Range as selected by user -->
+    <?!= include('indexpage/javascript/table_selector_js'); ?>  
+
+    <!-- Javascript functions specific to index page working --> 
+    <?!= include('indexpage/javascript/index_js'); ?> 
+    
+  </body>
+
+</html>

@@ -1,0 +1,424 @@
+<!--  Javascript functions to store the column headers and 
+      information about date columns, closing cards for any aspects, 
+      creating madlib query from a given json and checking if the query 
+      submitted for an intent is valid and contains the required fields -->
+
+<script>
+
+  /**
+   * Fetch headers when any intent is loaded and fill autocomplete values using them
+   * Store the details about date columns and fill autocomplete values for the date columns
+   */
+  window.onload = function() {
+    // Fetching headers list
+    headers = document.querySelector('#headers').textContent;
+    headers = headers.split(',');
+    // Set autocomplete values to the headers fetched
+    updateAutoCompleteHeaders();
+    
+    // Fetching details about date columns in the selected range
+    dateColumnInfo = JSON.parse(document.querySelector('#date-columns-list').textContent);
+    for (var dateColumn in dateColumnInfo) {
+      if (dateColumnInfo.hasOwnProperty(dateColumn)) {
+        if((dateColumnInfo[dateColumn]['type'] !== 'INCONSISTENT') && (headers.indexOf(dateColumn) !== -1)) {
+          dateColumnNames.push(dateColumn);
+        }
+      }
+    }
+    console.log('date columns info', dateColumnInfo);
+    console.log('date columns name', dateColumnNames);
+    // Set autocomplete values for the date columns
+    updateAutoCompleteDateColumns();
+    
+    // Prefill some details of date range for trend and time-compare
+    var intentName = document.querySelector('#intent-name').textContent;
+    if(intentName === 'trend') {
+      autoFillTrendDate();
+    }
+    if(intentName === 'time-compare') {
+      autoFillTimeCompareDate()
+    }
+  }
+
+  /**
+   * Close card for given aspect
+   * @param {string} aspect - The name to the aspect to close
+   */
+  function closeCard(aspect) {
+    switch(aspect){
+      case 'dimension': 
+        showDimension.classList.toggle('placeholder-active');
+        aspectDimension.classList.toggle('hide');
+        break;
+
+      case 'metric': 
+        showMetric.classList.toggle('placeholder-active');
+        aspectMetric.classList.toggle('hide');
+        break;
+
+      case 'date': 
+        showDate.classList.toggle('placeholder-active');
+        aspectDate.classList.toggle('hide');
+        break;
+
+      case 'slice': 
+        showSlice.classList.toggle('placeholder-active');
+        aspectSlice.classList.toggle('hide');
+        break;
+
+      case 'compare-value': 
+        showCompareValue.classList.toggle('placeholder-active');
+        aspectCompareValue.classList.toggle('hide');
+        break;
+
+      case 'compare-daterange': 
+        showCompareDateRange.classList.toggle('placeholder-active');
+        aspectCompareDateRange.classList.toggle('hide');
+        break;
+
+      case 'limit': 
+        showLimit.classList.toggle('placeholder-active');
+        aspectLimit.classList.toggle('hide');
+        break;
+
+      case 'sort-order': 
+        showSortOrder.classList.toggle('placeholder-active');
+        aspectSortOrder.classList.toggle('hide');
+        break;
+        
+      case 'granularity': 
+        showGranularity.classList.toggle('placeholder-active');
+        aspectGranularity.classList.toggle('hide');
+        break;
+      
+      case 'metrics-correlation':
+        showMetricCorrelation.classList.toggle('placeholder-active');
+        aspectMetricCorrelation.classList.toggle('hide');
+        break;
+    }
+
+    // Show the compute button once card closes
+    done.classList.toggle('hide');
+  }
+
+  /**
+   * Create madlib for the query using the json received
+   * @param {string} jsonQuery - The json of submitted query
+   * @return {string} madlibQuery - The query constructed from the json
+   */
+  function createQueryFromJson(jsonQuery) {
+    jsonQuery = JSON.parse(jsonQuery);
+  
+  	// Storing name of intent
+    var intent = jsonQuery['intent'];
+
+    var filtersAndDate = '';
+    // Adding slices
+    if(jsonQuery.hasOwnProperty('slices')) {
+      filtersAndDate += ' where ';
+      for(var i = 0; i < jsonQuery.slices.length; i++) {
+        filtersAndDate += jsonQuery.slices[i].sliceCol + ' is ';
+        filtersAndDate += jsonQuery.slices[i].sliceOp + ' ';
+        if(jsonQuery.slices[i].sliceOp === 'In' || jsonQuery.slices[i].sliceOp === 'Not in') {
+          var sliceVal = jsonQuery.slices[i].sliceVal;
+          filtersAndDate += sliceVal[0];
+          for(var j = 1; j < sliceVal.length; j++) {
+            filtersAndDate += ', ' + sliceVal[j];
+          }
+        }
+        else {
+          filtersAndDate += jsonQuery.slices[i].sliceVal;
+        }
+        filtersAndDate += ', ';
+      }
+      filtersAndDate = filtersAndDate.slice(0,filtersAndDate.length - 2);
+    }
+    // Adding date range
+    if(jsonQuery.hasOwnProperty('dateRange')) {
+      filtersAndDate += ' from ';
+      filtersAndDate += jsonQuery.dateRange.dateCol + ' ';
+      filtersAndDate += jsonQuery.dateRange.dateStart + ' to ' + jsonQuery.dateRange.dateEnd;
+    }
+
+    // Store madlib query created
+    var madlibQuery = '';
+
+    switch (intent) {
+      case 'show': 
+      	madlibQuery += 'Show ';	
+
+      	// Adding metric and summary operation
+        if(jsonQuery.hasOwnProperty('metric')) {
+          if(jsonQuery.hasOwnProperty('summaryOperator')) {
+            madlibQuery += jsonQuery.summaryOperator + ' of ';
+          }
+          madlibQuery += jsonQuery.metric;
+        }
+        if(jsonQuery.hasOwnProperty('metric') && jsonQuery.hasOwnProperty('dimensions')) {
+          madlibQuery += ' for ';
+        }
+
+        // Adding dimension
+        if(jsonQuery.hasOwnProperty('dimensions')) {
+          madlibQuery += jsonQuery.dimensions[0];
+          for(var i = 1; i < jsonQuery.dimensions.length; i++) {
+            madlibQuery += ', ' + jsonQuery.dimensions[i];
+          }
+        }
+
+        break;
+
+      case 'topk': 
+      	madlibQuery += 'Find the ';
+
+      	// Adding limit(k)
+	      madlibQuery += 'top-' + jsonQuery.topKLimit + ' ';
+
+        // Adding dimensions
+        if(jsonQuery.hasOwnProperty('dimensions')) {
+          madlibQuery += jsonQuery.dimensions[0];
+          for(var i = 1; i < jsonQuery.dimensions.length; i++) {
+            madlibQuery += ', ' + jsonQuery.dimensions[i];
+          }
+        }
+
+  	    // Adding sort order
+          madlibQuery += ' with ';
+  	    if(jsonQuery.isAsc) 
+  	      madlibQuery += 'minimum ';
+  	    else
+  	      madlibQuery += 'maximum ';
+
+  	    // Adding metric and summary operation
+  	    if(jsonQuery.hasOwnProperty('metric')) {
+  	      if(jsonQuery.hasOwnProperty('summaryOperator')) {
+  	        madlibQuery += jsonQuery.summaryOperator + ' of ';
+            }
+  	      madlibQuery += jsonQuery.metric;
+  	    }
+
+  	    break;
+
+      case 'slice_compare': 
+      	madlibQuery += 'Compare the ';
+
+      	// Adding metric and summary operation
+        if(jsonQuery.hasOwnProperty('metric')) {
+          if(jsonQuery.hasOwnProperty('summaryOperator')) {
+            madlibQuery += jsonQuery.summaryOperator + ' of ';
+          }
+          madlibQuery += jsonQuery.metric;
+        }
+
+        // Adding comparison column and comparison values
+        madlibQuery += ' for the ';
+        madlibQuery += jsonQuery.comparisonValue.comparisonColumn + ' ';
+        madlibQuery += jsonQuery.comparisonValue.slice1 + ' and ';
+        var value2 = 'everything';
+        if(jsonQuery.comparisonValue.slice2 !== '*') {
+          value2 = jsonQuery.comparisonValue.slice2;
+        }
+        madlibQuery += value2;
+
+        // Adding dimensions
+        if(jsonQuery.hasOwnProperty('dimensions')) {
+          madlibQuery += ' by ';
+          madlibQuery += jsonQuery.dimensions[0];
+          for(var i = 1; i < jsonQuery.dimensions.length; i++) {
+            madlibQuery += ', ' + jsonQuery.dimensions[i];
+          }
+        }
+
+        break;
+
+      case 'time_compare': 
+        madlibQuery += 'Compare the ';
+
+        // Adding metric and summary operation
+        if(jsonQuery.hasOwnProperty('metric')) {
+          if(jsonQuery.hasOwnProperty('summaryOperator')) {
+            madlibQuery += jsonQuery.summaryOperator + ' of ';
+          }
+          madlibQuery += jsonQuery.metric;
+        }
+
+        // Adding comparison column and comparison values
+        madlibQuery += ' for the ';
+        madlibQuery += jsonQuery.compareDateRange.dateCol + ' ';
+        madlibQuery += jsonQuery.compareDateRange.dateStart1 + ' to ' + jsonQuery.compareDateRange.dateEnd1;
+        madlibQuery += ' and '
+        madlibQuery += jsonQuery.compareDateRange.dateStart2 + ' to ' + jsonQuery.compareDateRange.dateEnd2;
+
+        // Adding dimensions
+        if(jsonQuery.hasOwnProperty('dimensions')) {
+          madlibQuery += ' by ';
+          madlibQuery += jsonQuery.dimensions[0];
+          for(var i = 1; i < jsonQuery.dimensions.length; i++) {
+            madlibQuery += ', ' + jsonQuery.dimensions[i];
+          }
+        }
+
+        break;
+        
+      case 'trend': 
+        // Adding time granularity
+      	madlibQuery += jsonQuery.timeGranularity + ' trend of ';	
+
+      	// Adding metric and summary operation
+        if(jsonQuery.hasOwnProperty('metric')) {
+          if(jsonQuery.hasOwnProperty('summaryOperator')) {
+            madlibQuery += jsonQuery.summaryOperator + ' of ';
+          }
+          madlibQuery += jsonQuery.metric;
+        }
+
+        break;
+
+      case 'correlation': 
+        madlibQuery += 'Correlation between '; 
+
+        // Adding metrics for correlation
+        if(jsonQuery.hasOwnProperty('correlationMetrics')) {
+          madlibQuery += jsonQuery.correlationMetrics.metric1 + ' and ';
+          madlibQuery += jsonQuery.correlationMetrics.metric2;
+        }
+
+        // Adding dimensions
+        if(jsonQuery.hasOwnProperty('dimensions')) {
+          madlibQuery += ' for each ';
+          madlibQuery += jsonQuery.dimensions[0];
+          for(var i = 1; i < jsonQuery.dimensions.length; i++) {
+            madlibQuery += ', ' + jsonQuery.dimensions[i];
+          }
+        }
+
+        break;
+    }
+    madlibQuery += filtersAndDate;
+
+    // Returning the computed madlib query
+    return madlibQuery;
+  }
+
+  /**
+   * Check if the query submitted for an intent is valid and contains the required fields
+   * @param {string} intentName - The name of the intent for which query is submitted
+   * @return {boolean} valid - True indicated a valid query and false indicated invalid
+   */
+  function isValidIntentInput(intentName) {
+  	// Stores the validity of query submitted for given intent
+    var valid = true;
+
+    // Store the error message
+    var errorMessages = '';
+
+    switch(intentName) {
+      case 'show': 
+      	if(dimensions.length === 0 && metric === null) {
+          errorMessages += '<div>Please select a value or column</div>';
+          valid = false;
+          document.querySelector('#show-metric').classList.add('madlib-error');
+          document.querySelector('#show-dimension').classList.add('madlib-error');
+       	}
+       	break;
+                   
+      case 'topk': 
+      	if(dimensions.length === 0 && metric === null) {
+          errorMessages += '<div>Please select a value and column</div>';
+          valid = false;
+          document.querySelector('#show-metric').classList.add('madlib-error');
+          document.querySelector('#show-dimension').classList.add('madlib-error');
+        }
+        else if(dimensions.length === 0) {
+          errorMessages += '<div>Please select a value</div>';
+          valid = false;
+          document.querySelector('#show-dimension').classList.add('madlib-error');
+        }
+        else if(metric === null) {
+          errorMessages += '<div>Please select a column</div>';
+          valid = false;
+          document.querySelector('#show-metric').classList.add('madlib-error');
+        }
+        break;
+                   
+      case 'slice_compare': 
+      	if(metric === null) {
+          errorMessages += '<div>Please select data - column name and the operation</div>';
+          valid = false;
+          document.querySelector('#show-metric').classList.add('madlib-error');
+        }
+        else if(summaryOperation === null) {
+          errorMessages += '<div>Please select operation for the data column</div>';
+          valid = false;
+          document.querySelector('#show-metric').classList.add('madlib-error');
+        }
+       
+        if(comparisonValue === null) {
+          errorMessages += '<div>Please select values to compare</div>';
+          valid = false;
+          document.querySelector('#show-compare-value').classList.add('madlib-error');
+        }
+        break;
+
+      case 'time_compare': 
+        if(metric === null) {
+          errorMessages += '<div>Please select data - column name and the operation</div>';
+          valid = false;
+          document.querySelector('#show-metric').classList.add('madlib-error');
+        }
+        else if(summaryOperation === null) {
+          errorMessages += '<div>Please select operation for the data column</div>';
+          valid = false;
+          document.querySelector('#show-metric').classList.add('madlib-error');
+        }
+       
+        if(compareDateRange === null) {
+          errorMessages += '<div>Please select date ranges to compare</div>';
+          valid = false;
+          document.querySelector('#show-compare-daterange').classList.add('madlib-error');
+        }
+        break;
+    
+      case 'trend': 
+        if(metric === null) {
+          errorMessages += '<div>Please select values - column name and the operation</div>';
+          valid = false;
+          document.querySelector('#show-metric').classList.add('madlib-error');
+        }
+        else if(summaryOperation === null) {
+          errorMessages += '<div>Please select operation for the values';
+          valid = false;
+          document.querySelector('#show-metric').classList.add('madlib-error');
+        }
+       
+        if(timeGranularity === null) {
+          errorMessages += '<div>Please select period for trend</div>';
+          valid = false;
+          document.querySelector('#show-granularity').classList.add('madlib-error');
+        }
+        
+        if(dateRange === null) {
+          errorMessages += '<div>Please enter date column</div>';
+          valid = false;
+          document.querySelector('#show-date').classList.add('madlib-error');
+        }
+        break;
+
+      case 'correlation': 
+        if(correlationMetrics === null) {
+          errorMessages += '<div>Please select values to apply correlation</div>';
+          valid = false;
+          document.querySelector('#show-metrics-correlation').classList.add('madlib-error');
+        }
+        break;
+    }
+
+    // If input is not valid, give error message
+    if(!valid) {
+      document.querySelector('.error-messages').innerHTML = errorMessages;
+      document.querySelector('.alert').classList.remove('hide');
+    }
+    return valid;
+  }
+
+</script>

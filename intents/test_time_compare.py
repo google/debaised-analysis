@@ -32,18 +32,21 @@ def test_1():
     table = pandas.read_csv('data/cricket_data.csv')
     query_result = time_compare.time_compare(table, 'total_run',
                                              ['team_name', 'date_of_match'],
-                                             ['team_name', 'date_of_match'],
-                                             ['date_of_match', ('01/01/2008', '31/12/2009'), 
-                                              ('01/01/2010', '31/12/2011'), '%d/%m/%Y'],
+                                             'date_of_match', ('01/01/2008', '31/12/2009'), 
+                                              ('01/01/2010', '31/12/2011'), '%d/%m/%Y',
                                              SummaryOperators.SUM,
-                                             slices = [('team_name', Filters.EQUAL_TO, 'MI')])
-    print(query_result)
+                                             slices = [('team_name', Filters.EQUAL_TO, 'MI')],
+                                             dimensions = ['team_name']
+                                             )
+    print(query_result[0])
 
     expected_result = """  team_name            date_of_match  total_run
 0        MI  01/01/2008 - 31/12/2009        776
 1        MI  01/01/2010 - 31/12/2011        420"""
+    expected_suggestions = "[]"
 
-    assert(expected_result == query_result.to_string())
+    assert(expected_result == query_result[0].to_string())
+    assert(expected_suggestions == str(query_result[1]))
 
 def test_2():
     """
@@ -55,20 +58,22 @@ def test_2():
 
     query_result = time_compare.time_compare(table, 'tournament',
                                              ['home_team', 'away_team', 'date', 'country'],
-                                             ['home_team', 'away_team', 'date', 'country'],
-                                             ['date', ('1871-11-30', '1950-12-30'), 
-                                              ('1950-12-31', '2020-01-01'), '%Y-%m-%d'],
+                                             'date', ('1871-11-30', '1950-12-30'), 
+                                              ('1950-12-31', '2020-01-01'), '%Y-%m-%d',
                                              SummaryOperators.COUNT,
                                              slices = [('home_team', Filters.EQUAL_TO, 'England'), 
                                                        ('away_team', Filters.EQUAL_TO, 'Wales'), 
-                                                       ('country', Filters.EQUAL_TO, 'England')])
+                                                       ('country', Filters.EQUAL_TO, 'England')],
+                                             dimensions = ['home_team', 'away_team', 'country'])
     print(query_result)
 
     expected_result = """  home_team away_team  country                     date  tournament
 0   England     Wales  England  1871-11-30 - 1950-12-30          33
 1   England     Wales  England  1950-12-31 - 2020-01-01          19"""
+    expected_suggestions = "[]"
 
-    assert(expected_result == query_result.to_string())
+    assert(expected_result == query_result[0].to_string())
+    assert(expected_suggestions == str(query_result[1]))
 
 print("\nCompare total_run of team_name ‘MI’ in date_comparision_colum in between ranges 01/01/2008 - 31/12/2009 and 01/01/2010 - 31/12/2011")
 test_1()

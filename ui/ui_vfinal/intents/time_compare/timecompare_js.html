@@ -1,0 +1,171 @@
+<!-- Functions to open and close cards for time-compare intent-->
+
+<script>
+
+  // Cards for aspects
+  var aspectMetric = document.querySelector('#aspect-metric');
+  var aspectDimension = document.querySelector('#aspect-dimension');
+  var aspectSlice = document.querySelector('#aspect-slice');
+  var aspectCompareDateRange = document.querySelector('#aspect-compare-daterange');
+
+  // Placeholders for aspects
+  var showMetric = document.querySelector('#show-metric');
+  var showDimension = document.querySelector('#show-dimension');
+  var showSlice = document.querySelector('#show-slice');
+  var showCompareDateRange = document.querySelector('#show-compare-daterange');
+
+  // Adding event listener to each placeholder to open the card corresponding to it
+  showMetric.addEventListener('click', showMetricFunc);
+  showDimension.addEventListener('click', showDimensionFunc);
+  showSlice.addEventListener('click', showSliceFunc);
+  showCompareDateRange.addEventListener('click', showCompareDateRangeFunc);
+  
+  var placeholderMetric = '&lt;data&gt;';
+  var placeholderDimension = '&lt;column(s)&gt;';
+  
+  /**
+   * To open the metric and summary card
+   */
+  function showMetricFunc() {
+    // Open metric card and close other cards
+    aspectMetric.classList.toggle('hide');
+    aspectDimension.classList.add('hide');
+    aspectSlice.classList.add('hide');
+    aspectCompareDateRange.classList.add('hide');
+
+    // Add active class to placeholder for metric 
+    // and remove active class from other placeholders
+    showMetric.classList.toggle('placeholder-active');
+    showDimension.classList.remove('placeholder-active');
+    showSlice.classList.remove('placeholder-active');
+    showCompareDateRange.classList.remove('placeholder-active');
+    showMetric.classList.remove('madlib-error');
+    
+     // Hide the compute button if card is open
+    if(aspectMetric.classList.contains('hide')) {
+      done.classList.remove('hide');
+    }
+    else {
+      done.classList.add('hide');
+    }
+  }
+  
+  /**
+   * To open the dimensions card
+   */
+  function showDimensionFunc() {
+    // Open dimensions card and close other cards
+    aspectMetric.classList.add('hide');
+    aspectDimension.classList.toggle('hide');
+    aspectSlice.classList.add('hide');
+    aspectCompareDateRange.classList.add('hide');
+
+    // Add active class to placeholder for dimension
+    // and remove active class from other placeholders
+    showMetric.classList.remove('placeholder-active');
+    showDimension.classList.toggle('placeholder-active');
+    showSlice.classList.remove('placeholder-active');
+    showCompareDateRange.classList.remove('placeholder-active');
+    
+    // Hide the compute button if card is open
+    if(aspectDimension.classList.contains('hide')) {
+      done.classList.remove('hide');
+    }
+    else {
+      done.classList.add('hide');
+    }
+  }
+  
+  /**
+   * To open the slice/filters card
+   */
+  function showSliceFunc() {
+    // Open slice card and close other cards
+    aspectMetric.classList.add('hide');
+    aspectDimension.classList.add('hide');
+    aspectSlice.classList.toggle('hide');
+    aspectCompareDateRange.classList.add('hide');
+
+    // Add active class to placeholder for slice
+    // and remove active class from other placeholders
+    showMetric.classList.remove('placeholder-active');
+    showDimension.classList.remove('placeholder-active');
+    showSlice.classList.toggle('placeholder-active');
+    showCompareDateRange.classList.remove('placeholder-active');
+    
+    // Hide the compute button if card is open
+    if(aspectSlice.classList.contains('hide')) {
+      done.classList.remove('hide');
+    }
+    else {
+      done.classList.add('hide');
+    }
+  }
+  
+  /**
+   * To open the compare date ranges card
+   */
+  function showCompareDateRangeFunc() {
+    // Open compare date ranges card and close other cards
+    aspectMetric.classList.add('hide');
+    aspectDimension.classList.add('hide');
+    aspectSlice.classList.add('hide');
+    aspectCompareDateRange.classList.toggle('hide');
+
+    // Add active class to placeholder for compare date ranges
+    // and remove active class from other placeholders
+    showMetric.classList.remove('placeholder-active');
+    showDimension.classList.remove('placeholder-active');
+    showSlice.classList.remove('placeholder-active');
+    showCompareDateRange.classList.toggle('placeholder-active');
+    showCompareDateRange.classList.remove('madlib-error');
+    
+    // Hide the compute button if card is open
+    if(aspectCompareDateRange.classList.contains('hide')) {
+      done.classList.remove('hide');
+    }
+    else {
+      done.classList.add('hide');
+    }
+  }
+
+  /**
+   * To prefill the date column and start and end dates if there is only 
+   * 1 consistent date column
+   */
+  function autoFillTimeCompareDate() {
+    var size = 0;
+    var dateColumnName;
+    for (var dateColumn in dateColumnInfo) {
+      if (dateColumnInfo.hasOwnProperty(dateColumn)) {
+        if(
+          (dateColumnInfo[dateColumn]['type'] === 'CONSISTENT') && 
+          (headers.indexOf(dateColumn) !== -1)
+        ) {
+          dateColumnName = dateColumn;
+          size++;
+        }
+      }
+    }
+
+    // If there is only 1 consistent date column, prefill that date column
+    if(size === 1) {
+      var minDate, maxDate;
+      var dayFirst = dateColumnInfo[dateColumnName]['day_first'];
+      if(dayFirst) {
+        minDate = dateColumnInfo[dateColumnName]['min_date']['day_first_true'];
+        maxDate = dateColumnInfo[dateColumnName]['max_date']['day_first_true'];
+      }
+      else {
+        minDate = dateColumnInfo[dateColumnName]['min_date']['day_first_false'];
+        maxDate = dateColumnInfo[dateColumnName]['max_date']['day_first_false'];
+      }
+      document.querySelector('#compare-date-column').value = dateColumnName; 
+      document.querySelector('#date-start1').value = minDate;
+      document.querySelector('#date-end1').value = maxDate;
+      document.querySelector('#date-start2').value = minDate;
+      document.querySelector('#date-end2').value = maxDate;
+    }
+  }
+  
+</script>

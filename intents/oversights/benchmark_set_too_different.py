@@ -59,7 +59,7 @@ def benchmark_set_too_different(table, metric, all_metric, slice_compare_column,
 
     date_column_name = kwargs.get('date_column_name', 'date')
     date_range = kwargs.get('date_range', None)
-    date_format = kwargs.get('date_format', '%Y-%m-%d')
+    day_first = kwargs.get('day_first', '%Y-%m-%d')
 
     slices = kwargs.get('slices', None)
 
@@ -67,7 +67,7 @@ def benchmark_set_too_different(table, metric, all_metric, slice_compare_column,
 
     table = aspects.apply_date_range(table, date_range,
                                      date_column_name, 
-                                     date_format)
+                                     day_first)
 
     table = aspects.slice_table(table, slices)
 
@@ -92,7 +92,8 @@ def benchmark_set_too_different(table, metric, all_metric, slice_compare_column,
     required_table_for_all[slice_compare_column] = '*'
 
     updated_table = pandas.concat([required_table_for_one, required_table_for_all])
-
+    updated_table = updated_table.reset_index()
+    
     grouping_columns = []
     if dimensions is not None:
         grouping_columns = dimensions.copy()
@@ -130,15 +131,15 @@ def benchmark_set_too_different(table, metric, all_metric, slice_compare_column,
         row_i = 0
         while row_i < num_rows:
             if row_i == num_rows - 1 or result_table_matrix[row_i][:dimensions_len] != result_table_matrix[row_i + 1][:dimensions_len]:
-                column_i_suggestion_list.append(row_i)
+                column_i_suggestion_list.append({'row':row_i + 1, 'confidence_score':100})
             else:
                 if _calculate_relation(result_table_matrix[row_i][column_i], result_table_matrix[row_i + 1][column_i]) < constants.BSTD_DISIMILARITY_THRESHOLD:
                     row_i = row_i + 1
                 elif _calculate_relation(result_table_matrix[row_i][dimensions_len + 1], result_table_matrix[row_i + 1][dimensions_len + 1]) < constants.BSTD_DISIMILARITY_THRESHOLD:
                     row_i = row_i + 1
                 else:
-                    column_i_suggestion_list.append(row_i)
-                    column_i_suggestion_list.append(row_i + 1)
+                    column_i_suggestion_list.append({'row':row_i + 1, 'confidence_score':100})
+                    column_i_suggestion_list.append({'row':row_i + 2, 'confidence_score':100})
                     row_i = row_i + 1
             row_i = row_i + 1
 

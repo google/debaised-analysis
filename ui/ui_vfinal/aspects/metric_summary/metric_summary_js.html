@@ -1,0 +1,83 @@
+<!-- Javascript functions for aspect: metric and summary -->
+
+<script>
+
+  // Adding autocompletion to the metric column name
+  autoComplete(document.querySelector('#metric'));
+
+  /**
+   * Check the validity of the metric column entered as input
+   * @param {HTMLInputElement} metricColumn - The input element for getting metric column name
+   * @param {string} helperMetric - The id of the element used to give error messages
+   */
+  function metricCheck(metricColumn, helperMetric) {
+    var metricColumnValue = metricColumn.value.trim();
+
+    // Give error message if the metric column is invalid
+    if(!isValidColumnName(metricColumnValue)) {
+      document.querySelector('#' + helperMetric).innerHTML = 'Please enter a valid column name';
+    }
+    else {
+      document.querySelector('#' + helperMetric).innerHTML = '';
+    }
+  }
+
+  /**
+   * Call the function to update metric when user clicks UPDATE in METRIC-SUMMARY card 
+   */
+  document.querySelector('#update-metric').addEventListener('click', updateMetric);
+
+  /**
+   * Update the values filled for aspect: metric and summary
+   */
+  function updateMetric() {
+    var metricVal = document.querySelector('#metric').value.trim();
+    var summary = document.querySelector('#summary');
+    var summaryOperationVal = summary.options[summary.selectedIndex].value; 
+
+    // Flag variable indicates the validity of the inputs, 
+    // It is set to false if the input is invalid
+    var flag = true;
+    if(!isValidColumnName(metricVal))
+      flag = false;
+
+    // If metric is empty, replace madlib by placeholder
+    if(flag && metricVal === '') {
+        showMetric.innerHTML = placeholderMetric;
+        showMetric.classList.toggle('placeholder-active');
+        showMetric.classList.add('placeholder');
+        showMetric.classList.remove('value');
+        aspectMetric.classList.toggle('hide');
+        
+        metric = null;
+        summaryOperation = null;
+        done.classList.toggle('hide');
+    }
+
+    // Else update metric and summary operation and madlib query with the 
+    // entered values if they are valid
+    else if(flag) {
+      // Updating the metric and operation stored and filling madlib
+      var fillMetric = '';
+      summaryOperation = null;
+      if(summaryOperationVal !== 'None'){
+        fillMetric += summaryOperationVal + ' of ';
+        summaryOperation = summaryOperationVal;
+      }
+      fillMetric += metricVal;
+      metric = metricVal;
+
+      console.log("metric "+metric);
+      console.log("summary "+summaryOperation);
+      
+      showMetric.innerHTML = fillMetric;
+      showMetric.classList.toggle('placeholder-active');
+      showMetric.classList.remove('placeholder');
+      showMetric.classList.add('value');
+      aspectMetric.classList.toggle('hide');
+
+      done.classList.toggle('hide');
+    }
+  }  
+
+</script>

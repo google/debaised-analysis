@@ -1,0 +1,184 @@
+<!-- Javascript functions for aspect: date-range -->
+
+<script>
+  
+  // Adding autocompletion to the date column name
+  autoCompleteDate(document.querySelector('#date-column'));  
+
+  /**
+   * Check the validity of the date column entered as input,
+   * if the date is valid autofill the start and end date
+   * and ask date format if the date column is ambiguous
+   * @param {HTMLInputElement} dateColumn - The input element for getting date column
+   * @param {string} helperDate - The id of the element used to give error messages
+   */
+  function dateCheck(dateColumn, helperDate) {
+    var dateColumnValue = dateColumn.value.trim();
+    var dateFormatBox = document.querySelector('#date-format-box');
+    dateFormatBox.classList.add('hide');
+    document.querySelector('#helper-date-start').innerHTML = '';
+    document.querySelector('#helper-date-end').innerHTML = '';
+    
+    // Give error message if the date column is invalid
+    if(!isValidDateColumn(dateColumnValue)) {
+      document.querySelector('#' + helperDate).innerHTML = 'Please enter a valid date column';
+    }
+    else {
+      document.querySelector('#' + helperDate).innerHTML = '';
+      if(dateColumnValue === '') {
+        return;
+      }
+
+      // If date column is consisent, fill the start and date 
+      if(dateColumnInfo[dateColumnValue]['type'] === 'CONSISTENT') {
+        var minDate, maxDate;
+        var dayFirst = dateColumnInfo[dateColumnValue]['day_first'];
+        if(dayFirst) {
+          minDate = dateColumnInfo[dateColumnValue]['min_date']['day_first_true'];
+          maxDate = dateColumnInfo[dateColumnValue]['max_date']['day_first_true'];
+        }
+        else {
+          minDate = dateColumnInfo[dateColumnValue]['min_date']['day_first_false'];
+          maxDate = dateColumnInfo[dateColumnValue]['max_date']['day_first_false'];
+        }
+        document.querySelector('#date-start').value = minDate;
+        document.querySelector('#date-end').value = maxDate;
+      }
+      // Else if the date column is ambiguous ask the date format
+      // and fill start and end date assuming the format as 29/10/2020
+      else if(dateColumnInfo[dateColumnValue]['type'] === 'ALL_AMBIGUOUS') {
+        dateFormatBox.classList.remove('hide');
+        setStartEndDate('true');
+      }
+    }
+  }
+
+  /**
+   * Called when user select an option out of the 2 radio buttons to
+   * set the start and end in the format selected by user
+   * @param {string} - dateFormatValue The value corresponding to the radio button selected
+   */
+  function setStartEndDate(dateFormatValue) {
+    var minDate, maxDate;
+    var dateColumnValue = document.querySelector('#date-column').value;
+    if(dateFormatValue === 'true') {
+      minDate = dateColumnInfo[dateColumnValue]['min_date']['day_first_true'];
+      maxDate = dateColumnInfo[dateColumnValue]['max_date']['day_first_true'];
+    }
+    else {
+      minDate = dateColumnInfo[dateColumnValue]['min_date']['day_first_false'];
+      maxDate = dateColumnInfo[dateColumnValue]['max_date']['day_first_false'];
+    }
+    document.querySelector('#date-start').value = minDate;
+    document.querySelector('#date-end').value = maxDate;
+  }
+
+  /**
+   * Call the function to update date range when user clicks UPDATE in DATE-RANGE card
+   */
+  document.querySelector('#update-date').addEventListener('click', updateDate);
+  
+  /**
+   * Update the values filled for aspect: date-range
+   */
+  function updateDate() {
+    var dateRangeObj = {
+      'dateCol': document.querySelector('#date-column').value.trim(),
+      'dateStart': document.querySelector('#date-start').value,
+      'dateEnd': document.querySelector('#date-end').value
+    }
+    
+    // Flag variable indicates the validity of the inputs, 
+    // It is set to false if the input is invalid
+    var flag = true;
+    var dateFormatBox = document.querySelector('#date-format-box');
+    if(!isValidDateColumn(dateRangeObj.dateCol)) {
+      flag = false;
+    }
+    else if(
+      dateRangeObj.dateCol !== '' && 
+      dateColumnInfo[dateRangeObj.dateCol]['type'] === 'ALL_AMBIGUOUS' && 
+      dateFormatBox.classList.contains('hide')
+    ) {
+      flag = false;
+    }
+
+    // If all date column is empty, replace madlib by placeholder
+    if(flag && dateRangeObj.dateCol === '') {
+      showDate.innerHTML = '&lt;date range&gt;';
+      showDate.classList.toggle('placeholder-active');
+      showDate.classList.add('placeholder');
+      showDate.classList.remove('value');
+      aspectDate.classList.toggle('hide');
+      dateFormatBox.classList.add('hide');
+      
+      dateRange = null;
+      done.classList.toggle('hide');
+    }
+
+    // Else update date-range and madlib query with the entered values if they are valid
+    else if(flag) {
+    
+      // Set flagDateRange to false if the start and end dates are empty 
+      // or start date > end date and give error message
+      var flagDateRange = true;
+      if(dateRangeObj.dateStart === '') {
+        document.querySelector('#helper-date-start').innerHTML = 'Please enter a valid start date';
+        flagDateRange = false;
+      }
+      else {
+        document.querySelector('#helper-date-start').innerHTML = '';
+      }
+      if(dateRangeObj.dateEnd === '') {
+        document.querySelector('#helper-date-end').innerHTML = 'Please enter a valid end date';
+        flagDateRange = false;
+      }
+      else {
+        document.querySelector('#helper-date-end').innerHTML = '';
+      }
+      if(flagDateRange) {
+        var date1 = new Date(dateRangeObj.dateStart);
+        var date2 = new Date(dateRangeObj.dateEnd);
+        if(date2 < date1) {
+          document.querySelector('#helper-date-end').innerHTML = 'End date should be more than start date';
+          flagDateRange = false;
+        }
+      }
+      
+      // Update values if start and end date is valid
+      if(flagDateRange) {
+        // Storing the date format if the date columns is ambiguous 
+        // to ensure the user isn't asked again to specify the format
+        if(dateColumnInfo[dateRangeObj.dateCol]['type'] === 'ALL_AMBIGUOUS') {
+          var dateFormat = document.getElementsByName('date-format');
+          var dayFirst;
+          if(dateFormat[0].checked) {
+            dayFirst = true;
+          }
+          else {
+            dayFirst = false;
+          }
+          dateColumnInfo[dateRangeObj.dateCol]['type'] = 'CONSISTENT';
+          dateColumnInfo[dateRangeObj.dateCol]['day_first'] = dayFirst;
+          dateFormatBox.classList.add('hide');
+        }
+      
+        // Filling the madlib 
+        var fillDate = dateRangeObj.dateCol + ' ' + dateRangeObj.dateStart + ' to ' + dateRangeObj.dateEnd;
+
+        // Updating the date-range stored
+        dateRange = dateRangeObj;
+        console.log("Date-Range ", dateRange);
+        
+        showDate.innerHTML = fillDate;
+        showDate.classList.toggle('placeholder-active');
+        showDate.classList.remove('placeholder');
+        showDate.classList.add('value');
+        aspectDate.classList.toggle('hide');
+
+        done.classList.toggle('hide');
+      }
+    }
+  }
+
+</script>

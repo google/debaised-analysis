@@ -23,9 +23,11 @@ Some of the operations are optional.
 
 from util import aspects
 import pandas
+from oversights.simpsons_paradox import simpsons_paradox
+from oversights.top_down_error import top_down_error
 
-def time_compare(table, metric, dimensions, all_dimensions, time_compare_column,
-                                                    summary_operator, **kwargs):
+def time_compare(table, metric, all_dimensions, time_compare_column, date_range1, 
+                           date_range2, date_format, summary_operator, **kwargs):
 
     """ This function returns both the results according to the intent
     as well as the debiasing suggestions.
@@ -43,24 +45,22 @@ def time_compare(table, metric, dimensions, all_dimensions, time_compare_column,
              dimension is 'batsman'. we group by dimensions.
         all_dimensions: Type-list of str
             It is the list of dimension columns in the initial table
-        date_range: Type-tuple
-            Tuple of start_date and end_date
-        date_column_name: Type-str
-            It is the name of column which contains date
-        date_format: Type-str
-            It is required by datetime.strp_time to parse the date in the format
-            Format Codes
-https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
         slices: Type-List of tuples
             Tuple represents the conditon to keep the row.
             (column_name, filter, value)
             column_name - is the value of the column that the
             condition is applied upon.
             filter - Filters enum members, ex. Filters.IN
-        time_compare_column: Type-list of different data types
-            first element denotes the column name by which we will do comparision.
-            second and third element are a tuple of start and end date range.
-            last element is date_format in which the date of columns present.
+        time_compare_column: Type-string
+            the column name by which we will do comparision.
+        date_range1: Type-tuple of start_date and end_date
+            first date range for which we have to do comparision
+        date_range2: Type-tuple of start_date and end_date
+            second date range for which we have to do comparision
+        date_format: Type-str
+            It is required by datetime.strp_time to parse the date in the format
+            Format Codes
+            https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
         summary_operator: Type-summary_operators enum members
             It denotes the summary operator, after grouping by dimensions.
             ex. SummaryOperators.MAX, SummaryOperators.SUM
@@ -70,25 +70,61 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
     Returns:
         The function will return both suggestions and the results in a tuple.
         (results, suggestions)
-        results: Type - pandas dataframe, The results of the intended slice-compare
+        results: Type - pandas dataframe, The results of the intended time-compare
         suggestions: Type - List of strings, List of suggestions.
     """
-    date_column_name = kwargs.get('date_column_name', 'date')
-    date_range = kwargs.get('date_range', None)
-    date_format = kwargs.get('date_format', '%Y-%m-%d')
 
     slices = kwargs.get('slices', None)
 
-    result_table = _time_compare_results(table, metric, dimensions, 
-                                         time_compare_column, summary_operator, 
-                                         date_column_name = date_column_name,
-                                         date_range = date_range,
-                                         date_format = date_format,
-                                         slices = slices)
-    return result_table
+    dimensions = kwargs.get('dimensions', None)
 
-def _time_compare_results(table, metric, dimensions, time_compare_column,
-                                             summary_operator, **kwargs):
+    result_table = _time_compare_results(table, metric, 
+                                         time_compare_column,
+                                         date_range1, date_range2, 
+                                         date_format, summary_operator,
+                                         dimensions = dimensions, 
+                                         slices = slices)
+
+    table_slice1 = aspects.apply_date_range(table, date_range1,
+                                            time_compare_column, 
+                                            date_format)
+    table_slice1[time_compare_column] = date_range1[0] + " - " + date_range1[1]
+    
+    table_slice2 = aspects.apply_date_range(table, date_range2,
+                                            time_compare_column, 
+                                            date_format)
+    table_slice2[time_compare_column] = date_range2[0] + " - " + date_range2[1]
+
+    oversights_detection_table = pandas.concat([table_slice2, table_slice1])
+    oversights_detection_table = oversights_detection_table.reset_index(drop = True)
+
+    suggestions = []
+
+    simpsons_paradox_suggestion = simpsons_paradox(oversights_detection_table, 
+                                                   metric, all_dimensions,
+                                                   time_compare_column,
+                                                   date_range1[0] + " - " + date_range1[1],
+                                                   date_range2[0] + " - " + date_range2[1],
+                                                   summary_operator,
+                                                   dimensions = dimensions,
+                                                   slices = slices)
+
+    top_down_error_suggestion = top_down_error(oversights_detection_table,  
+                                               metric, all_dimensions,
+                                               time_compare_column,
+                                               str(date_range1[0] + " - " + date_range1[1]),
+                                               str(date_range2[0] + " - " + date_range2[1]),
+                                               summary_operator,
+                                               dimensions = dimensions,
+                                               slices = slices)
+
+    suggestions = simpsons_paradox_suggestion + top_down_error_suggestion
+
+    return (result_table, suggestions)
+
+def _time_compare_results(table, metric, time_compare_column, 
+                          date_range1, date_range2, date_format, 
+                          summary_operator, **kwargs):
 
     """ This function returns the results according to the intent.
     Some of the oversights considered in this intent are-
@@ -104,74 +140,69 @@ def _time_compare_results(table, metric, dimensions, time_compare_column,
             It is the name of column we want.
             'compare batsman A and B according to total_runs',
              dimension is 'batsman'. we group by dimensions.
-        date_range: Type-tuple
-            Tuple of start_date and end_date
-        date_column_name: Type-str
-            It is the name of column which contains date
-        date_format: Type-str
-            It is required by datetime.strp_time to parse the date in the format
-            Format Codes
-https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
         slices: Type-List of tuples
             Tuple represents the conditon to keep the row.
             (column_name, filter, value)
             column_name - is the value of the column that the
             condition is applied upon.
             filter - Filters enum members, ex. Filters.IN
-        time_compare_column: Type-list of different data types
-            first element denotes the column name by which we will do comparision.
-            second and third element are a tuple of start and end date range.
-            last element is date_format in which the date of columns present.
+        time_compare_column: Type-string
+            the column name by which we will do comparision.
+        date_range1: Type-tuple of start_date and end_date
+            first date range for which we have to do comparision
+        date_range2: Type-tuple of start_date and end_date
+            second date range for which we have to do comparision
+        date_format: Type-str
+            It is required by datetime.strp_time to parse the date in the format
+            Format Codes
+            https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
         summary_operator: Type-summary_operators enum members
             It denotes the summary operator, after grouping by dimensions.
             ex. SummaryOperators.MAX, SummaryOperators.SUM
 
     Note-summary_operator is always applied on metric column passed,
          and only when grouping is done
-
     Returns:
-        The function will return the `table(a pandas dataframe object)`
-        after applying the intent on the
-        given `table(a pandas dataframe object)``
+        The function will return the results
+        results: Type - pandas dataframe, The results of the intended time-compare
     """
-
-    date_column_name = kwargs.get('date_column_name', 'date')
-    date_range = kwargs.get('date_range', None)
-    date_format = kwargs.get('date_format', '%d/%m/%Y')
 
     slices = kwargs.get('slices', None)
 
-    table = aspects.apply_date_range(table, date_range,
-                                     date_column_name, 
-                                     date_format)
+    dimensions = kwargs.get('dimensions', None)
 
     table = aspects.slice_table(table, slices)
 
-    required_columns = dimensions.copy()
+    required_columns = []
+    if dimensions is not None:
+        required_columns = dimensions.copy()
+    required_columns.append(time_compare_column)
     required_columns.append(metric)
 
     required_table = aspects.crop_other_columns(table, required_columns)
     
-    """ we shall have two list so that we can combine both the table and 
-    after applying the groupby operation we can get the desired result."""
-    table_slice1 = aspects.apply_date_range(required_table, 
-                                            time_compare_column[1], 
-                                            time_compare_column[0], 
-                                            time_compare_column[3])
-    table_slice1[time_compare_column[0]] = time_compare_column[1][0] + " - " + time_compare_column[1][1]
+    # we shall have two list so that we can combine both the table and 
+    # after applying the groupby operation we can get the desired result.
+    table_slice1 = aspects.apply_date_range(required_table,  
+                                            date_range1,
+                                            time_compare_column,
+                                            date_format)
+    table_slice1[time_compare_column] = date_range1[0] + " - " + date_range1[1]
 
-    table_slice2 = aspects.apply_date_range(required_table, 
-                                            time_compare_column[2], 
-                                            time_compare_column[0], 
-                                            time_compare_column[3])
-    table_slice2[time_compare_column[0]] = time_compare_column[2][0] + " - " + time_compare_column[2][1]
+    table_slice2 = aspects.apply_date_range(required_table,  
+                                            date_range2,
+                                            time_compare_column,
+                                            date_format)
+    table_slice2[time_compare_column] = date_range2[0] + " - " + date_range2[1]
 
     # Pandas library to combine the tables.
     updated_table = pandas.concat([table_slice2, table_slice1])
-    
-    grouping_columns = dimensions.copy()
-    grouping_columns.remove(time_compare_column[0])
-    grouping_columns.append(time_compare_column[0])
+    updated_table = updated_table.reset_index(drop = True)
+
+    grouping_columns = []
+    if dimensions is not None:
+        grouping_columns = dimensions.copy()
+    grouping_columns.append(time_compare_column)
 
     result_table = aspects.group_by(updated_table, grouping_columns, 
                                                    summary_operator)

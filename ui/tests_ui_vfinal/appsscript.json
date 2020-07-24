@@ -1,0 +1,17 @@
+{
+  "timeZone": "Asia/Kolkata",
+  "dependencies": {
+    "enabledAdvancedServices": [{
+      "userSymbol": "Sheets",
+      "serviceId": "sheets",
+      "version": "v4"
+    }],
+    "libraries": [{
+      "userSymbol": "IntentsUi",
+      "libraryId": "1Iq75afmNEZek4TwjtkPR8FsSIGqO63uU3fs_UVcm4ZkbdDuK8uAXtvJy",
+      "version": "1"
+    }]
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8"
+}

@@ -223,8 +223,8 @@ def _check_top_down_error(result_table, new_result_table, new_added_column,
             if new_max_correlation >= \
             constants.TOP_DOWN_ERROR_DISSIMILARITY_THRESHOLD and \
             correlation <= constants.TOP_DOWN_ERROR_SIMILARITY_THRESHOLD:
-                suggestion_row_list.append({'row': row_i, 'confidence_score':100})
-                suggestion_row_list.append({'row':row_i + 1, 'confidence_score':100})
+                suggestion_row_list.append({'row': row_i + 1, 'confidence_score':100})
+                suggestion_row_list.append({'row': row_i + 2, 'confidence_score':100})
             row_i = row_i + 1
 
         row_i = row_i + 1
@@ -233,8 +233,8 @@ def _check_top_down_error(result_table, new_result_table, new_added_column,
         return
     else:
         new_suggestion = {}
-        new_suggestion['suggestion'] = 'both the value is almost same in \
-some grouping but different if we add ' + new_added_column + ' in initial grouping.'
+        new_suggestion['suggestion'] = 'Some values are similar here but will vary if we add '\
+                                                         + new_added_column + ' for grouping '
         new_suggestion['oversight_name'] = 'top-down error'
         new_suggestion['is_row_level_suggestion'] = True
         new_suggestion['row_list'] = suggestion_row_list

@@ -1,0 +1,125 @@
+<!-- Javascript functions for slice-compare: comparison values -->
+
+<script>
+
+  // Adding autocompletion to the comparison column name
+  autoComplete(document.querySelector('#compare-value-column'));  
+
+  /**
+   * Check the validity of the comparison column entered as input
+   * @param {HTMLInputElement} compareValueColumn - The input element for getting comparison value
+   * @param {string} helperCompareValue - The id of the element used to give error messages
+   */
+  function compareValueCheck(compareValueColumn, helperCompareValue) {
+    var compareValueColumnValue = compareValueColumn.value.trim();
+
+    // Give error message if the comparison column is invalid
+    if(!isValidColumnName(compareValueColumnValue)) {
+      document.querySelector('#' + helperCompareValue).innerHTML = 'Please enter a valid comparison column';
+    }
+    else {
+      document.querySelector('#' + helperCompareValue).innerHTML = '';
+    }
+  }
+
+  /**
+   * Compare value1 with all values of the specified comparison column
+   * @param {HTMLInputElement} checkbox - The checkbox state decided whether to compare value1 
+   *                                      with all values of comparison column or the specified value2
+   */
+  function selectAllValuesForValue2(checkbox) {
+    if(checkbox.checked) {
+      document.querySelector('#compare-value2').value = 'All values';
+    }
+  }
+
+  /**
+   * Uncheck the checkbox when value2 is altered by the user
+   */
+  function uncheckSelectAllValuesCheckbox() {
+    document.querySelector('#select-all-values').checked = false;
+  }
+
+  /**
+   * Call the function to update comparison values when user clicks UPDATE in COMPARISON VALUES card
+   */
+  document.querySelector('#update-compare-value').addEventListener('click', updateCompareValue);
+
+  /**
+   * Update the values filled for: comparison values
+   */
+  function updateCompareValue() {
+    var compareColumn = document.querySelector('#compare-value-column').value.trim();
+    var compareValue1 = document.querySelector('#compare-value1').value.trim();
+    var compareValue2 = document.querySelector('#compare-value2').value.trim();
+
+    // If checkbox is selected value1 is compare with everything
+    if(document.querySelector('#select-all-values').checked)
+      compareValue2 = '*';
+ 
+    // Flag variable indicates the validity of the inputs, 
+    // It is set to false if the input is invalid
+    var flag = true;
+    if(!isValidColumnName(compareColumn))
+      flag = false;
+
+    // If all inputs are empty, replace madlib by placeholder
+    if(flag && compareColumn === '') {
+      showCompareValue.innerHTML = '&lt;value1 and value2&gt;';
+      showCompareValue.classList.toggle('placeholder-active');
+      showCompareValue.classList.add('placeholder');
+      showCompareValue.classList.remove('value');
+      aspectCompareValue.classList.toggle('hide');
+      
+      comparisonValue = null;
+      done.classList.toggle('hide');
+    }
+
+    // Else update comparison values and madlib query with the entered values if they are valid
+    else if(flag) {
+      // Set flagCompareValue to false if the any compare value is empty
+      var flagCompareValue = true;
+      if(compareValue1 === '') {
+        document.querySelector('#helper-compare-value1').innerHTML = 'Please enter a valid value1';
+        flagCompareValue = false;
+      }
+      else {
+        document.querySelector('#helper-compare-value1').innerHTML = '';
+      }
+      if(compareValue2 === '') {
+        document.querySelector('#helper-compare-value2').innerHTML = 'Please enter a valid value2';
+        flagCompareValue = false;
+      }
+      else {
+        document.querySelector('#helper-compare-value2').innerHTML = '';
+      }
+      
+      // Update comparsion values if value1 and value2 are valid
+      if(flagCompareValue) {
+        // Filling the madlib 
+        var compareValue2Madlib = compareValue2;
+        if(compareValue2 === '*')
+          compareValue2Madlib = 'everything'
+        var fillComparisonValue = compareColumn + ' ' + compareValue1 + ' and ' + compareValue2Madlib;
+
+        // Updating the comparison values stored
+        var comparisonValueObj = {
+          'comparisonColumn': compareColumn,
+          'slice1': compareValue1,
+          'slice2': compareValue2
+        }
+        comparisonValue = comparisonValueObj;
+        console.log('comparison values ',comparisonValue);
+        
+        showCompareValue.innerHTML = fillComparisonValue;
+        showCompareValue.classList.toggle('placeholder-active');
+        showCompareValue.classList.remove('placeholder');
+        showCompareValue.classList.add('value');
+        aspectCompareValue.classList.toggle('hide');
+  
+        done.classList.toggle('hide');
+      }
+    }
+  }
+  
+</script>

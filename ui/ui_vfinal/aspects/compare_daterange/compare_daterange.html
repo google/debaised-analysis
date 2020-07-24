@@ -1,0 +1,127 @@
+<!-- COMPARE DATE RANGES CARD -->
+
+<div id="aspect-compare-daterange" class="card hide">
+  <div class="container">
+    
+      <h2>Date Ranges</h2>
+
+      <form autocomplete="off">
+        
+        <div class="container-input">
+          <div class="outer-input-div" tabindex="0">
+            <label class="label-input" for="compare-date-column" data-shrink="true">Date Column</label>
+            <div class="inner-input-div">
+              <input 
+                  id="compare-date-column" 
+                  class="input-field" 
+                  name="compare-date-column" 
+                  placeholder="column name" 
+                  type="text"
+                  aria-invalid="false" 
+                  aria-describedby="helper-compare-date-col" 
+                  onfocusout="comparisonDateColCheck(this,'helper-compare-date-col')">
+            </div>
+          </div>
+          <p id="helper-compare-date-col" class="helper-text"></p>
+        </div>
+        
+        <div id="comparecol-date-format-box" class="hide" style="margin: 8px;">
+          <p style="color: rgba(0,0,0,0.54);">Which looks right ?</p>
+          <input 
+              id="comparecol-day-first" 
+              name="comparecol-date-format" 
+              type="radio" 
+              value="true" 
+              onclick="setCompareColStartEndDate(this.value)" 
+              checked>
+          <label for="comparecol-day-first">29/10/2020</label><br>
+          <input 
+              id="comparecol-month-first" 
+              name="comparecol-date-format" 
+              type="radio" 
+              value="false" 
+              onclick="setCompareColStartEndDate(this.value)">
+          <label for="comparecol-month-first">10/29/2020</label><br>
+        </div>
+        
+        <div>
+          <h4 style="margin: 8px">Date Range 1</h4>
+          <div class="container-input">
+            <div class="outer-input-div" tabindex="0">
+              <label class="label-input" for="date-start1" data-shrink="true">Start Date 1</label>
+              <div class="inner-input-div">
+                <input 
+                  id="date-start1" 
+                  class="input-field"
+                  name="date-start1" 
+                  type="date" 
+                  aria-invalid="false" 
+                  aria-describedby="helper-date-start1" 
+                  oninvalid="event.preventDefault();">
+              </div>
+            </div>
+            <p id="helper-date-start1" class="helper-text"></p>
+          </div>
+          <div class="container-input">
+            <div class="outer-input-div" tabindex="0">
+              <label class="label-input" for="date-end1" data-shrink="true">End Date 1</label>
+              <div class="inner-input-div">
+                <input 
+                    id="date-end1" 
+                    class="input-field"
+                    name="date-end1"
+                    type="date"
+                    aria-invalid="false"
+                    aria-describedby="helper-date-end1" 
+                    oninvalid="event.preventDefault();">
+              </div>
+            </div>
+            <p id="helper-date-end1" class="helper-text"></p>
+          </div>
+        </div>
+
+        <div>
+          <h4 style="margin: 8px">Date Range 2</h4>
+          <div class="container-input">
+            <div class="outer-input-div" tabindex="0">
+              <label class="label-input" for="date-start2" data-shrink="true">Start Date 2</label>
+              <div class="inner-input-div">
+                <input 
+                  id="date-start2" 
+                  class="input-field"
+                  name="date-start2" 
+                  type="date" 
+                  aria-invalid="false" 
+                  aria-describedby="helper-date-start2" 
+                  oninvalid="event.preventDefault();">
+              </div>
+            </div>
+            <p id="helper-date-start2" class="helper-text"></p>
+          </div>
+          <div class="container-input">
+            <div class="outer-input-div" tabindex="0">
+              <label class="label-input" for="date-end2" data-shrink="true">End Date 2</label>
+              <div class="inner-input-div">
+                <input 
+                    id="date-end2" 
+                    class="input-field"
+                    name="date-end2"
+                    type="date"
+                    aria-invalid="false"
+                    aria-describedby="helper-date-end2" 
+                    oninvalid="event.preventDefault();">
+              </div>
+            </div>
+            <p id="helper-date-end2" class="helper-text"></p>
+          </div>
+        </div>
+
+        <div class="update-cancel" style="margin-top: 1rem;">
+          <button class="btn default" onclick="closeCard('compare-daterange')">Cancel</button>
+          <button id="update-compare-daterange" class="btn primary">Update</button>
+        </div>
+        
+      </form>
+      
+  </div>
+</div>
