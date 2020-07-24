@@ -48,6 +48,8 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     num_rows = table.shape[0]
 
+    rows_to_be_dropped = []
+
     for row in range(num_rows):
         row_date = datetime.datetime.strptime(table.loc[row, date_column_name],
                                               date_format)
@@ -55,8 +57,10 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
         end_date = datetime.datetime.strptime(date_range[1], date_format)
 
         if row_date < start_date or end_date < row_date:
-            table = table.drop([row])
+            rows_to_be_dropped.append(row)
 
+    table = table.drop(rows_to_be_dropped)
+    
     # drop=True drops the new columnn named 'index' created in reset_index call
     table = table.reset_index(drop=True)
     return table

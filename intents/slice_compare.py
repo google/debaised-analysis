@@ -22,12 +22,15 @@ Some of the operations are optional.
 """
 
 from util import aspects
-from oversights.simpson_paradox import simpson_paradox
+from oversights.simpsons_paradox import simpsons_paradox
+from oversights.benchmark_set_too_different import benchmark_set_too_different
+from oversights.top_down_error import top_down_error
 from util.enums import SummaryOperators, Filters
 import pandas
 
-def slice_compare(table, metric, dimensions, all_dimension, all_metric,
-                  slice_compare_column, summary_operator, **kwargs):
+def slice_compare(table, metric, all_dimensions, all_metric,
+                      slice_compare_column, slice1, slice2,
+                               summary_operator, **kwargs):
     """ This function returns both the results according to the intent
     as well as the debiasing suggestions.
     Some of the oversights considered in this intent are-
@@ -43,7 +46,7 @@ def slice_compare(table, metric, dimensions, all_dimension, all_metric,
             It is the name of column we want.
             'compare batsman A and B according to total_runs',
              dimension is 'batsman'. we group by dimensions.
-        all_dimension: Type-list of str
+        all_dimensions: Type-list of str
             It is the list of dimension columns in the initial table
         all_metric: Type-list of str
             It is the list of metric columns in the initial table
@@ -51,7 +54,7 @@ def slice_compare(table, metric, dimensions, all_dimension, all_metric,
             Tuple of start_date and end_date
         date_column_name: Type-str
             It is the name of column which contains date
-        date_format: Type-str
+        day_first: Type-str
             It is required by datetime.strp_time to parse the date in the format
             Format Codes
 https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
@@ -79,47 +82,69 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
     """
     date_column_name = kwargs.get('date_column_name', 'date')
     date_range = kwargs.get('date_range', None)
-    date_format = kwargs.get('date_format', '%Y-%m-%d')
+    day_first = kwargs.get('day_first', '%Y-%m-%d')
 
     slices = kwargs.get('slices', None)
 
-    if slice_compare_column[2] == "*":
-        result_table = _slice_compare_results_for_all(table.copy(), metric, 
-                                                      dimensions.copy(),
-                                                      slice_compare_column, 
+    dimensions = kwargs.get('dimensions', None)
+
+    if slice2 == "*":
+        result_table = _slice_compare_results_for_all(table, metric,
+                                                      slice_compare_column,
+                                                      slice1, slice2, 
                                                       summary_operator,
                                                       slices = slices,
+                                                      dimensions = dimensions,
                                                       date_column_name = date_column_name,
                                                       date_range = date_range, 
-                                                      date_format = date_format)
+                                                      day_first = day_first)
         suggestions = []
+
+        if summary_operator == SummaryOperators.MEAN or summary_operator == SummaryOperators.MEDIAN:
+            suggestions = benchmark_set_too_different(table, metric, all_metric, 
+                                                      slice_compare_column, slice1,
+                                                      summary_operator,
+                                                      slices = slices,
+                                                      dimensions = dimensions,
+                                                      date_column_name = date_column_name,
+                                                      day_first = day_first,
+                                                      date_range = date_range
+                                                      )
+
         return (result_table, suggestions)
 
-    result_table = _slice_compare_results(table.copy(), metric, dimensions.copy(),
-                                          slice_compare_column, 
-                                          summary_operator,
-                                          slices = slices,
+    result_table = _slice_compare_results(table, metric, slice_compare_column,
+                                          slice1, slice2, summary_operator,
+                                          slices = slices, dimensions = dimensions,
                                           date_column_name = date_column_name,
                                           date_range = date_range, 
-                                          date_format = date_format)
+                                          day_first = day_first)
 
     suggestions = []
 
-    simpson_paradox_suggestion = simpson_paradox(table, metric, dimensions,
-                                                 all_dimension,
-                                                 slice_compare_column,
-                                                 summary_operator,
-                                                 date_column_name = date_column_name,
-                                                 date_range = date_range, 
-                                                 date_format = date_format)
-    if simpson_paradox_suggestion is not None :
-        suggestions.append(simpson_paradox_suggestion)
+    simpsons_paradox_suggestion = simpsons_paradox(table, metric, all_dimensions,
+                                                   slice_compare_column, slice1,
+                                                   slice2, summary_operator,
+                                                   dimensions = dimensions,
+                                                   date_column_name = date_column_name,
+                                                   date_range = date_range, 
+                                                   day_first = day_first,
+                                                   slices = slices)
+
+    top_down_error_suggestion = top_down_error(table, metric, all_dimensions,
+                                               slice_compare_column, slice1,
+                                               slice2, summary_operator,
+                                               dimensions = dimensions,
+                                               date_column_name = date_column_name,
+                                               date_range = date_range, 
+                                               day_first = day_first,
+                                               slices = slices)
+    suggestions = simpsons_paradox_suggestion + top_down_error_suggestion
 
     return (result_table, suggestions)
 
-def _slice_compare_results(table, metric, dimensions,
-                           slice_compare_column,
-                           summary_operator, **kwargs):
+def _slice_compare_results(table, metric, slice_compare_column,
+                           slice1, slice2, summary_operator, **kwargs):
     """This function will implement the slice-compare intent
 
     Also removes the tuples that do not lie in the given date range.
@@ -144,7 +169,7 @@ def _slice_compare_results(table, metric, dimensions,
             Tuple of start_date and end_date
         date_column_name: Type-str
             It is the name of column which contains date
-        date_format: Type-str
+        day_first: Type-str
             It is required by datetime.strp_time to parse the date in the format
             Format Codes
 https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
@@ -174,41 +199,44 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     date_column_name = kwargs.get('date_column_name', 'date')
     date_range = kwargs.get('date_range', None)
-    date_format = kwargs.get('date_format', '%Y-%m-%d')
+    day_first = kwargs.get('day_first', '%Y-%m-%d')
 
     slices = kwargs.get('slices', None)
 
+    dimensions = kwargs.get('dimensions', None)
+
     table = aspects.apply_date_range(table, date_range,
                                      date_column_name, 
-                                     date_format)
+                                     day_first)
 
     if slices == None:
-        slices = [(slice_compare_column[0], Filters.IN, 
-                  [slice_compare_column[1], slice_compare_column[2]])]
+        slices = [(slice_compare_column, Filters.IN, [slice1, slice2])]
     else:
-        slices.append((slice_compare_column[0], Filters.IN, 
-                      [slice_compare_column[1], slice_compare_column[2]]))
+        slices.append((slice_compare_column, Filters.IN, [slice1, slice2]))
     table = aspects.slice_table(table, slices)
 
     # collecting the colums not to be removed
     required_columns = []
     if dimensions is not None:
         required_columns = dimensions.copy()
+    required_columns.append(slice_compare_column)
     required_columns.append(metric)
 
     table = aspects.crop_other_columns(table, required_columns)
 
     # slice_compare_column should be the last element of the group
     # so that groupby will show them together for every grouping
-    dimensions.remove(slice_compare_column[0])
-    dimensions.append(slice_compare_column[0])
-    table = aspects.group_by(table, dimensions, summary_operator)
+    grouping_columns = []
+    if dimensions is not None:
+        grouping_columns = dimensions.copy()
+    grouping_columns.append(slice_compare_column)
+    
+    result_table = aspects.group_by(table, grouping_columns, summary_operator)
 
-    return table
+    return result_table
 
-def _slice_compare_results_for_all(table, metric, dimensions, 
-                                   slice_compare_column, 
-                                   summary_operator, **kwargs):
+def _slice_compare_results_for_all(table, metric, slice_compare_column,
+                                   slice1, slice2, summary_operator, **kwargs):
     
     """This function will implement the slice-compare intent
 
@@ -234,7 +262,7 @@ def _slice_compare_results_for_all(table, metric, dimensions,
             Tuple of start_date and end_date
         date_column_name: Type-str
             It is the name of column which contains date
-        date_format: Type-str
+        day_first: Type-str
             It is required by datetime.strp_time to parse the date in the format
             Format Codes
 https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
@@ -264,33 +292,42 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     date_column_name = kwargs.get('date_column_name', 'date')
     date_range = kwargs.get('date_range', None)
-    date_format = kwargs.get('date_format', '%Y-%m-%d')
+    day_first = kwargs.get('day_first', '%Y-%m-%d')
 
     slices = kwargs.get('slices', None)
 
+    dimensions = kwargs.get('dimensions', None)
+
     table = aspects.apply_date_range(table, date_range,
                                      date_column_name, 
-                                     date_format)
+                                     day_first)
 
     table = aspects.slice_table(table, slices)
 
-    required_columns = dimensions.copy()
+    # collecting the colums not to be removed
+    required_columns = []
+    if dimensions is not None:
+        required_columns = dimensions.copy()
+    required_columns.append(slice_compare_column)
     required_columns.append(metric)
+
     table = aspects.crop_other_columns(table, required_columns)
 
-    required_table_for_one = aspects.slice_table(table.copy(), [(slice_compare_column[0], 
-                                                               Filters.EQUAL_TO, 
-                                                               slice_compare_column[1])])
+    required_table_for_one = aspects.slice_table(table, [(slice_compare_column, 
+                                                   Filters.EQUAL_TO, slice1)])
     
     required_table_for_all = table.copy()
-    required_table_for_all[slice_compare_column[0]] = '*'
+    required_table_for_all[slice_compare_column] = 'ALL'
 
     updated_table = pandas.concat([required_table_for_all, required_table_for_one])
+    updated_table = updated_table.reset_index(drop = True)
 
-    grouping_columns = dimensions.copy()
-    grouping_columns.remove(slice_compare_column[0])
-    grouping_columns.append(slice_compare_column[0])
+    # collecting the colums on whcih we shall do grouping
+    grouping_columns = []
+    if dimensions is not None:
+        grouping_columns = dimensions.copy()
+    grouping_columns.append(slice_compare_column)
     
-    result_table = aspects.group_by(updated_table, grouping, summary_operator)
+    result_table = aspects.group_by(updated_table, grouping_columns, summary_operator)
 
     return result_table

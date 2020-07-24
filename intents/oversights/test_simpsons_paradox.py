@@ -34,7 +34,7 @@ def test_1():
                                                    dimensions = ['year'])
     print(query_result)
 
-    expected_result = "[{'suggestion': 'the relation between slices might changed a lot if you will consider month in grouping.', 'oversight_name': 'simpsons-paradox', 'is_row_level_suggestion': True, 'row_list': [0, 1]}]"
+    expected_result = "[{'suggestion': 'the relation between slices might changed a lot if you will consider month in grouping.', 'oversight_name': 'simpsons-paradox', 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}]"
     assert(str(query_result) == expected_result)
 
 def test_2():
@@ -48,7 +48,7 @@ def test_2():
                                                    SummaryOperators.MEAN)
     print(query_result)
 
-    expected_result = "[{'suggestion': 'the relation between slices might changed a lot if you will consider city in grouping.', 'oversight_name': 'simpsons-paradox', 'is_row_level_suggestion': True, 'row_list': [0, 1]}]"
+    expected_result = "[{'suggestion': 'the relation between slices might changed a lot if you will consider city in grouping.', 'oversight_name': 'simpsons-paradox', 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}]"
     assert(str(query_result) == expected_result)
 
 def test_3():
@@ -63,7 +63,7 @@ def test_3():
                                                    dimensions = ['class'])
     print(query_result)
 
-    expected_result = "[{'suggestion': 'the relation between slices might changed a lot if you will consider subject in grouping.', 'oversight_name': 'simpsons-paradox', 'is_row_level_suggestion': True, 'row_list': [0, 1, 2, 3]}]"
+    expected_result = "[{'suggestion': 'the relation between slices might changed a lot if you will consider subject in grouping.', 'oversight_name': 'simpsons-paradox', 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}, {'row': 3, 'confidence_score': 100}, {'row': 4, 'confidence_score': 100}]}]"
     assert(str(query_result) == expected_result)
 
 def test_4():
@@ -78,22 +78,7 @@ def test_4():
                                                    dimensions = ['class'])
     print(query_result)
 
-    expected_result = "[{'suggestion': 'the relation between slices might changed a lot if you will consider subject in grouping.', 'oversight_name': 'simpsons-paradox', 'is_row_level_suggestion': True, 'row_list': [0, 1]}]"
-    assert(str(query_result) == expected_result)
-
-def test_5():
-    """
-        question :  compare average revenue of A and B by country.
-     """
-    table = pandas.read_csv('data/new_revenue_list.csv')
-    query_result = simpsons_paradox.simpsons_paradox(table, 'revenue',
-                                                   ['country_name', 'company_name', 'month'],
-                                                   'company_name', 'A', 'B',
-                                                   SummaryOperators.MEAN,
-                                                   dimensions = ['country_name'])
-    print(query_result)
-
-    expected_result = "[{'suggestion': 'the relation between slices might changed a lot if you will consider month in grouping.', 'oversight_name': 'simpsons-paradox', 'is_row_level_suggestion': True, 'row_list': [2]}]"
+    expected_result = "[{'suggestion': 'the relation between slices might changed a lot if you will consider subject in grouping.', 'oversight_name': 'simpsons-paradox', 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}]"
     assert(str(query_result) == expected_result)
 
 print("\ncompare total salary of 'A' and 'B' for year 2019.")
@@ -107,8 +92,5 @@ test_3()
 
 print("\ncompare average score of A and B by class again.")
 test_4()
-
-print("\ncompare average revenue of A and B by country.")
-test_5()
 
 print("\nTest cases completed")
