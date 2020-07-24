@@ -53,10 +53,10 @@ def get_column_type_and_order(column):
         column_type_and_order['type'] = enums.ColumnTypes.INCONSISTENT
         column_type_and_order['day_first'] = None
     elif count_date_type[True] != 0:
-        column_type_and_order['type'] = enums.ColumnTypes.CONSINTENT
+        column_type_and_order['type'] = enums.ColumnTypes.CONSISTENT
         column_type_and_order['day_first'] = True
     elif count_date_type[False] != 0:
-        column_type_and_order['type'] = enums.ColumnTypes.CONSINTENT
+        column_type_and_order['type'] = enums.ColumnTypes.CONSISTENT
         column_type_and_order['day_first'] = False
     else:
         column_type_and_order['type'] = enums.ColumnTypes.ALL_AMBIGUOUS

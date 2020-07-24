@@ -39,6 +39,9 @@ import date_columns_detection
 # a passed column is & also wether day_first is True/False for that column
 import date_column_type_detection
 
+# Function in this module will add the min date & mx date for each column as a key
+from util import min_max_date
+
 def detect(table):
     """
     This function first detects the date columns in the table and
@@ -64,5 +67,10 @@ def detect(table):
         column_type_and_order[column] = \
         date_column_type_detection.\
         get_column_type_and_order(table[column].tolist())
+
+    # adding min_date & max_date for each date column to prefill start date &
+    # end date in date range aspect in the User Interface
+
+    column_type_and_order = min_max_date.update_min_max_date(column_type_and_order, table)
 
     return column_type_and_order
