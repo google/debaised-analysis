@@ -1,0 +1,69 @@
+<!-- Javascript functions for inserting the output in sheet -->
+
+<script>
+
+  // function to show the 2 options of adding output in sheet
+  function addOutputSheet(btnInsert) {
+    document.querySelector('#output-location').classList.remove('hide');
+    btnInsert.classList.add('hide');
+  }
+  
+  // function to select the output range
+  function getSelectedCell(cellPicker) {
+    // add loading effect
+    cellPicker.nextElementSibling.innerHTML = 'Selecting';   
+    cellPicker.classList.add('loading');
+
+    google.script.run                              
+          .withSuccessHandler(updateSelectedCell) // updateSelectedCell called upon successful completion of server-side function
+          .withUserObject(cellPicker)             // to pass argument to updateSelectedCell
+          .getSelectedCell();                     // executes a server-side function - getSelectedCell
+    return;
+  }
+        
+  // function called when server-side function - getSelectedRange returns successfully
+  // receive the selected cell a1notation
+  function updateSelectedCell(outputRange,cellPicker) {
+    document.getElementById('output-range').value = outputRange;
+    document.getElementById('output-range').focus();
+
+    // remove loading effect
+    cellPicker.nextElementSibling.innerHTML = 'Get data range';   
+    cellPicker.classList.remove('loading');
+  }
+  
+  // function to add output in current/new sheet
+  function addOutputInSheet(btnAddOutput) {
+    // adding loading effect    
+    btnAddOutput.innerHTML = 'Inserting';
+    btnAddOutput.disabled = true;
+    btnAddOutput.classList.add('loading');
+    
+    var outputSheet = document.getElementsByName('output-sheet');
+
+    // call server side function to insert output in new sheet
+    if(outputSheet[0].checked) {
+      google.script.run
+            .withSuccessHandler(addedOutput)
+            .addOutputInNewSheet(outputTable);
+    }
+    // call server side function in insert output in current sheet at the selected location
+    else {
+      var outputCell = document.querySelector('#output-range').value;
+      google.script.run
+            .withSuccessHandler(addedOutput)
+            .addOutputInCurrentSheet(outputCell,outputTable);
+    }
+  }
+  
+  // success handler of addOutputInNew/CurrentSheet
+  // called after output is inserted in sheet
+  function addedOutput(){
+    // remove loading effect
+    var btnAddOutput = document.querySelector('#btn-add-output');
+    btnAddOutput.innerHTML = 'Insert';
+    btnAddOutput.disabled = false;
+    btnAddOutput.classList.remove('loading');
+  }
+
+</script>

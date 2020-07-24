@@ -1,0 +1,211 @@
+<!-- Functions for autofilling table range field or fetching table range as selected by user  -->
+
+<script>
+  
+  // function invoked when home page loads to show the autodetected table
+  window.onload = function() {
+    // storing autodected table data
+    var autodectedRange = document.querySelector('#autodetectedRange').textContent.split(',');
+    tableRange['inputSheet'] = autodectedRange[0];
+    tableRange['rangeString'] = autodectedRange[1];
+    tableRange['headerRow'] = autodectedRange[2];
+    tableRange['headerRange'] = autodectedRange[3]; 
+    console.log("Autodetected Data Range ",tableRange);
+    
+    // update range field value
+    document.getElementById('data-range').innerHTML = tableRange['inputSheet'] + '!' + tableRange['rangeString'];   
+    // update header row value 
+    document.getElementById('header-range').innerHTML = tableRange['headerRange']; 
+  }
+  
+  // function to detect the selected table range
+  function getSelectedRange(rangePicker) {
+    // add loading effect
+    rangePicker.nextElementSibling.innerHTML = 'Selecting';    // Change the button hover text while getting range
+    rangePicker.classList.add('loading');
+    // uncheck the checkbox (used to select entire table)
+    document.querySelector('#select-entire-table').checked = false;
+
+    google.script.run     
+          .withSuccessHandler(updateSelectedRange) // updateSelectedRange called upon successful completion of server-side function
+          .withUserObject(rangePicker)             // to pass argument to updateSelectedRange
+          .getSelectedRange();                     // executes server-side function - getSelectedRange
+    return;
+  }
+        
+  // function called when server-side function - getSelectedRange returns successfully
+  // receives updated data range and displays it to the user
+  function updateSelectedRange(dataRange,rangePicker) {
+    document.getElementById('edit-data-range').value = dataRange['rangeString'];   
+    document.getElementById('edit-header-row').value = parseInt(dataRange['headerRow'],10);   
+    document.getElementById('edit-header-range').textContent = dataRange['headerRange'];
+    document.getElementById('edit-data-range').focus();
+
+    // remove the loading effect
+    rangePicker.nextElementSibling.innerHTML = 'Get data range';           
+    rangePicker.classList.remove('loading');
+  }
+  
+  // function to select entire table using the selected range
+  // invoked when user checks the checkbox
+  function selectEntireTable(checkbox) {
+    // if user selects the checkbox, call server side function to receive updated data range
+    if(checkbox.checked) {
+      // add loading effect
+      document.querySelector('#label-for-checkbox').classList.add('loading');
+      google.script.run
+            .withSuccessHandler(setRangeToEntireTable)  // setRangeToEntireTable called upon successful completion of server-side function
+            .selectEntireTableFromGivenRange(tableRange['rangeString']); // executes server-side function: selectEntireTableFromGivenRange
+    }
+  }
+  
+  // receives entire table range and display it to the user
+  function setRangeToEntireTable(dataRange) {
+    // remove loading effct
+    document.querySelector('#label-for-checkbox').classList.remove('loading');
+
+    // update the fields with receive data range
+    document.querySelector('#edit-data-range').value = dataRange['rangeString'];    
+    document.querySelector('#edit-header-row').value = parseInt(dataRange['headerRow']);
+    document.querySelector('#edit-header-range').textContent = dataRange['headerRange'];
+  }
+  
+  // function called when user enters range to check it's validity
+  function checkRangeValidity(range) {
+    var a1Notation = range.value;
+    // give an error message if a1notation of range is not valid
+    if(!checkRangeValidityUtil(a1Notation)) {
+      document.querySelector('#helper-range').innerHTML = 'Please select a valid range';
+    }
+    else {
+      document.querySelector('#helper-range').innerHTML = '';
+    }
+  }
+  
+  // function to check if the specified a1notation of range is valid
+  function checkRangeValidityUtil(a1Notation ) {
+    // separate a1notation into 2 parts 
+    // before ':' is start cell
+    // after ':' is end cell (blank is case of no ':')
+    var index = a1Notation.indexOf(':');
+    var startCell = '';
+    var endCell = '';
+    if(index != -1) {
+      startCell = a1Notation.slice(0,index);
+      endCell = a1Notation.slice(index+1);
+    }
+    else {
+      startCell = a1Notation;
+    }
+    
+    // if start cell is of the form: B5 - valid
+    if(/(([a-zA-Z]+)([0-9]+))$/.test(startCell)) {
+      // if end cell is of the form: D20 / D / 20 or there is no end cell, range is valid
+      if((/(([a-zA-Z]+)([0-9]*))$/.test(endCell)) || (/(([0-9]+))$/.test(endCell)) || (index === -1 && endCell === '')) {
+        return true;
+      }
+      return false;
+    }
+    // else if start cell is of the form: B - valid
+    else if(/(([a-zA-Z]+))$/.test(startCell)) {
+      // if end cell is of the form: D20 / D, range is valid
+      if(/(([a-zA-Z]+)([0-9]*))$/.test(endCell)) {
+        return true;
+      }
+      return false;
+    }
+    // else if start cell is of the form: 5 - valid
+    else if(/(([0-9]+))$/.test(startCell)) {
+      // if end cell is of the form: D20 / 20, range is valid
+      if((/(([a-zA-Z]+)([0-9]+))$/.test(endCell)) || (/(([0-9]+))$/.test(endCell))) {
+        return true;
+      }
+      return false;
+    }
+    // else the range is not valid
+    return false;
+  }
+
+  // function called if range is edited
+  function updateCheckboxAndHeaderRange(range) {
+    // uncheck the checkbox
+    document.querySelector('#select-entire-table').checked = false;
+    // if range is valid, set header range
+    if(checkRangeValidityUtil(range.value)) {
+      setHeaderRange();
+    }
+    else {
+      document.querySelector('#edit-header-range').textContent = '';
+    }
+  }
+  
+  // function called if header row is edited
+  function setHeaderRange() {
+    var headerRow = document.querySelector('#edit-header-row').value;    
+    var dataRange = document.querySelector('#edit-data-range').value;
+    
+    // give an error message to fill header row if it is blank
+    if(headerRow === '') {
+      document.querySelector('#edit-header-range').textContent = '';
+      document.querySelector('#helper-header-row').innerHTML = 'Please fill header row';
+      return;
+    }
+    
+    // else remove error message and construct header range
+    document.querySelector('#helper-header-row').innerHTML = '';
+
+    // separate a1notation into 2 parts 
+    // before ':' is start cell
+    // after ':' is end cell (blank is case of no ':')
+    var index = dataRange.indexOf(':');
+    var startCell = '';
+    var endCell = '';
+    if(index != -1) {
+      startCell = dataRange.slice(0,index);
+      endCell = dataRange.slice(index+1);
+    }
+    else {
+      startCell = dataRange;
+    }
+
+    // convert header row from string to number
+    headerRow = parseInt(headerRow);
+    
+    // start column for header range
+    var startColumn = '';
+    for(var i = 0; i < startCell.length; i++) {
+      if(isNaN(startCell[i])) {
+        startColumn += startCell[i];
+      }
+      else {
+        break;
+      }
+    }
+    
+    // end column for header range
+    var endColumn = '';
+    for(var i = 0; i < endCell.length; i++) {
+      if(isNaN(endCell[i])) {
+        endColumn += endCell[i];
+      }
+      else {
+        break;
+      }
+    }
+    
+    if(startColumn === '' && endColumn === '') {
+      startColumn = 'A';
+    }
+    
+    // constructing header range
+    var headerRange = '';
+    headerRange += startColumn + headerRow;
+    if(endColumn !== startColumn && index !== -1) {
+      headerRange += ':' + endColumn + headerRow;
+    }
+    
+    // display header range to the user   
+    document.querySelector('#edit-header-range').textContent = headerRange;
+  }
+  
+</script>

@@ -1,0 +1,238 @@
+<!-- Javascript functions for extracting data filled by user and 
+    calling server-side Apps Script function to get the result -->
+
+<script>
+
+  // fetching the submit button
+  var done = document.getElementById('done');  
+  
+  // function called when user clicks the Compute (submit) button
+  function evaluateQuery(intentName) {
+    // if input is not valid, give error messages and return - query is not submitted
+    if(!isValidIntentInput(intentName)) 
+      return;
+    
+    // if input is valid, hide error message if any
+    document.querySelector('.alert').classList.add('hide');
+    
+    // add loading effect
+    done.innerHTML = 'Computing';   //change value of button
+    done.disabled = true;           //disable the button
+    document.querySelector('.cover').classList.add('remove-cover');
+    
+    // intent name
+    intent = intentName;       //intent for which query is submitted
+    
+    // call server side function with the input values to submit query and receive output
+    // call printOutput when server side function returns successfully
+    google.script.run
+          .withSuccessHandler(printOutput)
+          .evalQuery(              
+            intent,
+            metric,
+            summaryOperation,
+            isAsc,
+            k,
+            dimensions,
+            slices,
+            dateRange,
+            timeGranularity,
+            comparisonValue);
+  }
+  
+  // function called after server-side function - evalQuery returns successfully
+  // receives json, output table and suggestions for query submiited and displays it
+  function printOutput(queryResult) {
+    // remove loading effect
+    done.innerHTML = 'Compute';        //change value of submit button
+    done.disabled = false;             //enable the button
+    document.querySelector('.cover').classList.remove('remove-cover');
+
+    // printing json for the query
+    console.log('Json of query entered ');
+    console.log(queryResult['jsonQuery']);
+
+    // storing and printing the output table and suggestions received
+    outputTable = queryResult['outputTable'];
+    suggestions = queryResult['suggestions'];
+    console.log('outputTable ',outputTable);
+    console.log('suggestions ',suggestions);
+
+    // show compact madlib of submitted query and it's output
+    document.querySelector('#back-to-intent').classList.remove('hide');
+    document.querySelector('#query-after-compute').classList.remove('hide');
+    document.querySelector('#output').classList.remove('hide');
+
+    // hide madlib of query written by user and compute button
+    document.querySelector('#back-to-home').classList.add('hide');
+    document.querySelector('#query').classList.add('hide');
+    document.querySelector('#done').classList.add('hide');
+    
+    // displaying the compact madlib of query submitted by user
+    document.querySelector('#short-query').innerHTML = createQuery();
+    
+    // showing output in sidebar
+    createTableInSidebar();
+  }
+
+  // function to show output in sidebar
+  function createTableInSidebar() {
+    // creating output table
+    var table = '<table id="output-table">';
+    
+    // creating table headers
+    var tableHead = '<thead>'+
+                      '<tr>';
+    for(var i = 0; i < outputTable[0].length; i++) {
+      tableHead += '<th>' + outputTable[0][i] + '</th>';
+    }
+    tableHead +=  '</tr>'+
+                '</thead>';
+    
+    // creating table body
+    var tableBody = '<tbody>';
+    for(var i = 1; i < outputTable.length; i++) {
+        tableBody += '<tr>';
+        for(var j = 0; j < outputTable[i].length; j++) {
+            tableBody += '<td>' + outputTable[i][j] + '</td>';
+        }
+        tableBody += '</tr>';
+    }
+    tableBody += '</tbody>';
+    
+    table += tableHead;
+    table += tableBody;
+    table += '</table>';
+
+    // displaying the result table to user
+    document.querySelector('#query-output').innerHTML = table;
+    
+    // creating suggestions list
+    var messages = '';
+    for(var i = 0; i < suggestions.length; i++) {
+      messages += '<div class="suggestion-flexbox">';
+      
+      // adding suggestions text
+      messages += '<span class="suggestion-text">' + suggestions[i].suggestion + '</span>';
+      
+      // if suggestion contains json for alternate query, add option to run it
+      if('json' in suggestions[i]) {
+        console.log('suggestion json',JSON.stringify(suggestions[i].json));
+        messages += '<span class="icon-hover">' +
+                      '<span ' +
+                          'class="material-icons suggestion-icon" ' +
+                          'onclick=\'submitDebiasingQuery(' + JSON.stringify(suggestions[i].json) + ')\'>' +
+                            'search' +
+                      '</span>' +
+                      '<br><span class="icon-hover-text hover-search">Try it</span>' +
+                    '</span>';
+      }
+      
+      // if suggestion contains column list, add option to highlight columns in output table
+      else if(suggestions[i].is_column_level_suggestion) {
+        messages += '<span class="icon-hover">' +
+                      '<span ' +
+                          'class="material-icons suggestion-icon" ' + 
+                          'onclick=\'highlightColumns(this,' + JSON.stringify(suggestions[i].col_list) + ')\'>' +
+                            'highlight' +
+                      '</span>' +
+                      '<br><span class="icon-hover-text hover-highlight">Highlight in table</span>' +
+                    '</span>';
+      }
+      
+      messages += '</div>';
+    }
+    document.querySelector('#query-suggestions').innerHTML = messages;
+
+    // if there are any suggestions, show the suggestions card
+    if(suggestions.length>0) {
+      document.querySelector('#debiasing-suggestions').classList.remove('hide');
+    }
+    // else hide the suggestions card
+    else {
+      document.querySelector('#debiasing-suggestions').classList.add('hide');
+    }
+  }
+
+  // function called when user clicks to run/try any debiasing suggestion
+  function submitDebiasingQuery(jsonQuery) {
+    // add loading effect
+    document.querySelector('.cover').classList.add('remove-cover');
+    
+    // storing the previous query and output shown in stack
+    var queryObject = {
+      'madlibQuery': document.querySelector('#short-query').innerHTML,
+      'outputTable': document.querySelector('#query-output').innerHTML,
+      'suggestions': document.querySelector('#query-suggestions').innerHTML
+    };
+    stack.push(queryObject);
+    
+    // calling gcp function to receive output of the suggested query
+    google.script.run
+          .withSuccessHandler(submitDebiasingQuerySuccessHandler)
+          .withUserObject(jsonQuery)
+          .callGcpToGetQueryResultUsingJson(JSON.stringify(jsonQuery));   
+  }
+  
+  // function called after server-side function - callGcpToGetQueryResultUsingJson returns successfully
+  // receives json, output table and suggestions for the suggested query
+  function submitDebiasingQuerySuccessHandler(queryResult,jsonQuery) {
+    // printing json for the query
+    console.log('Json of query submitted');
+    console.log(queryResult['jsonQuery']);
+
+    // storing and printing the output table and suggestions received
+    outputTable = queryResult['outputTable'];
+    suggestions = queryResult['suggestions'];
+    console.log('outputTable ',outputTable);
+    console.log('suggestions ',suggestions);
+    
+    // creating madlib for the submitted query using json
+    document.querySelector('#short-query').innerHTML = createQueryFromJson(jsonQuery);
+
+    // insert option
+    document.querySelector('#output-location').classList.add('hide');
+    document.querySelector('#add-sheet').classList.remove('hide');
+
+    // remove loading effect
+    document.querySelector('.cover').classList.remove('remove-cover');
+
+    // scrolling to top of sidebar
+    document.querySelector('#description').scrollIntoView();
+
+    // showing output in sidebar
+    createTableInSidebar();
+  }
+
+  // function to highlight the columns mentioned in columnsList
+  function highlightColumns(highlightIcon,columnsList) {
+    // change icon's hover text when highlight icon is clicked
+    var highlightHoverElement = highlightIcon.nextElementSibling.nextElementSibling;
+    var msg1 = 'Highlight in table';
+    var msg2 = 'Remove highlighting from table'
+    if(highlightHoverElement.innerHTML === msg1) {
+      highlightHoverElement.innerHTML = msg2;
+    }
+    else {
+      highlightHoverElement.innerHTML = msg1;
+    }
+      
+    // create list of columns to highlight
+    var columnNames = [];
+    for(var i = 0; i < columnsList.length; i++) { 
+      columnNames.push(columnsList[i].column);
+    }
+    
+    // highlight specified columns in the output table
+    var sidebarTable = document.querySelector('#output-table');
+    for(var j = 0; j < outputTable[0].length ; j++) {
+      var index = columnNames.indexOf(outputTable[0][j]);
+      if(index !== -1) {
+        for(var i = 1; i < sidebarTable.rows.length; i++) {
+          sidebarTable.rows[i].cells[j].classList.toggle('highlight-table-cell');
+        }
+      }
+    }
+  }
+
+</script>

@@ -1,0 +1,122 @@
+<!-- SLICE CARD -->
+
+<div id="aspect-slice" class="card hide">
+  <div class="container">
+
+    <div class="flexbox">
+      <span class="material-icons">filter_alt</span>
+      <h2>Filter(s)</h2>
+      <button class="circle-button add-button" style="margin-left: auto;" onclick="addSlice()" > 
+        <span style="display: inherit;">
+          <svg class="add" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path>
+          </svg>
+        </span>
+      </button>
+    </div>
+
+    <form autocomplete="off">
+
+      <div id="slice-parent">
+        <div id="filt1"> 
+          <div style="display: flex; justify-content: space-between;">
+
+            <div class="box filter-container">
+
+              <div class="container-input">
+                <div class="outer-input-div" tabindex="0">
+                  <label class="label-input" for="slice-col1" data-shrink="true">Filter Column</label>
+                  <div class="inner-input-div">
+                    <input 
+                        id="slice-col1" 
+                        class="input-field"
+                        name="slice-col" 
+                        placeholder="column name" 
+                        type="text"
+                        aria-invalid="false" 
+                        aria-describedby="helper-slice-col1" 
+                        onfocusout="sliceCheck(this,'helper-slice-col1')">
+                  </div>
+                </div>
+                <p id="helper-slice-col1" class="helper-text"></p>
+              </div>
+              
+              <div class="container-input">
+                <div class="outer-input-div" tabindex="0">
+                  <label class="label-input" for="slice-op1" data-shrink="true">Filter Operation</label>
+                  <div class="inner-input-div" style="padding: 0;">
+                    <select 
+                        id="slice-op1"
+                        class="input-field input-dropdown" 
+                        name="slice-op"
+                        aria-invalid="false"  
+                        onfocusout="sliceValCompatible('slice-val1','slice-op1','helper-slice-val1')">
+                      <option>Equal to</option>
+                      <option>Not equal to</option>
+                      <option>In</option>
+                      <option>Not in</option>
+                      <option>Less than</option>
+                      <option>Less than equal to</option>
+                      <option>Greater than</option>
+                      <option>Greater than equal to</option>
+                    </select>
+                    <svg class="dropdown-icon" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M7 10l5 5 5-5z"></path>
+                    </svg>
+                  </div>
+                  <p id="helper-slice-op1" class="helper-text"></p>
+                </div>
+              </div>
+              
+              <div class="container-input">
+                <div class="outer-input-div" tabindex="0">
+                  <label class="label-input" for="slice-val1" data-shrink="true">Filter Values</label>
+                  <div class="inner-input-div">
+                    <input 
+                        id="slice-val1" 
+                        class="input-field"
+                        name="slice-val"
+                        placeholder="values separated by ," 
+                        type="text"  
+                        aria-invalid="false" 
+                        aria-describedby="helper-slice-val1" 
+                        oninput="filterIconChange(this)" 
+                        onfocusout="sliceValCompatible('slice-val1','slice-op1','helper-slice-val1')">
+                    <span class="icon-hover">
+                      <span 
+                          id="select-filter-value1" 
+                          class="material-icons" 
+                          style="cursor: pointer;" 
+                          onclick="updateFilterValues(this,'slice-val1')">
+                            border_all
+                      </span>
+                      <span class="icon-hover-text hover-range">Get filter values</span>
+                    </span>
+                  </div>
+                </div>
+                <p id="helper-slice-val1" class="helper-text"></p>
+              </div>
+              
+            </div>
+            
+            <button class="circle-button sub-button" style="margin-top:10px" onclick="removeElement('filt1')"> 
+              <span style="display: inherit;">
+                <svg class="minus" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M19 13H5v-2h14v2z"></path>
+                </svg>
+              </span>
+            </button>
+
+          </div>
+        </div>
+      </div>
+      
+      <div class="update-cancel">
+        <button class="btn default" onclick="closeCard('slice')">Cancel</button>
+        <button id="update-slice" class="btn primary">Update</button>
+      </div>
+      
+    </form>
+
+  </div>
+</div>

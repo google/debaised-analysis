@@ -1,0 +1,82 @@
+<!-- COMPARISON VALUES CARD -->
+
+<div id="aspect-compare-value" class="card hide">
+  <div class="container">
+    
+      <h2>Value1 and Value2</h2>
+
+      <form autocomplete="off">
+        
+        <div>
+          <div class="container-input">
+            <div class="outer-input-div" tabindex="0">
+              <label class="label-input" for="compare-value-column" data-shrink="true">Comparison Column</label>
+              <div class="inner-input-div">
+                <input 
+                    id="compare-value-column" 
+                    class="input-field" 
+                    name="compare-value-column" 
+                    placeholder="column name" 
+                    type="text"
+                    aria-invalid="false" 
+                    aria-describedby="helper-compare-value-column" 
+                    onfocusout="compareValueCheck(this,'helper-compare-value-column')">
+              </div>
+            </div>
+            <p id="helper-compare-value-column" class="helper-text"></p>
+          </div>
+          
+          <div class="flexbox">
+            <div class="container-input">
+              <div class="outer-input-div" tabindex="0">
+                <label class="label-input" for="compare-value1" data-shrink="true">Value1</label>
+                <div class="inner-input-div">
+                  <input 
+                      id="compare-value1" 
+                      class="input-field"
+                      name="compare-value1" 
+                      placeholder="value1"
+                      type="text" 
+                      aria-invalid="false" 
+                      aria-describedby="helper-compare-value1">
+                </div>
+              </div>
+              <p id="helper-compare-value1" class="helper-text"></p>
+            </div>
+            <div class="container-input">
+              <div class="outer-input-div" tabindex="0">
+                <label class="label-input" for="compare-value2" data-shrink="true">Value2</label>
+                <div class="inner-input-div">
+                  <input 
+                      id="compare-value2" 
+                      class="input-field" 
+                      name="compare-value2" 
+                      placeholder="value2" 
+                      type="text" 
+                      aria-invalid="false" 
+                      aria-describedby="helper-compare-value2" 
+                      oninput="uncheckSelectAllValuesCheckbox()">
+                </div>
+              </div>
+              <p id="helper-compare-value2" class="helper-text"></p>
+            </div>    
+          </div>
+          
+          <div class="chk-container">
+            <div class="checkbox">
+              <input id="select-all-values" type="checkbox" onclick="selectAllValuesForValue2(this)">
+              <label id="label-for-value2-checkbox" for="select-all-values">Compare value1 with all other values</label>
+            </div>
+          </div>
+            
+        </div>
+
+        <div class="update-cancel" style="margin-bottom: 1.5rem;">
+          <button class="btn default" onclick="closeCard('compare_value')">Cancel</button>
+          <button id="update-compare-value" class="btn primary">Update</button>
+        </div>
+        
+      </form>
+      
+  </div>
+</div>

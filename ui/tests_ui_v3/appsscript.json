@@ -1,0 +1,12 @@
+{
+  "timeZone": "Asia/Kolkata",
+  "dependencies": {
+    "libraries": [{
+      "userSymbol": "IntentsUi",
+      "libraryId": "1YwrAuowhMo6RgwVf-qiwXwVQkEAKoHD087AdVAX6aV6C-ywh8CnZmi0E",
+      "version": "3"
+    }]
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8"
+}

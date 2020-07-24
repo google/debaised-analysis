@@ -1,0 +1,113 @@
+<!-- Styles madlib for query, query's output table and suggestions -->
+
+<style>
+
+  /* QUERY MADLIB */
+  .container .madlib {
+    font-family: 'Libre Baskerville', serif;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .container h2{
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+  }
+
+  .placeholder {
+    color: #188038;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: 'Vollkorn', serif;
+  }
+
+  .value {
+    color: #023e8a;
+    cursor: pointer;
+    font-family: 'Vollkorn', serif;
+    font-size: 16px;
+    text-decoration: underline;
+  }
+
+  .placeholder:hover, .placeholder-active {
+    color: #4e148c;
+    font-weight: bold;
+  }
+
+  .value:hover {
+    color: #4e148c;
+    font-weight: bold;
+  }
+
+	/* OUTPUT TABLE */
+  #output-table {
+    border-collapse: collapse;
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    width: 100%;
+  }
+  
+  #query-output:hover {
+    box-shadow: 0 0 18px #888888;
+    transition: 0.3s; 
+  }
+
+  #output-table td, 
+  #output-table th {
+    border: 1px inset #ddd;
+    padding: 5px;
+  }
+
+  #output-table tr:nth-child(even) {
+   background-color: #f8f9fa;
+  }
+  
+  #output-table tr:hover {
+    background-color: #ddd;
+  }
+  
+  #output-table th {
+    background-color: #0f9d58;
+    color: white;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: left;
+  }
+  
+  #query-output {
+    max-height : 500px;
+    overflow: auto;
+    white-space: nowrap;
+  }
+
+  /* HIGHLIGHT TABLE CELLS */
+  #output-table .highlight-table-cell {
+    background: #f8fcf9;
+    border: 1px dashed #188038;
+  }
+
+  /* INSERTNG OUTPUT IN SHEET */
+  #current-sheet:checked ~ #output-location2{
+      display: block;
+  }
+  
+  #output-location2{
+    margin-left: 25px; 
+    display: none;
+  }
+
+  /* SUGGESTIONS */
+  .suggestion-flexbox {
+    align-items: center;
+    border: 1px solid #188038;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+    padding: 5px 5px 5px 10px;
+  }
+
+  .suggestion-text {
+    font-family: 'Libre Baskerville', serif;
+  }
+
+</style>

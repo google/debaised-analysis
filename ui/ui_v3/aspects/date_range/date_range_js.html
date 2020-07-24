@@ -1,0 +1,97 @@
+<!-- Javascript functions for aspect: date-range -->
+
+<script>
+  
+  // calling autocomplete function for date column name
+  autoComplete(document.querySelector('#date-column'));  
+  
+  // function called when user enters date column to check it's validity
+  function dateCheck(dateColumn, helperDate) {
+    var dateColumnValue = dateColumn.value.trim();
+    // give error message if date column is invalid
+    if(!isValidColumnName(dateColumnValue)) {
+      document.querySelector('#' + helperDate).innerHTML = 'Please enter a valid date column';
+    }
+    else {
+      document.querySelector('#' + helperDate).innerHTML = '';
+    }
+  }
+
+  // calling updateDate when user clicks UPDATE in DATE-RANGE card
+  document.querySelector('#update-date').addEventListener('click', updateDate);
+  
+  // function to update the values filled for aspect: date-range
+  function updateDate() {
+    var dateRangeObj = {
+      'dateCol': document.querySelector('#date-column').value.trim(),
+      'dateStart': document.querySelector('#date-start').value,
+      'dateEnd': document.querySelector('#date-end').value
+    }
+    
+    // flag variable indicates validity of the inputs
+    // if any input is invalid flag is set to false 
+    var flag = true;
+    if(!isValidColumnName(dateRangeObj.dateCol))
+      flag = false;
+    
+    // if user hasn't filled any date column and updates, replace madlib by placeholder
+    if(flag && dateRangeObj.dateCol === '') {
+      showDate.innerHTML = '&lt;date range&gt;';
+      showDate.classList.toggle('placeholder-active');
+      showDate.classList.add('placeholder');
+      showDate.classList.remove('value');
+      aspectDate.classList.toggle('hide');
+      
+      dateRange='null';
+      done.classList.toggle('hide');
+    }
+    // else update date-range and madlib query with the values entered by the user if they are valid
+    else if(flag) {
+      // flagCompareValue ensures the dates are not empty and start date <= end date
+      var flagDateRange = true;
+      if(dateRangeObj.dateStart === '') {
+        document.querySelector('#helper-date-start').innerHTML = 'Please enter a valid start date';
+        flagDateRange = false;
+      }
+      else {
+        document.querySelector('#helper-date-start').innerHTML = '';
+      }
+      
+      if(dateRangeObj.dateEnd === '') {
+        document.querySelector('#helper-date-end').innerHTML = 'Please enter a valid end date';
+        flagDateRange = false;
+      }
+      else {
+        document.querySelector('#helper-date-end').innerHTML = '';
+      }
+      
+      // checking if start date <= end date
+      if(flagDateRange) {
+        var date1 = new Date(dateRangeObj.dateStart);
+        var date2 = new Date(dateRangeObj.dateEnd);
+        if(date2 < date1) {
+          document.querySelector('#helper-date-end').innerHTML = 'End date should be more than start date';
+          flagDateRange = false;
+        }
+      }
+      
+      // if all fields are valid, update
+      if(flagDateRange) {
+        // used to fill madlib 
+        var fillDate = dateRangeObj.dateCol + ' ' + dateRangeObj.dateStart + ' to ' + dateRangeObj.dateEnd;
+
+        dateRange = dateRangeObj;
+        console.log("date range key",dateRange);
+        
+        showDate.innerHTML = fillDate;
+        showDate.classList.toggle('placeholder-active');
+        showDate.classList.remove('placeholder');
+        showDate.classList.add('value');
+        aspectDate.classList.toggle('hide');
+
+        done.classList.toggle('hide');
+      }
+    }
+  }
+
+</script>

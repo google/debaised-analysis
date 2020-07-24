@@ -1,0 +1,33 @@
+<!-- Global variables used by javascript files -->
+
+<script>
+
+  // store data and header range and the sheet's name
+  // keys: inputSheet, rangeString, headerRow, headerRange
+  var tableRange = {};
+
+  // store column headers 
+  var headers = [];
+
+  // asepcts
+  var metric = 'null';
+  var summaryOperation = 'null';
+  var dimensions = [];
+  var slices = [];
+  var dateRange = 'null';
+  var k = 'null';
+  var isAsc = false;
+  var comparisonValue = 'null';
+  var timeGranularity = 'null';
+
+  // intent name
+  var intent;
+
+  // results returned on submitting query
+  var outputTable;
+  var suggestions;
+  
+  // stack used to store queries and their results
+  var stack = [];
+  
+</script>
