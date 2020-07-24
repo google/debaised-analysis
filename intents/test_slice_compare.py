@@ -27,15 +27,15 @@ def test_1():
     """
         An example from the IPL dataset
         question :  compare total runs of 'Mumbai indians' and
-                    'Chennai Super Kings'.
+                    'Chennai Super Kings' by season.
      """
     table = pandas.read_csv('data/ipl_innings.csv')
     query_result = slice_compare.slice_compare(table, 'total_runs',
                                                ['batsman_team', 'season'],
-                                               ['batsman_team', 'season'],
-                                               ['total_runs'],
-                                               ['batsman_team', 'Mumbai Indians', 'Chennai Super Kings'],
-                                               SummaryOperators.SUM)
+                                               ['total_runs'], 'batsman_team', 
+                                               'Mumbai Indians', 'Chennai Super Kings',
+                                               SummaryOperators.SUM, dimensions = ['season']
+                                               )
     print(query_result)
 
     expected_result = """   season         batsman_team  total_runs
@@ -53,20 +53,20 @@ def test_2():
      """
     table = pandas.read_csv('data/salary_list_modified.csv')
     query_result = slice_compare.slice_compare(table, 'salary',
-                                               ['Person name', 'year'],
                                                ['Person name', 'year', 'month'],
-                                               ['salary'],
-                                               ['Person name', 'A', 'B'],
-                                               SummaryOperators.SUM)
+                                               ['salary'], 'Person name', 'A', 
+                                               'B', SummaryOperators.SUM,
+                                               slices = [('Person name', Filters.IN, ['A', 'B'])],
+                                               dimensions = ['year'])
     print(query_result)
 
     expected_result = """   year Person name  salary
 0  2019           A   10239
 1  2019           B    8190"""
-    expected_suggestion = """{'suggestion': "['year', 'month', 'Person name'] these group of columns have different results than initial columns so you might also look for the given group of columns", 'oversight_name': "simpson's paradox", 'is_column_level_suggestion': True, 'col_list': {'column': 'Person name'}}"""
+    expected_suggestion = "[{'suggestion': 'the relation between slices might changed a lot if you will consider month in grouping.', 'oversight_name': 'simpsons-paradox', 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}]"
+
     assert(expected_result == query_result[0].to_string())
-    print(str(query_result[1][0]))
-    assert(expected_suggestion == str(query_result[1][0]))
+    assert(expected_suggestion == str(query_result[1]))
 
 def test_3():
     """
@@ -76,10 +76,10 @@ def test_3():
     table = pandas.read_csv('data/ipl_innings.csv')
     query_result = slice_compare.slice_compare(table, 'total_runs',
                                                ['batsman_team', 'innings'],
-                                               ['batsman_team', 'innings'],
-                                               ['total_runs'],
-                                               ['innings', '1st', '2nd'],
-                                               SummaryOperators.SUM)
+                                               ['total_runs'], 'innings', 
+                                               '1st', '2nd', SummaryOperators.SUM,
+                                               dimensions = ['batsman_team'],
+                                               slices = [('innings', Filters.IN, ['1st', '2nd'])])
     print(query_result)
 
     expected_output = """                   batsman_team innings  total_runs
@@ -110,6 +110,46 @@ def test_3():
     assert(expected_output == query_result[0].to_string())
     assert(expected_suggestion == str(query_result[1]))
 
+def test_4():
+    """
+        question :  compare average hour work per day of A and rest all interns.
+     """
+    table = pandas.read_csv('data/intern_performance.csv')
+    query_result = slice_compare.slice_compare(table, 'avg_hour_of_work',
+                                               ['intern_name'], ['avg_hour_of_work', 'lines_of_code'], 
+                                              'intern_name', 'A', '*', SummaryOperators.MEAN)
+    print(query_result)
+
+    expected_output = """  intern_name  avg_hour_of_work
+0           A               8.5
+1         ALL               5.5"""
+    expected_suggestion = "[{'suggestion': 'A looks different from others on avg_hour_of_work. You might also want to look at lines_of_code since A also looks different on this.', 'oversight_name': 'Benchmark set too different', 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}]"
+
+    assert(expected_output == query_result[0].to_string())
+    assert(expected_suggestion == str(query_result[1]))
+
+def test_5():
+    """
+        question :  compare average score of A and B by class.
+     """
+    table = pandas.read_csv('data/student_score1.csv')
+    query_result = slice_compare.slice_compare(table, 'marks',
+                                               ['class', 'student_name', 'subject'],
+                                               ['marks'], 'student_name', 'A', 'B',
+                                               SummaryOperators.MEAN,
+                                               dimensions = ['class'])
+    print(query_result)
+
+    expected_output = """  class student_name  marks
+0   7th            A     75
+1   7th            B     75
+2   8th            A     75
+3   8th            B     75"""
+    expected_suggestion = "[{'suggestion': 'the relation between slices might changed a lot if you will consider subject in grouping.', 'oversight_name': 'simpsons-paradox', 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}, {'suggestion': 'Some values are similar here but will vary if we add subject for grouping ', 'oversight_name': 'top-down error', 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}, {'row': 3, 'confidence_score': 100}, {'row': 4, 'confidence_score': 100}]}]"
+
+    assert(expected_output == query_result[0].to_string())
+    assert(expected_suggestion == str(query_result[1]))
+
 print("\ncompare total runs of 'Mumbai indians' and 'Chennai Super Kings'")
 test_1()
 
@@ -118,5 +158,11 @@ test_2()
 
 print("\ncompare total run scored in 1st innings and second innings by batsman_teams.")
 test_3()
+
+print("\ncompare average hour work per day of A and rest all interns.")
+test_4()
+
+print("\ncompare average score of A and B by class.")
+test_5()
 
 print("\nTest cases completed")
