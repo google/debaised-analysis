@@ -5,20 +5,20 @@
  * Sheet1's data influences all tests
  */
 function testTableSelectionFunctions() {
-  testPreComputeTableRange1();
-  testPreComputeTableRange2();
+  testPreComputeTableRange_aboveThreshold();
+  testPreComputeTableRange_underThreshold();
   
   testDetectTableFromGivenRange();
   
-  testGetSelectedRange1();
-  testGetSelectedRange2();
+  testGetSelectedRange_isSubsetOfPrevious();
+  testGetSelectedRange_isNotSubsetOfPrevious();
   
   testSelectEntireTable();
   
-  testSetSelectedRange1();
-  testSetSelectedRange2();
-  testSetSelectedRange3();
-  testSetSelectedRange4();
+  testSetSelectedRange_headerInMiddleOfRange();
+  testSetSelectedRange_headerNotAtTop();
+  testSetSelectedRange_rangeTooSmall();
+  testSetSelectedRange_validHeaderAndRange();
      
   testGetHeaders();
   testGetFilterValues();
@@ -28,7 +28,7 @@ function testTableSelectionFunctions() {
  * Test: preComputeTableRange()
  * When number of cells selected by user > Threshold (2 rows and area 5)
  */
-function testPreComputeTableRange1() {
+function testPreComputeTableRange_aboveThreshold() {
   // Set active range in Sheet1
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Sheet1');
   SpreadsheetApp.setActiveSheet(sheet);
@@ -45,14 +45,14 @@ function testPreComputeTableRange1() {
   };
   
   // Checking if generated output is same as expected output
-  assertEquals(expectedOutput, generatedOutput, 'preComputeTableRange1');
+  assertEquals(expectedOutput, generatedOutput, 'preComputeTableRange_aboveThreshold');
 }
 
 /**
  * Test: preComputeTableRange()
  * When number of cells selected by user <= Threshold 
  */
-function testPreComputeTableRange2() {
+function testPreComputeTableRange_underThreshold() {
   // Set active range in Sheet1
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Sheet1');
   SpreadsheetApp.setActiveSheet(sheet);
@@ -69,7 +69,7 @@ function testPreComputeTableRange2() {
   };
   
   // Checking if generated output is same as expected output
-  assertEquals(expectedOutput, generatedOutput, 'preComputeTableRange2');
+  assertEquals(expectedOutput, generatedOutput, 'preComputeTableRange_underThreshold');
 }
 
 /**
@@ -98,34 +98,9 @@ function testDetectTableFromGivenRange() {
 
 /**
  * Test: getSelectedRange()
- * When the range selected is not a subset of previous selected range
- */
-function testGetSelectedRange1() {
-  // Set active range in Sheet1
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Sheet1');
-  SpreadsheetApp.setActiveSheet(sheet);
-  sheet.setActiveRange(sheet.getRange('A1:J50'));
-  
-  // Setting user properties
-  IntentsUi.setUserProperties('Sheet1', 'C3:I46', 3, 'C3:I3','C3:I46');
-  
-  // Call the function to test
-  var generatedOutput = IntentsUi.getSelectedRange();
-  var expectedOutput = {
-     'rangeA1Notation': 'A1:J50',
-     'headerRow': 1,
-     'headerRange': 'A1:J1' 
-  };
-  
-  // Checking if generated output is same as expected output 
-  assertEquals(expectedOutput, generatedOutput, 'getSelectedRange1');
-}
-
-/**
- * Test: getSelectedRange()
  * When the range selected is a subset of previous selected range
  */
-function testGetSelectedRange2() {
+function testGetSelectedRange_isSubsetOfPrevious() {
   // Set active range in Sheet1
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Sheet1');
   SpreadsheetApp.setActiveSheet(sheet);
@@ -143,8 +118,32 @@ function testGetSelectedRange2() {
   };
   
   // Checking if generated output is same as expected output 
-  assertEquals(expectedOutput, generatedOutput, 'getSelectedRange2');
+  assertEquals(expectedOutput, generatedOutput, 'getSelectedRange_isSubsetOfPrevious');
+}
+
+/**
+ * Test: getSelectedRange()
+ * When the range selected is not a subset of previous selected range
+ */
+function testGetSelectedRange_isNotSubsetOfPrevious() {
+  // Set active range in Sheet1
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Sheet1');
+  SpreadsheetApp.setActiveSheet(sheet);
+  sheet.setActiveRange(sheet.getRange('A1:J50'));
   
+  // Setting user properties
+  IntentsUi.setUserProperties('Sheet1', 'C3:I46', 3, 'C3:I3','C3:I46');
+  
+  // Call the function to test
+  var generatedOutput = IntentsUi.getSelectedRange();
+  var expectedOutput = {
+     'rangeA1Notation': 'A1:J50',
+     'headerRow': 1,
+     'headerRange': 'A1:J1' 
+  };
+  
+  // Checking if generated output is same as expected output 
+  assertEquals(expectedOutput, generatedOutput, 'getSelectedRange_isNotSubsetOfPrevious');
 }
 
 /**
@@ -169,7 +168,7 @@ function testSelectEntireTable() {
  * Test: setSelectedRange(rangeString, headerRow, headerRange)
  * When user selects a header row in middle/end of the range selected
  */
-function testSetSelectedRange1() {
+function testSetSelectedRange_headerInMiddleOfRange() {
   // Call the function to test
   var generatedOutput = IntentsUi.setSelectedRange('C3:I46',5,'C5:I5');
   var expectedOutput = {
@@ -178,14 +177,14 @@ function testSetSelectedRange1() {
   };
   
   // Checking if generated output is same as expected output
-  assertEquals(expectedOutput, generatedOutput, 'setSelectedRange1');
+  assertEquals(expectedOutput, generatedOutput, 'setSelectedRange_headerInMiddleOfRange');
 }
 
 /**
  * Test: setSelectedRange(rangeString, headerRow, headerRange)
  * When user selects a header row not in first/second row of the table
  */
-function testSetSelectedRange2() {
+function testSetSelectedRange_headerNotAtTop() {
   // Call the function to test
   var generatedOutput = IntentsUi.setSelectedRange('C5:I46',5,'C5:I5');
   var expectedOutput = {
@@ -194,14 +193,14 @@ function testSetSelectedRange2() {
   };
   
   // Checking if generated output is same as expected output
-  assertEquals(expectedOutput, generatedOutput, 'setSelectedRange2');
+  assertEquals(expectedOutput, generatedOutput, 'setSelectedRange__headerNotAtTop');
 }
 
 /**
  * Test: setSelectedRange(rangeString, headerRow, headerRange)
  * When user selects a range with only 1 row
  */
-function testSetSelectedRange3() {
+function testSetSelectedRange_rangeTooSmall() {
   // Call the function to test
   var generatedOutput = IntentsUi.setSelectedRange('C3:I3',3,'C3:I3');
   var expectedOutput = {
@@ -210,14 +209,14 @@ function testSetSelectedRange3() {
   };
   
   // Checking if generated output is same as expected output
-  assertEquals(expectedOutput, generatedOutput, 'setSelectedRange3');
+  assertEquals(expectedOutput, generatedOutput, 'setSelectedRange_rangeTooSmall');
 }
 
 /**
  * Test: setSelectedRange(rangeString, headerRow, headerRange)
  * When user selects a valid range and header row
  */
-function testSetSelectedRange4() {
+function testSetSelectedRange_validHeaderAndRange() {
   // Call the function to test
   var generatedOutput = IntentsUi.setSelectedRange('C5:I15',3,'C3:I3');
   var expectedOutput = {
@@ -230,7 +229,7 @@ function testSetSelectedRange4() {
   };
   
   // Checking if generated output is same as expected output
-  assertEquals(expectedOutput, generatedOutput, 'setSelectedRange4');
+  assertEquals(expectedOutput, generatedOutput, 'setSelectedRange_validHeaderAndRange');
 }
 
 /**
