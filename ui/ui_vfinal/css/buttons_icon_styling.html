@@ -1,0 +1,232 @@
+<!-- Styles buttons, icons and hover text for icons -->
+
+<style>
+
+	/* BUTTONS */
+
+	.btn {
+    align-items: center;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    box-sizing: border-box;
+    box-shadow: none;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    height: 36px;
+    justify-content: center;
+    letter-spacing: .25px;
+    line-height: 16px;
+    margin: 8px;
+    min-width: 64px;
+    outline: 0;
+    padding: 9px 24px 11px 24px;
+    position: relative;
+    transition: box-shadow .28s cubic-bezier(0.4,0.0,0.2,1);
+    user-select: none;
+    vertical-align: middle;
+  }
+  
+  .btn:focus {
+    box-shadow: none;
+  }
+
+  .primary {
+    background: #188038;
+    color: white;
+  }
+  
+  .primary:disabled {
+    background: #188038;
+    border: 1px solid transparent;
+    color: white;
+  }
+  
+  .primary:hover {
+    background: #2a8947;
+    border: 1px solid transparent;
+    box-shadow: 0 1px 3px 1px rgba(52,168,83,0.15);
+    color: white;
+  }
+  
+  .default {
+    background: white;
+    border: 1px solid #dadce0;
+    color: #188038;
+  }
+  
+  .default:hover {
+    background: #f8fcf9;
+    border: 1px solid #c8e7d1;
+    color: #188038;
+  }
+  
+  .suggestion-btn {
+    font-size: 13px;
+    margin: 5px;
+    padding: 5px 12px 7px 12px;
+  }
+  
+  /* ADD and DELETE BUTTONS */
+  .circle-button {
+    align-items: center;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    box-shadow: none;
+    cursor: pointer;
+    display: inline-flex;
+    height: 25px;
+    justify-content: center;
+    min-width: 0;
+    outline: 0;
+    transition: box-shadow 0.28s cubic-bezier(0.4,0.0,0.2,1);
+    user-select: none;
+    vertical-align: middle;
+    width: 25px; 
+  }
+
+  .circle-button:focus {
+    box-shadow: 0px 3px 5px -1px rgba(0,0,0,0.2), 0px 6px 10px 0px rgba(0,0,0,0.14), 0px 1px 18px 0px rgba(0,0,0,0.12);;
+    -webkit-box-shadow: none;
+  }
+  
+  .add-button {
+    background: #188038;
+    color: white;
+  }
+
+  .add-button:hover {
+    background: #2a8947;
+    border: 1px solid transparent;
+    box-shadow: 0 1px 3px 1px rgba(52,168,83,0.15);
+    color: white;
+  }
+  
+  .sub-button {
+    background: white;
+    border: 1px solid #dadce0;
+    color: #188038;
+  }
+
+  .sub-button:hover {
+    background: #f8fcf9;
+    border: 1px solid #c8e7d1;
+    color: #188038;
+  }
+
+  .add,
+  .minus {
+    font-size: 1.1rem;
+    height: 1em; 
+  }
+  
+  .add {
+    fill: white;
+  }
+  
+  .minus {
+    fill: #188038;
+  }
+  
+  /* BACK BUTTON */
+  .back-button {
+    background: #188038;
+    color: white;
+    margin: 5px 0 0 5px;
+  }
+  
+  .back-button:hover {
+    background: #2a8947;
+    border: 1px solid transparent;
+    box-shadow: 0 1px 3px 1px rgba(52,168,83,0.15);
+    color: white;
+  }
+
+  /* ICONS */
+  
+  /* Icons for expandable panels */
+  .expand-icon {
+    transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  }
+
+  .collapse-icon {
+    transform: rotate(180deg);
+    transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  }
+  
+  .info-icon {
+    cursor: pointer;
+    padding: 5px;
+  }
+  
+
+  /* ICONS TEXT ON HOVERING - TOOLTIP */
+
+  .icon-hover .icon-hover-text {
+    background-color: #3c4043;
+    border-radius: 0;
+    color: #fff;
+    font-family: arial, sans-serif;
+    font-size: 0.8rem;
+    margin-left: -60px;
+    opacity: 0;
+    padding: 5px 0;
+    position: absolute;
+    text-align: center;
+    transition: opacity 0.3s;
+    visibility: hidden;
+    z-index: 1;
+  }
+
+  .icon-hover .icon-hover-text::after {
+    border-color: #555 transparent transparent transparent;
+    border-style: solid;
+    border-width: 5px;
+    bottom: 100%;
+    content: '';
+    left: 50%;
+    margin-left: -5px;
+    position: absolute;
+    transform: rotate(180deg);
+  }
+
+  .icon-hover:hover .icon-hover-text {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .icon-hover .hover-edit {
+    right: 6%;
+    width: 45px;
+  }
+
+  .icon-hover .hover-range {
+    left: 94%;
+    top: 85%;
+    width: 120px;
+  }
+  
+  .icon-hover .hover-info {
+    background: #f8fcf9;
+    border: 1px solid #dadce0;
+    border-radius: 10px;
+    color: #188038;
+    padding: 5px 10px;
+    right: 21px;
+    width: 235px;
+  }
+  
+  .icon-hover .hover-info::after {
+    left: 74%;
+    border-color: #dadce0 transparent transparent transparent;
+  }
+  
+  /* Align buttons or icons to right of sidebar */
+  .flex-right {
+    display:flex; 
+    justify-content: flex-end;
+  }
+
+</style>

@@ -1,0 +1,42 @@
+<!-- Global variables used by javascript files -->
+
+<script>
+
+  // Store information about table range
+  // Keys: inputSheet, rangeA1Notation, headerRow, headerRange
+  var tableRange = {};
+
+  // Store column headers 
+  var headers = [];
+  
+  // Store data for date columns
+  var dateColumnNames = [];  // List of date column names
+  var dateColumnInfo = {};   // Type, format, minimum and maximum date of the date columns
+
+  // Aspects
+  var metric = null;
+  var summaryOperation = null;
+  var dimensions = [];
+  var slices = [];
+  var dateRange = null;
+  var topKLimit = 10;
+  var isAsc = false;
+  var comparisonValue = null;
+  var compareDateRange = null;
+  var timeGranularity = null;
+  var correlationMetrics = null;
+
+  // Intent name
+  var intent;
+
+  // Results returned on submitting query
+  var jsonQuery
+  var outputTable;
+  var suggestions = [];
+  var filtersPassed = null;
+  var inTopK = null;
+  
+  // Stack used to store queries and their results
+  var stack = [];
+  
+</script>

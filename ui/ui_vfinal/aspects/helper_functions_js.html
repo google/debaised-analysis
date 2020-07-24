@@ -1,0 +1,71 @@
+<!-- Javascript helper functions to perform repetitive tasks for the aspects and keep code DRY -->
+<!-- Contains the functions to add and delete an html element, 
+     perform error checks for column names and date columns and 
+     hide error message on opening any aspect card -->
+
+<script>
+   
+  /**
+   * Append a new child element to the parent element
+   *
+   * @param {string} parentId - The id of the parent element where the child will be appended
+   * @param {string} elementTag - The type of html elment that will be created
+   * @param {string} elementId - The id assigned to the appended child element
+   * @param {string} html - The html content of the appended element
+   */
+  function addElement(parentId, elementTag, elementId, html) {
+    var p = document.getElementById(parentId);
+    var newElement = document.createElement(elementTag);
+    newElement.setAttribute('id', elementId);
+    newElement.innerHTML = html;
+    p.appendChild(newElement);
+  }
+  
+  /**
+   * Remove the element that calls this function
+   * @param {string} elementId - The id of the element to be removed
+   */
+  function removeElement(elementId) {
+    // Removes an element from the document
+    var element = document.getElementById(elementId);
+    element.parentNode.removeChild(element);
+  }
+
+  /**
+   * Assigning event listener to each query's placeholder to remove 
+   * the alert message when any card is opened
+   */
+  var showAspectCard = document.querySelectorAll('.show-aspect-card');
+  for (var i = 0; i < showAspectCard.length; i++) {
+    showAspectCard[i].addEventListener('click', function() {
+      document.querySelector('.alert').classList.add('hide');
+    });
+  }
+
+  /**
+   * Check the validity of the given column (i.e is one of the column headers)
+   * @param {string} column - The name of the column to be verfied
+   * @return {boolean} - True indicates column is valid and false indicates invalid
+   */
+  function isValidColumnName(column) {
+    // If index = -1 the column entered is not a valid column header
+    var index = headers.indexOf(column);
+    if(column === '' || index !== -1)
+      return true;
+    return false;
+  }
+
+  /**
+   * Check the validity of the given date column (i.e is a valid date column)
+   * @param {string} dateColumnValue - The name of the date column to be verfied
+   * @return {boolean} - True indicates the date column is valid and false indicates invalid
+   */
+  function isValidDateColumn(dateColumnValue) {
+    // If index = -1 the column entered is not a valid date column 
+    var index = dateColumnNames.indexOf(dateColumnValue);
+    if(dateColumnValue === '' || index !== -1)
+      return true;
+    return false;
+  }
+  
+</script>

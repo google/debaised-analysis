@@ -1,0 +1,151 @@
+ <!-- Styles for the home/index page of add-on -->
+
+ <style>
+  
+  /* Headings on index page */
+  .heading-index {
+    font-size: 15px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+  }
+
+  /* Edit icon */
+  .edit {
+    cursor: pointer;
+    margin-right: 7px;
+  }
+
+  /* Dialog */
+  .modal {
+    background-color: rgba(0, 0, 0, 0.5);
+    height: 100%;
+    left: 0;
+    opacity: 0;
+    position: fixed;
+    top: 0;
+    transform: scale(1.1);
+    transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
+    visibility: hidden;
+    width: 100%;
+    z-index: 1;
+  }
+
+  /* Dialog content */
+  .modal-content {
+    background-color: white;
+    border-radius: 0.5rem;
+    left: 50%;
+    padding: 1rem 1.5rem;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 28%;
+    width: 235px;
+  }
+
+  .show-modal {
+    opacity: 1;
+    transform: scale(1.0);
+    transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
+    visibility: visible;
+  }
+
+  /* Form that takes input data range and header row */
+  .form {
+    background-color: #fff;
+    box-shadow: 2px 2px 16px 3px rgba(0, 0, 0, 0.4);
+    padding: 2rem 3rem 4rem;
+  }
+
+  /* Select range icon */
+  #select-range {
+    cursor: pointer;
+  }
+
+  /* Collasible bars to select intent */
+  .collapsible {
+    background: white;
+    border-left: 1px solid rgba(0,0,0,.125);
+    border-right: 1px solid rgba(0,0,0,.125);
+    border-top: 0.5px solid rgba(0,0,0,.125);
+    border-bottom: 0.5px solid rgba(0,0,0,.125);
+    border-radius: 0;
+    color: #444;
+    cursor: pointer;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 15px;
+    font-weight: bold;
+    height: 40px;
+    line-height: 40px;
+    text-align: left;
+    transition: all .2s ease-in-out; 
+    transition: 0.4s;
+    width: 100%;
+  }
+
+  .collapsible:hover {
+    background: #555;
+    border: none; 
+    color: #fff; 
+    transform: scale(1.02); 
+  }
+
+  .active {
+    background: #555;
+    border: none;
+    color: #fff;
+  }
+
+  /* Content of collapsible bars */
+  .content {
+    background: white;
+    border-left: 1px solid rgba(0,0,0,.125);
+    border-right: 1px solid rgba(0,0,0,.125);
+    max-height: 0;
+    overflow: hidden;
+    padding: 0px 18px;
+    transition: max-height 0.2s ease-out;
+  }
+
+  /* Sample query title */
+  .sample-query {
+    color: #188038;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 5px 0;
+    text-decoration: underline ;
+    text-decoration-color: #188038;
+  }
+
+  .sample-query:hover {
+    color: #002855;
+    font-weight: bold;
+    text-decoration-color: #002855;
+  }
+
+  /* Sample query content */
+  .query-content {
+    background: white;
+    max-height: 0;
+    overflow: hidden;
+    padding: 0;
+    transition: max-height 0.2s ease-out;
+  }
+  
+  .sample-query-placeholder {
+    color: #188038;
+  }
+  
+  .sample-query-value {
+    color: #023e8a;
+  }
+  
+  .active-sample-query {
+    color: #4e148c;
+    text-decoration: underline;
+  }
+
+</style>
+

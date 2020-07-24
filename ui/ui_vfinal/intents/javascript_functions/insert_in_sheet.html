@@ -1,0 +1,79 @@
+<!-- Javascript functions for inserting the output in sheet -->
+
+<script>
+
+  /**
+   * Show the 2 options of adding output in sheet
+   * @param {HTMLElement} btnInsert - The button selected to view the 2 insert options
+   */
+  function addOutputSheet(btnInsert) {
+    document.querySelector('#output-location').classList.remove('hide');
+    document.querySelector('#insert-in-sheet-container').classList.add('hide');
+  }
+  
+  /**
+   * Add output in the current or new sheet according to the option selected
+   * @param {HTMLElement} btnAddOutput- The button selected to add output in sheet
+   */
+  function addOutputInSheet(btnAddOutput) {  
+    btnAddOutput.innerHTML = 'Inserting';
+    btnAddOutput.disabled = true;
+    btnAddOutput.classList.add('loading');
+    
+    var outputSheet = document.getElementsByName('output-sheet');
+
+    // Call server side function to insert output in new sheet
+    if(outputSheet[0].checked) {
+      google.script.run
+            .withSuccessHandler(addedOutputInSheet)
+            .withUserObject(btnAddOutput)
+            .addOutputInNewSheet(outputTable);
+    }
+    // Call server side function in insert output in current sheet
+    else {
+      google.script.run
+            .withSuccessHandler(addedOutputInSheet)
+            .withUserObject(btnAddOutput)
+            .addOutputInCurrentSheet(filtersPassed, inTopK, jsonQuery);
+    }
+  }
+
+  /**
+   * Success handler of addOutputInSheet
+   * It is called after output is inserted in sheet
+   */
+  function addedOutputInSheet(){
+    var btnInsert = document.querySelector('#btn-add-output');
+    btnInsert.innerHTML = 'Insert';
+    btnInsert.disabled = false;
+    btnInsert.classList.remove('loading');
+  }
+
+  /**
+   * Add output in the new sheet
+   * @param {HTMLElement} btnAddInNewSheet- The button selected to add output in new sheet
+   */
+  function addOutputInNewSheet(btnAddInNewSheet) {
+    // adding loading effect    
+    btnAddInNewSheet.innerHTML = 'Inserting in new sheet';
+    btnAddInNewSheet.disabled = true;
+    btnAddInNewSheet.classList.add('loading');
+    
+    google.script.run
+          .withSuccessHandler(addedOutputInNewSheet)
+          .withUserObject(btnAddInNewSheet)
+          .addOutputInNewSheet(outputTable);
+  }
+
+  /**
+   * Success handler of addOutputInNewSheet
+   * It is called after output is inserted in new sheet
+   */
+  function addedOutputInNewSheet(){
+    var btnInsert = document.querySelector('#add-in-new-sheet');
+    btnInsert.innerHTML = 'Insert in new sheet';
+    btnInsert.disabled = false;
+    btnInsert.classList.remove('loading');
+  }
+
+</script>

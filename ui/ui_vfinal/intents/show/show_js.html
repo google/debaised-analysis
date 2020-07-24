@@ -1,0 +1,134 @@
+<!-- Functions to open and close cards for show intent-->
+
+<script>
+  
+  // Cards for aspects
+  var aspectMetric = document.querySelector('#aspect-metric');
+  var aspectDimension = document.querySelector('#aspect-dimension');
+  var aspectSlice = document.querySelector('#aspect-slice');
+  var aspectDate = document.querySelector('#aspect-date');
+
+  // Placeholders for aspects
+  var showMetric = document.querySelector('#show-metric');
+  var showDimension = document.querySelector('#show-dimension');
+  var showSlice = document.querySelector('#show-slice');
+  var showDate = document.querySelector('#show-date');
+
+  // Adding event listener to each placeholder to open the card corresponding to it
+  showMetric.addEventListener('click', showMetricFunc);
+  showDimension.addEventListener('click', showDimensionFunc);
+  showSlice.addEventListener('click', showSliceFunc);
+  showDate.addEventListener('click', showDateFunc);
+  
+  var placeholderMetric = '&lt;values&gt;';
+  var placeholderDimension = '&lt;column(s)&gt;';
+
+  /**
+   * To open the metric and summary card
+   */
+  function showMetricFunc() {
+    // Open metric card and close other cards
+    aspectMetric.classList.toggle('hide');
+    aspectDimension.classList.add('hide');
+    aspectSlice.classList.add('hide');
+    aspectDate.classList.add('hide');
+
+    // Add active class to placeholder for metric 
+    // and remove active class from other placeholders
+    showMetric.classList.toggle('placeholder-active');
+    showDimension.classList.remove('placeholder-active');
+    showSlice.classList.remove('placeholder-active');
+    showDate.classList.remove('placeholder-active');
+    showMetric.classList.remove('madlib-error');
+    showDimension.classList.remove('madlib-error');
+    
+    // Hide the compute button if card is open
+    if(aspectMetric.classList.contains('hide')) {
+      done.classList.remove('hide');
+    }
+    else {
+      done.classList.add('hide');
+    }
+  }
+
+  /**
+   * To open the dimensions card
+   */
+  function showDimensionFunc() {
+    // Open dimensions card and close other cards
+    aspectMetric.classList.add('hide');
+    aspectDimension.classList.toggle('hide');
+    aspectSlice.classList.add('hide');
+    aspectDate.classList.add('hide');
+
+    // Add active class to placeholder for dimension 
+    // and remove active class from other placeholders
+    showMetric.classList.remove('placeholder-active');
+    showDimension.classList.toggle('placeholder-active');
+    showSlice.classList.remove('placeholder-active');
+    showDate.classList.remove('placeholder-active');
+    showMetric.classList.remove('madlib-error');
+    showDimension.classList.remove('madlib-error');
+    
+    // Hide the compute button if card is open
+    if(aspectDimension.classList.contains('hide')) {
+      done.classList.remove('hide');
+    }
+    else {
+      done.classList.add('hide');
+    }
+  }
+
+  /**
+   * To open the slice/filters card
+   */
+  function showSliceFunc() {
+    // Open slice card and close other cards
+    aspectMetric.classList.add('hide');
+    aspectDimension.classList.add('hide');
+    aspectSlice.classList.toggle('hide');
+    aspectDate.classList.add('hide');
+
+    // Add active class to placeholder for slice
+    // and remove active class from other placeholders
+    showMetric.classList.remove('placeholder-active');
+    showDimension.classList.remove('placeholder-active');
+    showSlice.classList.toggle('placeholder-active');
+    showDate.classList.remove('placeholder-active');
+    
+    // Hide the compute button if card is open
+    if(aspectSlice.classList.contains('hide')) {
+      done.classList.remove('hide');
+    }
+    else {
+      done.classList.add('hide');
+    }
+  }
+
+  /**
+   * To open the date range card
+   */
+  function showDateFunc() {
+    // Open date range card and close other cards
+    aspectMetric.classList.add('hide');
+    aspectDimension.classList.add('hide');
+    aspectSlice.classList.add('hide');
+    aspectDate.classList.toggle('hide');
+
+    // Add active class to placeholder for date range
+    // and remove active class from other placeholders
+    showMetric.classList.remove('placeholder-active');
+    showDimension.classList.remove('placeholder-active');
+    showSlice.classList.remove('placeholder-active');
+    showDate.classList.toggle('placeholder-active');
+    
+    // Hide the compute button if card is open
+    if(aspectDate.classList.contains('hide')) {
+      done.classList.remove('hide');
+    }
+    else {
+      done.classList.add('hide');
+    }
+  }
+  
+</script>

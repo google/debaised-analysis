@@ -1,0 +1,55 @@
+<!-- METRICS OF CORRELATION CARD -->
+
+<div id="aspect-metrics-correlation" class="card hide">
+	<div class="container">
+
+    <h2>Value1 and Value2</h2>
+
+    <form autocomplete="off">
+    	
+      <div>
+        <div class="container-input">
+          <div class="outer-input-div" tabindex="0" >
+            <label class="label-input" for="metric-correlation1" data-shrink="true">Column Name 1</label>
+            <div class="inner-input-div">
+              <input 
+                  id="metric-correlation1" 
+                  class="input-field"
+                  name="metrics-correlation" 
+                  placeholder="column name" 
+                  type="text"  
+                  aria-invalid="false" 
+                  aria-describedby="helper-metric-correlation1" 
+                  onfocusout="correlationMetricCheck(this,'helper-metric-correlation1')">
+            </div>
+          </div>
+          <p id="helper-metric-correlation1" class="helper-text"></p>
+        </div>
+        <div class="container-input">
+          <div class="outer-input-div" tabindex="0" >
+            <label class="label-input" for="metric-correlation2" data-shrink="true">Column Name 2</label>
+            <div class="inner-input-div">
+              <input 
+                  id="metric-correlation2" 
+                  class="input-field"
+                  name="metrics-correlation" 
+                  placeholder="column name" 
+                  type="text"  
+                  aria-invalid="false" 
+                  aria-describedby="helper-metric-correlation2" 
+                  onfocusout="correlationMetricCheck(this,'helper-metric-correlation2')">
+            </div>
+          </div>
+          <p id="helper-metric-correlation2" class="helper-text"></p>
+        </div>
+      </div>
+      
+      <div class="update-cancel" style="margin-top: 1rem;">
+        <button class="btn default" onclick="closeCard('metrics-correlation')">Cancel</button>
+        <button id="update-metrics-correlation" class="btn primary">Update</button>
+      </div>
+
+    </form>
+
+	</div>
+</div>

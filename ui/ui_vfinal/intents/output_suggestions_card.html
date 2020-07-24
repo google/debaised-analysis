@@ -1,0 +1,78 @@
+<!-- OUTPUT CARD -->
+
+<!-- Card for displaying suggestions related to the query submitted -->
+<div id="debiasing-suggestions" class="card hide">
+  <div class="container">
+
+    <div class="collapsible-card flexbox" onclick="toggleCardState(this)">  
+      <h3 id="suggestions-heading"></h3>
+      <span class="icon-hover">
+         <span 
+           id="suggestions-info" 
+           class="material-icons info-icon">
+             info_outline
+         </span>
+         <br>
+         <span class="icon-hover-text hover-info">
+           To mitigate the bias in user's thinking, we give some suggestions that encourage a deeper and wider exploration of the data.
+         </span>
+      </span>
+      <span id="suggestions-toggle-icon" class="material-icons expand-icon" style="margin-left: auto;">expand_more</span>
+    </div>
+    
+    <div id="suggestions-content"></div>
+    
+  </div>
+</div>
+
+<!-- Card for displaying output of query submitted -->
+<div id="output" class="card hide">
+  <div class="container">
+
+    <!-- Heading -->
+    <h2>Output Table</h2>
+
+    <!-- Result table -->
+    <div id="result">
+      <div id="query-output" class="style-output">
+      </div>
+    </div>
+    
+    <!-- Button to insert output in new sheet -->
+    <div id="insert-in-new-sheet-container" class="flex-right hide">
+      <button id="add-in-new-sheet" class="btn primary" onclick="addOutputInNewSheet(this)">Insert in new sheet</button>
+    </div>
+    
+    <!-- Button to give option to insert the output in sheet -->
+    <div id="insert-in-sheet-container" class="flex-right hide">
+      <button id="add-in-sheet" class="btn primary" onclick="addOutputSheet()">Insert</button>
+    </div>
+    
+    <!-- Asking user where to insert the output -->
+    <div id="output-location" class="style-output hide">
+      <div style="margin: 8px;">
+
+        <p style="color: rgba(0,0,0,0.54);">Insert Output</p>
+        
+        <input id="new-sheet" name="output-sheet" type="radio" value="new-sheet" checked>
+        <label for="new-sheet">In new sheet</label><br>
+        <input id="current-sheet" name="output-sheet" type="radio" value="current-sheet">
+        <label for="current-sheet">As column</label><br>
+        
+        <div style="display:flex; justify-content: flex-end">
+          <button id="btn-add-output" class="btn primary" onclick="addOutputInSheet(this)">Insert</button>
+        </div>
+        
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- The error message displayed if gcp function fails -->
+<div id="gcp-error" class="card hide">
+  <div class="container">
+    <div class="gcp-error-msg">Oops, something went wrong!</div>
+    <img src="https://www.google.com/images/errors/robot.png">
+  </div>
+</div>

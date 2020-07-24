@@ -1,0 +1,67 @@
+<!-- Functions that use autocomplete library: Awesomplete to autocomplete textfields -->
+
+<script>
+
+  var awesomepleteObjects = [];  // Array of autocomplete objects created
+  var idAwesomeplete=0;          // Id number of the autocomplete object created
+
+  var awesomepleteDateObjects = [];  // Array of autocomplete objects created
+  var idAwesomepleteDate=0;          // Id number of the autocomplete object created
+  
+  /**
+   * Add autocompletion to the input element given
+   * @param {HTMLInputElement} input - The html element for adding autocompletion
+   */
+  function autoComplete(input) {
+    // Id number of autocomplete object created for the input field
+    idAwesomeplete++;
+    var awesomeplete = 'awesomeplete' + idAwesomeplete;
+
+    awesomeplete = new Awesomplete(input, {
+      list: headers,
+      minChars: 1,
+      maxItems: 10
+    });
+    
+    // Array of autocomplete objects created
+    awesomepleteObjects.push(awesomeplete);
+  }
+
+  /**
+   * Add autocompletion to the date column input element
+   * @param {HTMLInputElement} input - The html element for adding autocompletion
+   */
+  function autoCompleteDate(input) {
+    // Id number of date autocomplete object created
+    idAwesomepleteDate++;
+    var awesomeplete = 'awesomeplete-date' + idAwesomepleteDate;
+
+    awesomeplete = new Awesomplete(input, {
+      list: dateColumnNames,
+      minChars: 1,
+      maxItems: 10
+    });
+    
+    // Array of autocomplete objects created for filling date columns
+    awesomepleteDateObjects.push(awesomeplete);
+  }
+  
+  /**
+   * Update the autocomplete options when headers of columns are updated
+   */
+  function updateAutoCompleteHeaders() {
+    for(var i = 0; i < awesomepleteObjects.length; i++) {
+      awesomepleteObjects[i].list = headers;
+    }
+  } 
+
+  /**
+   * Update the autocomplete options for date columns when the date column names are updated
+   */
+  function updateAutoCompleteDateColumns() {
+    for(var i = 0; i < awesomepleteDateObjects.length; i++) {
+      awesomepleteDateObjects[i].list = dateColumnNames;
+    }
+  } 
+
+</script>
