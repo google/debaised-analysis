@@ -20,6 +20,9 @@ import date_detection
 from util import enums
 import pandas, json
 
+# ToDo : Change the name hello_world (default name on GCP) to a better name
+# that makes sense of the function & also make changes in the UI javascript
+
 def hello_world(request):
     """Responds to any HTTP request.
     Args:

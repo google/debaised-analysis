@@ -15,7 +15,10 @@ limitations under the License.
 """
 This module will help in calling the main.py locally and debugging
 if any error occurs.
-This module has a RequestClass that mimics the flask request class.
+This module has a RequestClass that mimics the flask.Request class.
+(The argument that hello_world(Cloud endpoint that gets called by UI)
+ takes is a flask.Request object containing the json sent.
+)
 Implementation-
     Then Creates an object of the RequestClass
     Reads the json object as a str from the obj.json file.

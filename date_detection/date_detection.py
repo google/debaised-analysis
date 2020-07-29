@@ -27,11 +27,6 @@ returns date_first = True / False.
 date_first = Bool is an extra argument required of parsing ambiguous dates in
 pandas.to_datetime function
 """
-
-import re
-import datetime
-import pandas
-
 # This module will detect all the columns that are date columns
 import date_columns_detection
 
@@ -39,7 +34,8 @@ import date_columns_detection
 # a passed column is & also wether day_first is True/False for that column
 import date_column_type_detection
 
-# Function in this module will add the min date & mx date for each column as a key
+# Function in this module will add the min date & mx date for each column
+# as a key
 from util import min_max_date
 
 def detect(table):

@@ -14,7 +14,7 @@ limitations under the License.
 """
 """
 This module adds the functionality of prefilling the minimum date &
-maximum date in the card for filling start date & end date for slicing 
+maximum date in the card for filling start date & end date for slicing
 based on date range aspect
 """
 import pandas
@@ -24,12 +24,12 @@ from util import enums
 def update_min_max_date(column_type_and_order, table):
     """
     This function takes the dict of date columns (column_type_and_order) and the
-    entire table as pandas dataframe and adds keys representing minimum dates and
-    maximum dates of each of the Consistent & All Ambiguous date columns.
-    
+    entire table as pandas dataframe and adds keys representing minimum dates
+    and maximum dates of each of the Consistent & All Ambiguous date columns.
+
     In the dict for each of the Consistent & All_ambiguous date columns 2 keys,
     min_date & max_date are added.
-    Example - 
+    Example -
 
     # Consistent column with day_first = True
     'Order_date' : {
@@ -48,7 +48,8 @@ def update_min_max_date(column_type_and_order, table):
          # rest of the keys remain the same
          # new key added -
          min_date : {
-            'day_first_false': '2019-08-01' # min date if user selects day_first = False
+            # min date if user selects day_first = False
+            'day_first_false': '2019-08-01'
             'day_first_true': '2019-04-01'
          }
          max_date : {
@@ -58,21 +59,21 @@ def update_min_max_date(column_type_and_order, table):
     }
 
     Args :
-        column_type_and_order : Type - dict, consists of date column names as keys and their
-            corresponding types date order as values.
+        column_type_and_order : Type - dict, consists of date column names
+            as keys and their corresponding types date order as values.
         table : Type-Pandas Dataframe
     Returns :
         The updated column_type_and_order with the keys min_date & max_date.
     """
     for column in column_type_and_order.keys():
-        
+
         if column_type_and_order[column]['type'] == enums.ColumnTypes.CONSISTENT:
 
             day_first = column_type_and_order[column]['day_first']
 
             day_first_key = 'day_first_'
 
-            if day_first :
+            if day_first:
                 day_first_key += 'true'
             else:
                 day_first_key += 'false'

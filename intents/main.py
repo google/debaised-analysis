@@ -23,6 +23,9 @@ from flask import escape
 from show import show
 from util import enums
 
+# ToDo : Change the name hello_http (default name on GCP) to a better name
+# that makes sense of the function & also make changes in the UI javascript
+
 def hello_http(request):
     """HTTP Cloud Function.
     Args:
