@@ -84,7 +84,7 @@ def show(table,**kwargs):
 
     dimensions = kwargs.get('dimensions',None)
 
-    table = aspects.apply_date_range(table, date_range,date_column_name, date_format)
+    table = aspects.apply_date_range(table, date_range, date_column_name, date_format)
 
     table = aspects.slice_table(table, slices)
 
@@ -103,7 +103,7 @@ def show(table,**kwargs):
     if( (dimensions is None) and (summary_operator is not None) ):
         # We add temporary column of 'Summary Operator' by which we can groupby
         # to obtain the final result
-        add_temporary_column_of_summary_operator(table,summary_operator)
+        _add_temporary_column_of_summary_operator(table, summary_operator)
 
         dimensions = []
 
@@ -117,7 +117,7 @@ def show(table,**kwargs):
 
 
 
-def add_temporary_column_of_summary_operator(table,summary_operator):
+def _add_temporary_column_of_summary_operator(table,summary_operator):
     """This function adds a new column of summary operator
 
     Whenever Show intent is applied on the whole data we 
