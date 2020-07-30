@@ -17,11 +17,11 @@ limitations under the License.
 import enum
 
 class ColumnTypes(enum.Enum):
-    """The attributes of this class like ColumnTypes.CONSINTENT ,
+    """The attributes of this class like ColumnTypes.CONSISTENT ,
     .INCONSISTENT , etc. are enum members
 
     The ColumnTypes are listed in an arbitrary order.
     """
-    CONSINTENT = 1
+    CONSISTENT = 1
     ALL_AMBIGUOUS = 2
     INCONSISTENT = 3

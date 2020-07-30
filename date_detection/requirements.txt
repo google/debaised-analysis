@@ -1,0 +1,9 @@
+# Function dependencies, for example:
+
+# package>=version
+
+Flask==1.0.2
+
+pandas==1.0.1
+
+dateparser
