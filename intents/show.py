@@ -23,17 +23,17 @@ Some of the operations are optional.
 from util import aspects
 
 def show(table,**kwargs):
-	"""This function will implement the show intent
+    """This function will implement the show intent
 
-	Firstly removes the tuples that do not lie in the given date range.
-	Then applies slicing and groupby operations.
-	The argument 'table' is not optional , hence passed as it is.
-	Rest of the arguments are optional , hence passed in kwargs
-	If the summary_operator is not None , it groups by dimensions.
-	If some of the optional args are None (not passed),
-	it is assumed that we don't have to apply them.
+    Firstly removes the tuples that do not lie in the given date range.
+    Then applies slicing and groupby operations.
+    The argument 'table' is not optional , hence passed as it is.
+    Rest of the arguments are optional , hence passed in kwargs
+    If the summary_operator is not None , it groups by dimensions.
+    If some of the optional args are None (not passed),
+    it is assumed that we don't have to apply them.
 
-	Args:
+    Args:
         table: Type-pandas.dataframe
             It has the contents of the csv file
         metric: Type-string
@@ -51,7 +51,7 @@ def show(table,**kwargs):
         date_format: Type-str
             It is required by datetime.strp_time to parse the date in the format
             Format Codes
-			https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
+    		https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
         slices: Type-List of tuples
             Tuple represents the conditon to keep the row.
             (column_name, filter, value)
@@ -71,34 +71,85 @@ def show(table,**kwargs):
         given `table(a pandas dataframe object)``
 
     """
-    
-	date_column_name = kwargs.get('date_column_name', 'date')
-	date_range = kwargs.get('date_range', None)
-	date_format = kwargs.get('date_format', 'yyyy-mm-dd')
 
-	slices = kwargs.get('slices', None)
+    date_column_name = kwargs.get('date_column_name', 'date')
+    date_range = kwargs.get('date_range', None)
+    date_format = kwargs.get('date_format', 'yyyy-mm-dd')
 
-	summary_operator = kwargs.get('summary_operator', None)
+    slices = kwargs.get('slices', None)
 
-	metric = kwargs.get('metric',None)
+    summary_operator = kwargs.get('summary_operator', None)
 
-	dimensions = kwargs.get('dimensions',None)
+    metric = kwargs.get('metric',None)
 
-	table = aspects.apply_date_range(table, date_range,date_column_name, date_format)
+    dimensions = kwargs.get('dimensions',None)
 
-	table = aspects.slice_table(table, slices)
+    table = aspects.apply_date_range(table, date_range, date_column_name, date_format)
 
-	# collecting the colums not to be removed
-	required_columns = []
-	if dimensions is not None:
-		required_columns = dimensions.copy()
-	# metric is optional in show	
-	if metric is not None:
-		required_columns.append(metric)
+    table = aspects.slice_table(table, slices)
 
-	table = aspects.crop_other_columns(table, required_columns)
+    # collecting the colums not to be removed
+    required_columns = []
+    if dimensions is not None:
+    	required_columns = dimensions.copy()
+    # metric is optional in show	
+    if metric is not None:
+        required_columns.append(metric)
 
-	table = aspects.group_by(table, dimensions, summary_operator)
+    table = aspects.crop_other_columns(table, required_columns)
 
-	return table
-    
+    # When there is no dimension to group by but a summary_operator exists ,
+    # we assume that user wants to apply the summary operator on whole data
+    if( (dimensions is None) and (summary_operator is not None) ):
+        # We add temporary column of 'Summary Operator' by which we can groupby
+        # to obtain the final result
+        _add_temporary_column_of_summary_operator(table, summary_operator)
+
+        dimensions = []
+
+        # To groupby 'Summary Operator' column inserted
+        dimensions.append('Summary Operator')
+
+    table = aspects.group_by(table, dimensions, summary_operator)
+
+    return table
+
+
+
+
+def _add_temporary_column_of_summary_operator(table,summary_operator):
+    """This function adds a new column of summary operator
+
+    Whenever Show intent is applied on the whole data we 
+    will add a temporary column which represent the summary operator
+    and then apply grouping on the whole data which will give the 
+    intended result.
+
+    Example : 
+    INPUT                      OUTPUT
+
+        Marks                   Summary Operator   Marks 
+    0   10                  0   MEAN                10
+    1   20                  1   MEAN                20
+    2   30                  2   MEAN                30
+
+    Args:
+        table: Type-pandas.dataframe
+            It has the contents of the csv file
+        summary_operator: Type-summary_operators enum members
+            It denotes the summary operator, after grouping by dimensions.
+            ex. SummaryOperators.MAX, SummaryOperators.SUM
+
+        
+    Returns:
+        The function will return the `table(a pandas dataframe object)`
+        after adding the temporary column of summary operator
+    """
+
+    number_of_rows = len(table.index)
+
+    summary_operator_column = [ summary_operator.name ] * number_of_rows
+
+    table[ 'Summary Operator' ] = summary_operator_column
+
+    return table 
