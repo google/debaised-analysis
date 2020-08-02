@@ -231,5 +231,9 @@ def _str_to_summary_operator_enum(summary_operator):
         return enums.SummaryOperators.LAST
     elif summary_operator == 'Count Distinct':
         return enums.SummaryOperators.DISTINCT
+    elif summary_operator == 'Proportion of sum':
+        return enums.SummaryOperators.PROPORTION_OF_SUM
+    elif summary_operator == 'Proportion of count':
+        return enums.SummaryOperators.PROPORTION_OF_COUNT
     else:
         return None
