@@ -95,4 +95,36 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     table = table.sort_values(by=[date_column_name])
 
+    table = _add_growth_column(table, metric)
+
+    return table
+
+def _add_growth_column(table, metric):
+    """
+    This functions adds the growth column in the result table &
+    returns the updated table.
+
+    Args:
+        table : Pandas dataframe
+        metric : String
+    Returns : Pandas dataframe
+        the updated table
+    """
+    growth_col = 'growth of ' + metric
+
+    table[growth_col] = table[metric]
+
+    num_rows = table.shape[0]
+
+    table.loc[0, growth_col] = ''
+
+    for i in range(1, num_rows):
+        
+        change = 0
+
+        if table.loc[i - 1, metric] != 0:
+            change = (table.loc[i, metric] - table.loc[i - 1, metric]) * 100 / table.loc[i - 1, metric]
+
+        table.loc[i, growth_col] = format(change, '.3f') + ' %'
+
     return table

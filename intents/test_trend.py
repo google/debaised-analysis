@@ -31,10 +31,10 @@ def test_1():
     	                          date_column_name='date',
     	                          date_format='%Y-%m-%d')
     print(query_result)
-    expected_result = """         date  win_by_runs
-0  2008-01-01          105
-1  2009-01-01           92
-2  2010-01-01           98"""
+    expected_result = """         date  win_by_runs growth of win_by_runs
+0  2008-01-01          105                      
+1  2009-01-01           92             -12.381 %
+2  2010-01-01           98               6.522 %"""
     assert(expected_result == query_result.to_string())
 
 print(test_1.__doc__)
