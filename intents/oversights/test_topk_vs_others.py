@@ -122,7 +122,6 @@ def test_3():
 
     assert(expected_suggestions == str(suggestions))
 
-
 # print('Generating top-k results')
 # print(generate.__doc__)
 # generate()

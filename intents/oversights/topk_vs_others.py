@@ -20,7 +20,6 @@ Topk_vs_others is the oversight which arises when  the entries that are
 not in the results of top-k, have a huge impact.
 Here we use the ratio of the sum of top-k  metrics to the sum of other
 metrics to decide when to return a debissing suggestion.
-
 """
 import sys
 sys.path.append(".")
@@ -71,7 +70,6 @@ def topk_vs_others(result_table, k, metric):
         return
 
     ratio = topk_sum / others_sum
-
 
     if ratio < constants.TOPK_VS_OTHERS_THRESHOLD:
         change_list = {'topKLimit':result_table.shape[0]}
