@@ -115,6 +115,15 @@ else
   list_logs+=("oversights/test_benchmark_set_too_different passed")
 fi
 
+
+if ! python3 oversights/test_benchmark_set_too_different.py;
+then
+  err "oversights/test_top10_when_9_are_present failed"
+  list_logs+=("oversights/test_top10_when_9_are_present failed")
+else
+  list_logs+=("oversights/test_top10_when_9_are_present passed")
+fi
+
 echo 'All tests completed '
 echo 'Results -'
 

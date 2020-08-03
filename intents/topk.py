@@ -24,6 +24,7 @@ from oversights.regression_to_mean import regression_to_mean
 from oversights.looking_at_tails import looking_at_tails
 from oversights.duplicates_in_topk import duplicates_in_topk
 from oversights.more_than_just_topk import more_than_just_topk
+from oversights.top10_when_9_are_present import top10_when_9_are_present
 from util.enums import *
 from util import aspects
 
@@ -125,6 +126,11 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     if looking_at_tails_suggestion is not None:
         suggestions.append(looking_at_tails_suggestion)
+
+    top10_when_9_are_present_suggestion = top10_when_9_are_present(result_table, k)
+
+    if top10_when_9_are_present_suggestion is not None:
+        suggestions.append(top10_when_9_are_present_suggestion)
 
     return (result_table, suggestions)
 
