@@ -18,7 +18,7 @@ serves a purpose of a master function to all the intets.
 It returns the result of the intent and also the list of suggestions.
 """
 
-import json, pandas, enum, topk, slice_compare
+import json, pandas, enum, topk, slice_compare, insert_as_column
 from flask import escape
 from show import show
 from util import enums
@@ -143,6 +143,16 @@ def hello_http(request):
     final_table.insert(0, list(query_table_dataframe.columns.values))
 
     json_ret = {'outputTable' : final_table, 'suggestions' : suggestions}
+
+    # Insert as column when slicing is done
+    if slices_list is not None:
+        json_ret['slicing_passed_list'] = insert_as_column.list_index_slicing_passed(table, slices_list)
+
+    # Insert as column for top-k intent
+    if intent == 'topk' and summary_operator is None:
+        json_ret['list_topk_indices'] = insert_as_column.list_index_in_topk(table, metric, dimensions, is_asc, k,
+                                                                            slices=slices_list)
+
     json_string = json.dumps(json_ret)
     return json_string
 
