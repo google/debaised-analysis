@@ -15,6 +15,11 @@ limitations under the License.
 
 """This module will return the list of results that pass the slicing
 and those which are in the top-k.
+
+The functions use the index of the table to check which all rows in
+the initial tbale are present in the final table.
+reset_index is not called, as the indices in the original table are
+needed.
 """
 
 from util import aspects
