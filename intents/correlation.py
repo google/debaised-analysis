@@ -69,7 +69,7 @@ def correlation(table, metric1, metric2, **kwargs):
     """
     date_column_name = kwargs.get('date_column_name', 'date')
     date_range = kwargs.get('date_range', None)
-    date_format = kwargs.get('day_first', 'yyyy-mm-dd')
+    date_format = kwargs.get('date_format', 'yyyy-mm-dd')
 
     slices = kwargs.get('slices', None)
 
@@ -128,13 +128,13 @@ def _correlation_results(table, metric1, metric2, **kwargs):
     """
     date_column_name = kwargs.get('date_column_name', 'date')
     date_range = kwargs.get('date_range', None)
-    day_first = kwargs.get('day_first', 'yyyy-mm-dd')
+    date_format = kwargs.get('date_format', 'yyyy-mm-dd')
 
     slices = kwargs.get('slices', None)
 
     dimensions = kwargs.get('dimensions',None)
     
-    table = aspects.apply_date_range(table, date_range,date_column_name, day_first)
+    table = aspects.apply_date_range(table, date_range,date_column_name, date_format)
     
     table = aspects.slice_table(table, slices)
 

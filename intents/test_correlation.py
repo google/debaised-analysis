@@ -165,3 +165,5 @@ test_3()
 
 print(test_4.__doc__)
 test_4()
+
+print('Test cases completed')
