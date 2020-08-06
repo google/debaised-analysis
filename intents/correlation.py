@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-""" This modile contains the correlation intent.
+""" This module contains the correlation intent.
 The correlation intent finds the correlation coefficient between 2
 columns/metrics.
 In statistics, correlation or dependence is any statistical relationship,
@@ -28,6 +28,14 @@ Madlib :
 In Type 1 the result contains only 1 number as the result.
 And in Type 2 the result is a table and a correlation coefficient for each
 of the groupings.
+
+Correlation value close to +1 means that the 2 variables move in the same
+direction with respect to their means. 
+
+Correlation value close to -1 means that the 2 variables move in the opposite
+directions with respect to their means. 
+
+Correlation value close to 0 means that the 2 columns are weakly correlated.
 """
 from util import aspects
 import pandas
