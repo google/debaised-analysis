@@ -37,6 +37,8 @@ class SummaryOperators(enum.Enum):
     LAST = 9
     DISTINCT = 10
     MEDIAN = 11
+    PROPORTION_OF_SUM = 12
+    PROPORTION_OF_COUNT = 13
 
 class Granularities(enum.Enum):
     """The attributes of this class like granularity.DAILY ,
