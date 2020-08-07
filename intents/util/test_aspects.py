@@ -134,6 +134,62 @@ def test_3():
 
     assert(result_table.to_string() == expected_result)
 
+def test_4():
+    """ Test for summary operator = PROPORTION_OF_COUNT
+    Proportion of count of gender for each race/ethnicity
+    Dataset used : https://www.kaggle.com/spscientist/students-performance-in-exams
+    Args:
+    Returns:
+    """
+    table = pandas.read_csv('data/data_for_test_aspects/student_performance.csv')
+
+    result_table = aspects.group_by(table, ['race/ethnicity'], 
+                             enums.SummaryOperators.PROPORTION_OF_COUNT)
+    
+    result_table = aspects.crop_other_columns(result_table, ['race/ethnicity', 'gender'])
+    
+    # Sum of proportion column should be(close to) 1.0
+    assert(result_table['gender'].sum() == 1.0)
+
+    print(result_table)
+
+    expected_result_table = """  race/ethnicity  gender
+0        group A   0.089
+1        group B   0.190
+2        group C   0.319
+3        group D   0.262
+4        group E   0.140"""
+
+    assert(expected_result_table == result_table.to_string())
+
+def test_5():
+    """ Test for summary operator = PROPORTION_OF_SUM
+    Proportion of sum of reading score for each race/ethnicity
+    Dataset used : https://www.kaggle.com/spscientist/students-performance-in-exams
+    Args:
+    Returns:
+    """
+    table = pandas.read_csv('data/data_for_test_aspects/student_performance.csv')
+
+    result_table = aspects.group_by(table, ['race/ethnicity'], 
+                             enums.SummaryOperators.PROPORTION_OF_SUM)
+    
+    result_table = aspects.crop_other_columns(result_table, ['race/ethnicity', 'reading score'])
+    
+    # Sum of proportion column should be(close to) 1.0
+    assert(float(format(result_table['reading score'].sum(), '.5f')) == 1)
+
+    print(result_table)
+
+    expected_result_table = """  race/ethnicity  reading score
+0        group A       0.083216
+1        group B       0.185011
+2        group C       0.318698
+3        group D       0.265263
+4        group E       0.147812"""
+
+    assert(expected_result_table == result_table.to_string())
+
 # print(generate_1.__doc__)
 # generate_1()
 
@@ -145,5 +201,11 @@ test_2()
 
 print(test_3.__doc__)
 test_3()
+
+print(test_4.__doc__)
+test_4()
+
+print(test_5.__doc__)
+test_5()
 
 print('Test cases completed')
