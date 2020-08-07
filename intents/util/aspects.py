@@ -240,6 +240,18 @@ def group_by(table, dimensions, summary_operator):
     if summary_operator == enums.SummaryOperators.DISTINCT:
         table = table.groupby(dimensions).agg(_count_distinct)
 
+    if summary_operator == enums.SummaryOperators.PROPORTION_OF_SUM:
+        table = table.groupby(dimensions).sum()
+        for column in table.columns:
+            if column not in dimensions:
+                table[column] /= table[column].sum()
+
+    if summary_operator == enums.SummaryOperators.PROPORTION_OF_COUNT:
+        table = table.groupby(dimensions).count()
+        for column in table.columns:
+            if column not in dimensions:
+                table[column] /= table[column].sum()
+
     table = table.reset_index()
 
     return table
