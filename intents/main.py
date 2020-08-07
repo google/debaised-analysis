@@ -122,6 +122,16 @@ def hello_http(request):
                                                             date_range=date_range,
                                                             slices=slices_list
                                                             )
+    elif intent == 'correlation':
+        query_table_dataframe = correlation.correlation(query_table_dataframe,
+                                                        correlation_metrics['metric1'],
+                                                        correlation_metrics['metric2'],
+                                                        slices=slices_list,
+                                                        date_column_name=date_column_name,
+                                                        date_range=date_range,
+                                                        dimensions=dimensions
+                                                        )
+
     else:
         raise Exception("Intent name does not match")
 
@@ -231,5 +241,9 @@ def _str_to_summary_operator_enum(summary_operator):
         return enums.SummaryOperators.LAST
     elif summary_operator == 'Count Distinct':
         return enums.SummaryOperators.DISTINCT
+    elif summary_operator == 'Proportion of sum':
+        return enums.SummaryOperators.PROPORTION_OF_SUM
+    elif summary_operator == 'Proportion of count':
+        return enums.SummaryOperators.PROPORTION_OF_COUNT
     else:
         return None

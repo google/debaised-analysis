@@ -35,6 +35,16 @@ else
   list_logs+=("test_topk passed")
 fi
 
+if ! python3 test_correlation.py;
+then
+  # if this test fails echos the error and also stores in an array
+  err "test_correlation failed"
+  list_logs+=("test_correlation failed")
+else
+  # if this does not fails then just stores in the array
+  list_logs+=("test_correlation passed")
+fi
+
 if ! python3 test_trend.py;
 then
   err "test_trend failed"

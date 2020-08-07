@@ -195,9 +195,9 @@ def test_7():
 22      Mary Johnson  178345
 23       Karen Scott  205187
 24        Mark Young  205187
-25   Joseph Thompson  212156
+25   Lawrence Sperry  212156
 26   Angela Martinez  212156
-27   Lawrence Sperry  212156
+27   Joseph Thompson  212156
 28       Betty Adams  227489
 29       Lisa Walker  256481
 30     George Wright  289950"""
