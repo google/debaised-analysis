@@ -208,7 +208,9 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     table = aspects.group_by(table, dimensions, summary_operator)
 
-    table = table.sort_values(by=[metric], ascending=is_asc)
+    # using a stable sort('mergesort') will help to preserve the order
+    # if equal values of [metric] are present
+    table = table.sort_values(by=[metric], ascending=is_asc, kind = 'mergesort')
 
     # reordering the index
     # drop=True drops the new columnn named 'index' created in reset_index call
