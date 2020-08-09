@@ -25,7 +25,7 @@ like this. But actually the metric is closeby for the entire list.
 Todo(when the date format is updated) - add the test for date columns
 """
 import math
-from util import constants
+from util import constants, enums
 
 def looking_at_tails(result_table, k, metric):
     """This function gives suggestions if 'looking at tails to find causes'
@@ -84,7 +84,7 @@ def looking_at_tails(result_table, k, metric):
     else:
         suggestion = {}
         suggestion['suggestion'] = 'Values in top-k rows of columns - ' + str([col['column'] for col in col_list])[1:-1] + ' are similar for other rows also'
-        suggestion['oversight_name'] = 'Looking at tails to find causes'
+        suggestion['oversight'] = enums.Oversights.LOOKING_AT_TAILS_TO_FIND_CAUSES
         suggestion['is_column_level_suggestion'] = True
         suggestion['col_list'] = col_list
         return suggestion

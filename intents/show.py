@@ -20,7 +20,7 @@ that do not follow the conditions) , groupy by.
 Some of the operations are optional.
 """
 
-from util import aspects
+from util import aspects, oversights_order, rank_oversights
 
 def show(table,**kwargs):
     """This function will implement the show intent
@@ -111,6 +111,11 @@ def show(table,**kwargs):
         dimensions.append('Summary Operator')
 
     table = aspects.group_by(table, dimensions, summary_operator)
+
+    suggestions = []
+
+    order = oversights_order.ORDER_IN_SHOW
+    suggestions = rank_oversights.rank_oversights(suggestions, order)
 
     return table
 

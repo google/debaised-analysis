@@ -26,7 +26,7 @@ from oversights.duplicates_in_topk import duplicates_in_topk
 from oversights.more_than_just_topk import more_than_just_topk
 from oversights.topk_vs_others import topk_vs_others
 from util.enums import *
-from util import aspects
+from util import aspects, oversights_order, rank_oversights
 
 def topk(table, metric, dimensions, is_asc, k, **kwargs):
     """ This function returns both the results according to the intent
@@ -131,6 +131,10 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     if looking_at_tails_suggestion is not None:
         suggestions.append(looking_at_tails_suggestion)
+
+    order = oversights_order.ORDER_IN_TOPK
+
+    suggestions = rank_oversights.rank_oversights(suggestions, order)
 
     return (result_table, suggestions)
 
