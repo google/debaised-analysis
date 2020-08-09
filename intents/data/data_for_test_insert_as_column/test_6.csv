@@ -1,0 +1,8 @@
+Student Name,Grade,Marks,Entries where Grade is equal to A
+Monica,A,32,TRUE
+Rachel,B,45,FALSE
+Joey,A,72,TRUE
+Ross,C,93,FALSE
+Monica,A,72,TRUE
+Ross,A,95,TRUE
+Ross,A,92,TRUE
