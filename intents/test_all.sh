@@ -53,6 +53,15 @@ else
   list_logs+=("test_trend passed")
 fi
 
+
+if ! python3 test_weighted_mean.py;
+then
+  err "test_weighted_mean failed"
+  list_logs+=("test_weighted_mean failed")
+else
+  list_logs+=("test_weighted_mean passed")
+fi
+
 if ! python3 test_show.py;
 then
   err "test_show failed"
@@ -85,12 +94,28 @@ else
   list_logs+=("util/test_aspects passed")
 fi
 
+if ! python3 util/test_insert_as_column.py;
+then
+  err "util/test_insert_as_column failed"
+  list_logs+=("util/test_insert_as_column failed")
+else
+  list_logs+=("util/test_insert_as_column passed")
+fi
+
 if ! python3 oversights/test_mean_vs_median.py;
 then
   err "oversights/test_mean_vs_median failed"
   list_logs+=("oversights/test_mean_vs_median failed")
 else
   list_logs+=("oversights/test_mean_vs_median passed")
+fi
+
+if ! python3 oversights/test_topk_vs_others.py;
+then
+  err "oversights/test_topk_vs_others failed"
+  list_logs+=("oversights/test_topk_vs_others failed")
+else
+  list_logs+=("oversights/test_topk_vs_others passed")
 fi
 
 if ! python3 oversights/test_simpsons_paradox.py;
