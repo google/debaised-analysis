@@ -23,6 +23,9 @@ from flask import escape
 from show import show
 from util import enums, insert_as_column
 
+# ToDo : Change the name hello_http (default name on GCP) to a better name
+# that makes sense of the function & also make changes in the UI javascript
+
 def hello_http(request):
     """HTTP Cloud Function.
     Args:
@@ -162,6 +165,7 @@ def hello_http(request):
             updated_suggestion = suggestion
             if 'changelist' in suggestion.keys():
                 updated_suggestion['json'] = func(request_json, suggestion['changelist'])
+            updated_suggestion['oversight'] = updated_suggestion['oversight'].name
             updated_suggestions.append(updated_suggestion)
 
         suggestions = updated_suggestions
@@ -187,6 +191,7 @@ def hello_http(request):
             updated_suggestion = suggestion
             if 'changelist' in suggestion.keys():
                 updated_suggestion['json'] = func(request_json, suggestion['changelist'])
+            updated_suggestion['oversight'] = updated_suggestion['oversight'].name
             updated_suggestions.append(updated_suggestion)
 
         suggestions = updated_suggestions
@@ -208,10 +213,19 @@ def hello_http(request):
             updated_suggestion = suggestion
             if 'changelist' in suggestion.keys():
                 updated_suggestion['json'] = func(request_json, suggestion['changelist'])
+            updated_suggestion['oversight'] = updated_suggestion['oversight'].name
             updated_suggestions.append(updated_suggestion)
 
         suggestions = updated_suggestions
 
+        query_table_dataframe = slice_compare.slice_compare(query_table_dataframe,
+                                                            metric, dimensions, [], [],
+                                                            slice_compare_column_list,
+                                                            summary_operator=summary_operator,
+                                                            date_column_name=date_column_name,
+                                                            date_range=date_range,
+                                                            slices=slices_list
+                                                            )
     elif intent == 'correlation':
         query_table_dataframe = correlation.correlation(query_table_dataframe,
                                                         correlation_metrics['metric1'],
@@ -245,15 +259,18 @@ def hello_http(request):
 
     json_ret = {'outputTable' : final_table, 'suggestions' : suggestions}
 
+    # Insert as column when slicing is done
     if slices_list is not None:
         json_ret['slicing_passed_list'] = insert_as_column.list_index_slicing_passed(table, slices_list)
 
+    # Insert as column for top-k intent
     if intent == 'topk' and summary_operator is None:
         json_ret['list_topk_indices'] = insert_as_column.list_index_in_topk(table, metric, dimensions, is_asc, k,
                                                                             slices=slices_list)
 
     json_string = json.dumps(json_ret)
     return json_string
+
 
 def _str_to_filter_enum(comparator):
     """
@@ -316,6 +333,10 @@ def _str_to_summary_operator_enum(summary_operator):
         return enums.SummaryOperators.LAST
     elif summary_operator == 'Count Distinct':
         return enums.SummaryOperators.DISTINCT
+    elif summary_operator == 'Proportion of sum':
+        return enums.SummaryOperators.PROPORTION_OF_SUM
+    elif summary_operator == 'Proportion of count':
+        return enums.SummaryOperators.PROPORTION_OF_COUNT
     else:
         return None
 
@@ -430,4 +451,3 @@ def _list_all_dimensions_metrics(table, dimensions, metric):
             else:
                 all_dimensions.append(column)
     return (all_dimensions, all_metrics)
-

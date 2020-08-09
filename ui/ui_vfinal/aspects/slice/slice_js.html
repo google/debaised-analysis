@@ -248,7 +248,8 @@
   /**
    * Find whether the slice operation and slice values entered are compatible
    * @param {Array} sliceValue - The list of slice values entered
-   * @param {string} sliceOperation - The slice operation selected by user
+   * @param {string} sliceOperation - The slice operation selected by 
+   * @return {boolean} True indicates compatible and false indicates incompatible
    */
   function sliceValCompatibleUtil(sliceValue,sliceOperation) {
     if(sliceValue.length === 1 && sliceValue[0] === '')

@@ -24,7 +24,7 @@ are dropped.
 import datetime
 from util import enums
 
-def apply_date_range(table, date_range, date_column_name, date_format):
+def apply_date_range(table, date_range, date_column_name, date_format,  **kwargs):
     """This function removes the rows from from the table that
        are not in the date range(contains start date and end date) given.
 
@@ -39,12 +39,18 @@ def apply_date_range(table, date_range, date_column_name, date_format):
             It is required by datetime.strp_time to parse the date in the format
             Format Codes
 https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
+        reset_index: Bool
+            True/False- to perform reset index or not
+            Used only for generating the new column in insert_as_column
 
     Returns:
         The updated table after aplying the condition, in pandas.dataframe type
     """
     if date_range is None:
         return table
+
+    # initialized with True, so will not affect intents layer
+    reset_index = kwargs.get('reset_index', True)
 
     num_rows = table.shape[0]
 
@@ -62,10 +68,12 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
     table = table.drop(rows_to_be_dropped)
     
     # drop=True drops the new columnn named 'index' created in reset_index call
-    table = table.reset_index(drop=True)
+    if reset_index is True:
+        table = table.reset_index(drop=True)
+
     return table
 
-def slice_table(table, slices):
+def slice_table(table, slices,  **kwargs):
     """This function removes the rows from the table
        that do not satisfy the slicing condition.
 
@@ -87,10 +95,17 @@ def slice_table(table, slices):
                 Greater than equal to
                 In
                 Not In
+        reset_index: Bool
+            True/False- to perform reset index or not
+            Used only for generating the new column in insert_as_column
 
     Returns:
         The updated table after aplying the condition, in pandas.dataframe type
     """
+
+    # initialized with True, so will not affect intents layer
+    reset_index = kwargs.get('reset_index', True)
+
     if slices is None:
         return table
 
@@ -135,7 +150,8 @@ def slice_table(table, slices):
     table = table.drop(rows_to_be_dropped)
 
     #some indices get deleted after slicing
-    table = table.reset_index(drop=True)
+    if reset_index is True:
+        table = table.reset_index(drop=True)
 
     return table
 
@@ -223,6 +239,18 @@ def group_by(table, dimensions, summary_operator):
 
     if summary_operator == enums.SummaryOperators.DISTINCT:
         table = table.groupby(dimensions).agg(_count_distinct)
+
+    if summary_operator == enums.SummaryOperators.PROPORTION_OF_SUM:
+        table = table.groupby(dimensions).sum()
+        for column in table.columns:
+            if column not in dimensions:
+                table[column] /= table[column].sum()
+
+    if summary_operator == enums.SummaryOperators.PROPORTION_OF_COUNT:
+        table = table.groupby(dimensions).count()
+        for column in table.columns:
+            if column not in dimensions:
+                table[column] /= table[column].sum()
 
     table = table.reset_index()
 

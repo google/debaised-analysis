@@ -203,6 +203,40 @@ def test_6():
 	assert(expected_result == query_result.to_string())
 
 
+def test_7():
+    """An example from the IPL dataset
+    question :show sum of win_by_runs
+    """
+    table = pandas.read_csv('data/matches.csv')
+    query_result = show.show(table,
+                                metric='win_by_runs' ,
+                                date_column_name='date', date_format='%Y-%m-%d',
+                                summary_operator=SummaryOperators.SUM)
+    print(query_result)
+    expected_result = """  Summary Operator  win_by_runs
+0              SUM         8702"""
+    assert(expected_result == query_result.to_string())
+    
+
+def test_8():
+    """An example from the IPL dataset
+    question :show mean of win_by_runs
+              in season 2017 in date range '2017-05-09' to '2017-05-12'
+    """
+    table = pandas.read_csv('data/matches.csv')
+    query_result = show.show(table,
+                                metric='win_by_runs' ,
+                                slices=[('season', Filters.EQUAL_TO, 2017)],
+                                date_range=('2017-05-09', '2017-05-12'),
+                                date_column_name='date', date_format='%Y-%m-%d',
+                                summary_operator=SummaryOperators.MEAN)
+    print(query_result)
+    expected_result = """  Summary Operator  win_by_runs
+0             MEAN            7"""
+    assert(expected_result == query_result.to_string())
+
+
+
 print(test_1.__doc__)
 test_1()    
 print(test_2.__doc__)
@@ -215,5 +249,9 @@ print(test_5.__doc__)
 test_5()
 print(test_6.__doc__)
 test_6()
+print(test_7.__doc__)
+test_7()
+print(test_8.__doc__)
+test_8()
 
 print("Test cases completed")

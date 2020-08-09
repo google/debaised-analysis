@@ -50,3 +50,6 @@ TOP_DOWN_ERROR_SIMILARITY_THRESHOLD = 0.05
 
 # top-down error dissimilarity threshold value
 TOP_DOWN_ERROR_DISSIMILARITY_THRESHOLD = 0.30
+
+# Threshold of ratio between sum of top-k & sum of others
+TOPK_VS_OTHERS_THRESHOLD = .7

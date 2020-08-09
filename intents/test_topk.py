@@ -87,7 +87,7 @@ def test_3():
     print(query_result)
     expected_result = """  Creation  Department_ID
 0     1789              2"""
-    expected_suggestions = """[]"""
+    expected_suggestions = """[{'change_list': {'topKLimit': 14}, 'suggestion': 'The rows NOT in the top-k have a much larger sum over Department_ID than the rows in top-k', 'confidence_score': 0.15384615384615385}]"""
     assert(expected_result == query_result[0].to_string())
     assert(expected_suggestions == str(query_result[1]))
 
@@ -195,9 +195,9 @@ def test_7():
 22      Mary Johnson  178345
 23       Karen Scott  205187
 24        Mark Young  205187
-25   Joseph Thompson  212156
+25   Lawrence Sperry  212156
 26   Angela Martinez  212156
-27   Lawrence Sperry  212156
+27   Joseph Thompson  212156
 28       Betty Adams  227489
 29       Lisa Walker  256481
 30     George Wright  289950"""
