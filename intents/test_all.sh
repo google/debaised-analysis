@@ -53,6 +53,15 @@ else
   list_logs+=("test_trend passed")
 fi
 
+
+if ! python3 test_weighted_mean.py;
+then
+  err "test_weighted_mean failed"
+  list_logs+=("test_weighted_mean failed")
+else
+  list_logs+=("test_weighted_mean passed")
+fi
+
 if ! python3 test_show.py;
 then
   err "test_show failed"
