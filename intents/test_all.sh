@@ -94,6 +94,14 @@ else
   list_logs+=("util/test_aspects passed")
 fi
 
+if ! python3 util/test_insert_as_column.py;
+then
+  err "util/test_insert_as_column failed"
+  list_logs+=("util/test_insert_as_column failed")
+else
+  list_logs+=("util/test_insert_as_column passed")
+fi
+
 if ! python3 oversights/test_mean_vs_median.py;
 then
   err "oversights/test_mean_vs_median failed"
