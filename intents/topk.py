@@ -24,6 +24,7 @@ from oversights.regression_to_mean import regression_to_mean
 from oversights.looking_at_tails import looking_at_tails
 from oversights.duplicates_in_topk import duplicates_in_topk
 from oversights.more_than_just_topk import more_than_just_topk
+from oversights.topk_vs_others import topk_vs_others
 from util.enums import *
 from util import aspects
 
@@ -120,6 +121,11 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     if more_than_just_topk_suggestion is not None:
         suggestions.append(more_than_just_topk_suggestion)
+
+    topk_vs_others_suggestion = topk_vs_others(results_without_k_condition, k, metric)
+
+    if topk_vs_others_suggestion is not None:
+        suggestions.append(topk_vs_others_suggestion)
 
     looking_at_tails_suggestion = looking_at_tails(results_without_k_condition, k, metric)
 

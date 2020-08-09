@@ -102,6 +102,14 @@ else
   list_logs+=("oversights/test_mean_vs_median passed")
 fi
 
+if ! python3 oversights/test_topk_vs_others.py;
+then
+  err "oversights/test_topk_vs_others failed"
+  list_logs+=("oversights/test_topk_vs_others failed")
+else
+  list_logs+=("oversights/test_topk_vs_others passed")
+fi
+
 if ! python3 oversights/test_simpsons_paradox.py;
 then
   err "oversights/test_simpsons_paradox failed"
