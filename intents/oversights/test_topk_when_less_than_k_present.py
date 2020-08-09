@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 """
-This module contains the tests for the top10_when_9_are_present
+This module contains the tests for the topk_when_less_than_k_present
 module
 """
 
@@ -19,11 +19,11 @@ import sys
 sys.path.append(".")
 
 import pandas
-from oversights import top10_when_9_are_present
+from oversights import topk_when_less_than_k_present
 
 def test_1():
     """
-    This test will test the case when the oversight shold not be
+    This test will test the case when the oversight should not be
     given.
     The result_table is hardcoded and then sent to the oversights
     layer.
@@ -40,8 +40,8 @@ def test_1():
     # The data should be already sorted in descreasing order
     assert(result_table[metric].is_monotonic_decreasing)
 
-    suggestion = top10_when_9_are_present.top10_when_9_are_present(result_table,
-    	                                                           k)
+    suggestion = topk_when_less_than_k_present.topk_when_less_than_k_present(result_table,
+    	                                                                     k)
 
     print(suggestion)
 
@@ -51,7 +51,7 @@ def test_1():
 
 def test_2():
     """
-    This test will test the case when the oversight shold be
+    This test will test the case when the oversight should be
     given.
     The result_table is hardcoded and then sent to the oversights
     layer.
@@ -72,8 +72,8 @@ def test_2():
     # The data should be already sorted in descreasing order
     assert(result_table[metric].is_monotonic_decreasing)
 
-    suggestion = top10_when_9_are_present.top10_when_9_are_present(result_table,
-    	                                                           k)
+    suggestion = topk_when_less_than_k_present.topk_when_less_than_k_present(result_table,
+    	                                                                     k)
 
     print(suggestion)
 

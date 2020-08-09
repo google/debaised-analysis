@@ -11,18 +11,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 """
-This module implements the 'Top10 when 9 are present' oversight.
+This module implements the 'TopK when less than k present.
 
-'Top10 when 9 are present' oversight arises when there are less than
+'TopK when less than k present' oversight arises when there are less than
 k entries present in the result table of the top-k intent.
 
 This oversight would be very useful in the case when the entire
 table is not visible to the user & it is difficult for him to scroll.
 """
 
-def top10_when_9_are_present(result_table, k):
+def topk_when_less_than_k_present(result_table, k):
     """
-    This function returns the suggestion when the 'Top10 when 9 are present'
+    This function returns the suggestion when the 'TopK when less than k present'
     oversight is detected.
 
     In the detection it is simply checked if the number of rows in the
@@ -41,5 +41,5 @@ def top10_when_9_are_present(result_table, k):
     if num_rows < k and k != -1:
     	suggestion = {}
     	suggestion['suggestion'] = 'Instead of {} only {} rows are present in the results'.format(k, num_rows)
-    	suggestion['oversight_name'] = 'Top10 when 9 are present'
+    	suggestion['oversight_name'] = 'TopK when less than k present'
     	return suggestion
