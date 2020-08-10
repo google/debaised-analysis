@@ -29,7 +29,7 @@ def test_1():
     	                          SummaryOperators.MAX,
     	                          date_range=('2008-05-08', '2010-04-12'),
     	                          date_column_name='date',
-    	                          date_format='%Y-%m-%d')
+    	                          day_first=False)
     print(query_result)
     expected_result = """         date  win_by_runs
 0  2008-01-01          105
