@@ -18,10 +18,11 @@ serves a purpose of a master function to all the intets.
 It returns the result of the intent and also the list of suggestions.
 """
 
-import json, pandas, enum, topk, slice_compare
+
+import json, pandas, enum, topk, slice_compare, correlation, trend, time_compare
 from flask import escape
 from show import show
-from util import enums
+from util import enums, insert_as_column
 
 # ToDo : Change the name hello_http (default name on GCP) to a better name
 # that makes sense of the function & also make changes in the UI javascript
@@ -41,43 +42,55 @@ def hello_http(request):
     request_args = request.args
 
     # extracting the intent parameters from the json
-    intent = request_json['intent']
-    table = request_json['table']
-    row_range = request_json['rowRange']
-    metric = request_json['metric']
-    dimensions = request_json['dimensions']
-    summary_operator = request_json['summaryOperator']
-    slices = request_json['slices']
-    is_asc = request_json['isAsc']
-    k = request_json['k']
-    slices = request_json['slices']
-    slice_compare_column = request_json['comparisonValue']
-    date = request_json['dateRange']
-    time_granularity = request_json['timeGranularity']
-    row_start = row_range["rowStart"]
-    row_end = row_range["rowEnd"]
-    row_header = row_range["header"]
+    intent = _get_value(request_json, 'intent')
+    table = _get_value(request_json, 'table')
+    metric = _get_value(request_json, 'metric')
+    dimensions = _get_value(request_json, 'dimensions')
+    summary_operator = _get_value(request_json, 'summaryOperator')
+    slices = _get_value(request_json, 'slices')
+    is_asc = _get_value(request_json, 'isAsc')
+    k = _get_value(request_json, 'topKLimit')
+    slices = _get_value(request_json, 'slices')
+    slice_comparision_arg = _get_value(request_json, 'comparisonValue')
+    time_comparision_arg = _get_value(request_json, 'compareDateRange')
+    date = _get_value(request_json, 'dateRange')
+    time_granularity = _get_value(request_json, 'timeGranularity')
+    correlation_metrics = _get_value(request_json, 'correlationMetrics')
+
+
 
     # Converting the list of list into a pandas dataframe.
     query_table = []
-    for row in range(row_start-1, row_end):
-        if row != row_header-1:
+    for row in range(1, len(table)):
+        if row != 0:
             query_table.append(table[row])
     query_table_dataframe = pandas.DataFrame(query_table,
-                                             columns=table[row_header-1])
+                                             columns=table[0])
+
+    (all_dimensions, all_metrics) = _list_all_dimensions_metrics(query_table_dataframe,
+                                                                 dimensions, metric)
+
+    # Remove empty columns
+    query_table_dataframe = remove_empty_columns(query_table_dataframe)
+
+    # Remove duplicate named columns
+    query_table_dataframe = remove_duplicate_named_columns(query_table_dataframe)
 
     # Converting the variables that contain denote the
     # date range into the desired format.
     date_column_name = None
     date_range = None
-    if date != "null":
+    day_first = None
+    if date != None:
+        date_columns = request_json['dateColumns']
         date_column_name = date['dateCol']
         date_range = (date['dateStart'], date['dateEnd'])
+        day_first = date_columns[date_column_name]['day_first']
 
     # Converting the Slices passed in the json into a
     # list of tuples (col, operator, val)
     slices_list = None
-    if slices != "null":
+    if slices != None:
         slices_list = []
         for item in slices:
             val = item['sliceVal']
@@ -88,32 +101,124 @@ def hello_http(request):
     if dimensions == 'null':
         dimensions = None
 
+    if slice_comparision_arg is not None:
+        slice_compare_column = slice_comparision_arg['comparisonColumn']
+        slice1 = slice_comparision_arg['slice1']
+        slice2 = slice_comparision_arg['slice2']
+
+    if time_comparision_arg is not None:
+        print(time_comparision_arg)
+        time_compare_column = time_comparision_arg['dateCol']
+        date_range1 = (time_comparision_arg['dateStart1'],
+                       time_comparision_arg['dateEnd1'])
+        date_range2 = (time_comparision_arg['dateStart2'],
+                       time_comparision_arg['dateEnd2'])
+        date_format = request_json['dateColumns'][time_compare_column]['day_first']
+
     if metric == 'null':
         metric = None
     
     summary_operator = _str_to_summary_operator_enum(summary_operator)
 
+    time_granularity = _str_to_time_granularity_enum(time_granularity)
+
     suggestions = []
+
+    table = query_table_dataframe
 
     if intent == 'show':
         query_table_dataframe = show(query_table_dataframe,
                                      slices=slices_list,
                                      metric=metric,
                                      dimensions=dimensions,
-                                     summary_operator=summary_operator
+                                     summary_operator=summary_operator,
+                                     date_column_name=date_column_name,
+                                     day_first=day_first,
+                                     date_range=date_range
                                     )
+
+        if summary_operator == enums.SummaryOperators.MEAN :
+            suggestions.append(get_hardcoded_mean_vs_median_suggestion())
+        
+        updated_suggestions = []
+        for suggestion in suggestions:
+            updated_suggestion = suggestion
+            if 'changelist' in suggestion.keys():
+                updated_suggestion['json'] = func(request_json, suggestion['changelist'])
+            updated_suggestions.append(updated_suggestion)
+
+        suggestions = updated_suggestions
+
+                                    
     elif intent == 'topk':
         query_result = topk.topk(query_table_dataframe,
                                  metric, dimensions, is_asc, k,
                                  summary_operator=summary_operator,
+                                 slices=slices_list,
                                  date_column_name=date_column_name,
-                                 date_range=date_range,
-                                 slices=slices_list
+                                 day_first=day_first,
+                                 date_range=date_range
                                 )
         query_table_dataframe = query_result[0]
         suggestions = query_result[1]
-        
+        updated_suggestions = []
+        for suggestion in suggestions:
+            updated_suggestion = suggestion
+            if 'changelist' in suggestion.keys():
+                updated_suggestion['json'] = func(request_json, suggestion['changelist'])
+            updated_suggestion['oversight'] = updated_suggestion['oversight'].name
+            updated_suggestions.append(updated_suggestion)
+
+        suggestions = updated_suggestions
+                                                                      
     elif intent == 'slice_compare':
+        query_result = slice_compare.slice_compare(query_table_dataframe,
+                                                   metric, all_dimensions,
+                                                   all_metrics, 
+                                                   slice_compare_column,
+                                                   slice1, slice2,
+                                                   summary_operator,
+                                                   date_column_name=date_column_name,
+                                                   date_range=date_range,
+                                                   day_first = day_first,
+                                                   slices=slices_list,
+                                                   dimensions = dimensions
+                                                   )
+        query_table_dataframe = query_result[0]
+        suggestions = query_result[1]
+        updated_suggestions = []
+
+        for suggestion in suggestions:
+            updated_suggestion = suggestion
+            if 'changelist' in suggestion.keys():
+                updated_suggestion['json'] = func(request_json, suggestion['changelist'])
+            updated_suggestion['oversight'] = updated_suggestion['oversight'].name
+            updated_suggestions.append(updated_suggestion)
+
+        suggestions = updated_suggestions
+
+    elif intent == 'time_compare':
+        query_result = time_compare.time_compare(query_table_dataframe,
+                                                 metric, all_dimensions,
+                                                 time_compare_column,
+                                                 date_range1, date_range2,
+                                                 date_format, summary_operator,
+                                                 slices=slices_list,
+                                                 dimensions = dimensions
+                                                 )
+        query_table_dataframe = query_result[0]
+        suggestions = query_result[1]
+        updated_suggestions = []
+
+        for suggestion in suggestions:
+            updated_suggestion = suggestion
+            if 'changelist' in suggestion.keys():
+                updated_suggestion['json'] = func(request_json, suggestion['changelist'])
+            updated_suggestion['oversight'] = updated_suggestion['oversight'].name
+            updated_suggestions.append(updated_suggestion)
+
+        suggestions = updated_suggestions
+
         query_table_dataframe = slice_compare.slice_compare(query_table_dataframe,
                                                             metric, dimensions, [], [],
                                                             slice_compare_column_list,
@@ -128,24 +233,25 @@ def hello_http(request):
                                                         correlation_metrics['metric2'],
                                                         slices=slices_list,
                                                         date_column_name=date_column_name,
+                                                        day_first=day_first,
                                                         date_range=date_range,
                                                         dimensions=dimensions
                                                         )
 
+    elif intent == 'trend':
+        query_table_dataframe = trend.trend(query_table_dataframe,
+                                            metric,
+                                            time_granularity,
+                                            summary_operator,
+                                            date_column_name=date_column_name,
+                                            day_first=day_first,
+                                            date_range=date_range,
+                                            slices=slices_list
+                                            )
+
     else:
         raise Exception("Intent name does not match")
 
-    # In updated suggestions, change_list is replaced with the json of
-    # the new query.
-    updated_suggestions = []
-    for suggestion in suggestions:
-        updated_suggestion = suggestion
-        if 'change_list' in suggestion.keys():
-            updated_suggestion['json'] = \
-            _convert_change_list_to_new_query_json(request_json, suggestion['change_list'])
-        updated_suggestions.append(updated_suggestion)
-
-    suggestions = updated_suggestions
     final_table = []
 
     # converting into a json object and returning
@@ -157,29 +263,6 @@ def hello_http(request):
     json_string = json.dumps(json_ret)
     return json_string
 
-def _convert_change_list_to_new_query_json(inp_json, change_list):
-    """
-    As the json for the new query would be very similar to the json of the
-    requested query, the oversights only return a list of changes to
-    be made in the current json.
-    This function takes as input the current json, applies the list of
-    changes & returns the new json.
-
-    Args:
-        inp_json: Type-dict
-            Json of the initial query
-        change_list: Type-dict
-            Changes to be made in the current json
-            keys - key in the json that needs to be updated
-            values - the updated value
-
-    Returns:
-        the json for the new query
-    """
-    for key in change_list.keys():
-        inp_json[key] = change_list[key]
-
-    return inp_json
 
 def _str_to_filter_enum(comparator):
     """
@@ -248,3 +331,115 @@ def _str_to_summary_operator_enum(summary_operator):
         return enums.SummaryOperators.PROPORTION_OF_COUNT
     else:
         return None
+
+
+
+def _str_to_time_granularity_enum(time_granularity):
+    """
+    This function return the corresponding enum to the
+    summary operator passed.
+
+    Args:
+        time_granularity : Type-str
+    Returns:
+        SummaryOperator enum member
+    """
+    if time_granularity == 'Annually':
+        return enums.Granularities.ANNUALLY
+    elif time_granularity == 'Monthly':
+        return enums.Granularities.MONTHLY
+    elif time_granularity == 'Daily':
+        return enums.Granularities.DAILY
+    elif time_granularity == 'Hourly':
+        return enums.Granularities.HOURLY
+    elif time_granularity == None:
+        return None
+    else:
+        raise Exception('Granularity not supported')
+
+def func(inp_json, changelist):
+    for key in changelist.keys():
+        inp_json[key] = changelist[key]
+
+    return inp_json
+
+def remove_empty_columns(query_table_dataframe):
+    empty_header_present = False
+
+    for column_name in list(query_table_dataframe.columns.values):
+        if(column_name==""):
+            empty_header_present = True
+    
+    if(empty_header_present):
+        query_table_dataframe.drop(columns=[""])
+
+    return query_table_dataframe
+
+
+def remove_duplicate_named_columns(query_table_dataframe):
+    #query_table_dataframe.columns.duplicated() gives a list of True and False for unique columns
+    query_table_dataframe = query_table_dataframe.loc[:,~query_table_dataframe.columns.duplicated()]
+    return query_table_dataframe    
+
+def _get_value(dict, key):
+    """
+    Returns the value for corresponding key. If key is not present return None
+    """
+    if key in dict.keys():
+        return dict[key]
+    return None
+
+def get_hardcoded_mean_vs_median_suggestion():
+    suggestion = {}
+
+    row_list = []
+    row_list.append({'row':1, 'confidence_score':100})
+    row_list.append({'row':2, 'confidence_score':100})
+
+    suggestion['suggestion'] = 'Mean of rows are very different from Median at rows ' + str([row['row'] for row in row_list])
+    suggestion['oversight_name'] = 'Mean vs Median'
+    suggestion['is_row_level_suggestion'] = True
+    suggestion['row_list'] = row_list
+
+    changelist = {'summaryOperator':'Median'}
+    suggestion['changelist'] = changelist
+
+    return suggestion
+
+def _list_all_dimensions_metrics(table, dimensions, metric):
+    """
+    This function return a tuple of all_dimensions and all_metrics
+
+    Args:
+        table: Type-pandan DataFrame
+        dimensions: Type-list of strings
+        metric: string
+    Returns:
+        Tuple of all_dimensions and all_metrics
+    """
+
+    num_rows = table.shape[0]
+
+    all_dimensions = []
+    all_metrics = []
+
+    dimension_list = []
+    if dimensions is not None:
+        dimension_list = dimensions
+
+    for column in table.columns:
+        if column in dimension_list or metric == column:
+            if column in dimension_list:
+                all_dimensions.append(column)
+            if metric == column:
+                all_metrics.append(metric)
+        else:
+            is_metric = True
+            for row_i in range(num_rows):
+                if str(type(table.loc[row_i, column])) == "<class 'str'>":
+                    is_metric = False
+            if is_metric == True:
+                all_metrics.append(column)
+            else:
+                all_dimensions.append(column)
+    return (all_dimensions, all_metrics)
