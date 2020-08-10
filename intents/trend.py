@@ -65,7 +65,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
     Returns:
         The function will return both suggestions and the results in a tuple.
         (results, suggestions)
-        results: Type - pandas dataframe, The results of the intended slice-compare
+        results: Type - pandas dataframe, The results of the intended trend
         suggestions: Type - List of strings, List of suggestions.
 
     """

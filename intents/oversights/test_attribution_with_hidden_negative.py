@@ -12,7 +12,7 @@ limitations under the License.
 """
 
 """
-This module contains the tests for looking_at_tails.py
+This module contains the tests for attribution_with_hidden_negative.py
 """
 
 from attribution_with_hidden_negative import attribution_with_hidden_negative

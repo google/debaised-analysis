@@ -13,9 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-"""This module detects the cases of mean_vs_median whenever 
-user uses the summary_operator as mean.
-This module detects the cases of attribution with hidden negative
+"""This module detects the cases of attribution with hidden negative
 whenever user uses the summary_operator as proportion
 
 Attribution with Hidden Negative is the oversight which arises whenever
@@ -26,30 +24,30 @@ and the values contains a negative value , the oversight is passed.
 """
 
 def attribution_with_hidden_negative(values):
-	""" This function gives suggestion if the attribution_with_hidden_negative
-	oversight is detected when summary_operator is 'proportion of <sum/count>'  
-	
-	It checks if a negative value exists in values.
+    """ This function gives suggestion if the attribution_with_hidden_negative
+    oversight is detected when summary_operator is 'proportion of <sum/count>'  
 
-	Args:
-		values: Type - anything that can be iterated over
+    It checks if a negative value exists in values.
+
+    Args:
+        values: Type - anything that can be iterated over
     Returns:
         suggestion : dictonary with keys 'suggestion', 'oversight_name'
-	"""
+    """
 
-	negative_exists = False
+    negative_exists = False
 
-	for value in values :
-		if ( type(value) == int or type(value) == float ) and value < 0 :
-			negative_exists = True
+    for value in values :
+        if ( type(value) == int or type(value) == float ) and value < 0 :
+            negative_exists = True
 
-	if negative_exists :
-		suggestion = {}
-		suggestion['suggestion'] = 'There exists negative values among the values on which proportion is being applied'
-		suggestion['oversight_name'] = 'Attribution to Hidden Negative'
-		suggestion['is_row_level_suggestion'] = True
-		suggestion['confidence_score'] = 1
-
-		return suggestion
-	else :
-		return None
+    if negative_exists :
+        suggestion = {}
+        suggestion['suggestion'] = 'There exists negative values among the values on which proportion is being applied'
+        suggestion['oversight_name'] = 'Attribution to Hidden Negative'
+        suggestion['is_row_level_suggestion'] = True
+        suggestion['confidence_score'] = 1
+        
+        return suggestion
+    else :
+        return None
