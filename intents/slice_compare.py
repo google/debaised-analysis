@@ -33,6 +33,8 @@ def slice_compare(table, metric, all_dimensions, all_metric,
                                summary_operator, **kwargs):
     """ This function returns both the results according to the intent
     as well as the debiasing suggestions.
+    Also, if summary operator is applied, the name of metric column is
+    renamed to "<summary operator> of metric".
     Some of the oversights considered in this intent are-
     1. simpson's paradox
     Args:
@@ -140,6 +142,9 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
                                                day_first = day_first,
                                                slices = slices)
     suggestions = simpsons_paradox_suggestion + top_down_error_suggestion
+
+    if summary_operator is not None:
+        result_table = aspects.update_metric_column_name(result_table, summary_operator, metric)
 
     return (result_table, suggestions)
 

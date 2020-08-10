@@ -67,11 +67,11 @@ def test_2():
     	                        date_column_name='date', date_format='%Y-%m-%d',
     	                        summary_operator=SummaryOperators.MEAN)
     print(query_result)
-    expected_result = """  player_of_match  win_by_runs
-0         KK Nair            7
-1       MM Sharma           14
-2         SS Iyer            0
-3         WP Saha            7"""
+    expected_result = """  player_of_match  MEAN of win_by_runs
+0         KK Nair                    7
+1       MM Sharma                   14
+2         SS Iyer                    0
+3         WP Saha                    7"""
     assert(expected_result == query_result.to_string())
 
 def test_3():
@@ -213,8 +213,8 @@ def test_7():
                                 date_column_name='date', date_format='%Y-%m-%d',
                                 summary_operator=SummaryOperators.SUM)
     print(query_result)
-    expected_result = """  Summary Operator  win_by_runs
-0              SUM         8702"""
+    expected_result = """  Summary Operator  SUM of win_by_runs
+0              SUM                8702"""
     assert(expected_result == query_result.to_string())
     
 
@@ -231,8 +231,8 @@ def test_8():
                                 date_column_name='date', date_format='%Y-%m-%d',
                                 summary_operator=SummaryOperators.MEAN)
     print(query_result)
-    expected_result = """  Summary Operator  win_by_runs
-0             MEAN            7"""
+    expected_result = """  Summary Operator  MEAN of win_by_runs
+0             MEAN                    7"""
     assert(expected_result == query_result.to_string())
 
 

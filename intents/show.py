@@ -32,7 +32,9 @@ def show(table,**kwargs):
     If the summary_operator is not None , it groups by dimensions.
     If some of the optional args are None (not passed),
     it is assumed that we don't have to apply them.
-
+    
+    Also, if summary operator is applied, the name of metric column is
+    renamed to "<summary operator> of metric".
     Args:
         table: Type-pandas.dataframe
             It has the contents of the csv file
@@ -111,6 +113,9 @@ def show(table,**kwargs):
         dimensions.append('Summary Operator')
 
     table = aspects.group_by(table, dimensions, summary_operator)
+
+    if summary_operator is not None:
+        table = aspects.update_metric_column_name(table, summary_operator, metric)
 
     return table
 

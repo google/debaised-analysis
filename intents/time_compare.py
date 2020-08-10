@@ -31,6 +31,10 @@ def time_compare(table, metric, all_dimensions, time_compare_column, date_range1
 
     """ This function returns both the results according to the intent
     as well as the debiasing suggestions.
+
+    Also, if summary operator is applied, the name of metric column is
+    renamed to "<summary operator> of metric".
+
     Some of the oversights considered in this intent are-
     Args:
         table: Type-pandas.dataframe
@@ -119,6 +123,9 @@ def time_compare(table, metric, all_dimensions, time_compare_column, date_range1
                                                slices = slices)
 
     suggestions = simpsons_paradox_suggestion + top_down_error_suggestion
+
+    if summary_operator is not None:
+        result_table = aspects.update_metric_column_name(result_table, summary_operator, metric)
 
     return (result_table, suggestions)
 

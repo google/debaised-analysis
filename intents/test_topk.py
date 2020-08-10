@@ -63,11 +63,11 @@ def test_2():
                                 date_format='%Y-%m-%d',
     	                        summary_operator=enums.SummaryOperators.MEAN)
     print(query_result)
-    expected_result = """  player_of_match  win_by_runs
-0       MM Sharma           14
-1         KK Nair            7
-2         WP Saha            7
-3         SS Iyer            0"""
+    expected_result = """  player_of_match  MEAN of win_by_runs
+0       MM Sharma                   14
+1         KK Nair                    7
+2         WP Saha                    7
+3         SS Iyer                    0"""
     expected_suggestions = """[{'oversight_name': 'Regression to the mean', 'suggestion': "very few of the top-k in the given date range will be in the previous window's top-k"}]"""
     assert(expected_result == query_result[0].to_string())
     assert(expected_suggestions == str(query_result[1]))
@@ -85,8 +85,8 @@ def test_3():
                                 date_format='%Y-%m-%d',
     	                        summary_operator=enums.SummaryOperators.COUNT)
     print(query_result)
-    expected_result = """  Creation  Department_ID
-0     1789              2"""
+    expected_result = """  Creation  COUNT of Department_ID
+0     1789                       2"""
     expected_suggestions = """[{'change_list': {'topKLimit': 14}, 'suggestion': 'The rows NOT in the top-k have a much larger sum over Department_ID than the rows in top-k', 'confidence_score': 0.15384615384615385}]"""
     assert(expected_result == query_result[0].to_string())
     assert(expected_suggestions == str(query_result[1]))
@@ -126,12 +126,12 @@ def test_5():
     	                        date_format='%Y-%m-%d',
     	                        summary_operator=enums.SummaryOperators.MAX)
     print(query_result)
-    expected_result = """            city        lat
-0  San Francisco  37.804770
-1   Redwood City  37.491269
-2      Palo Alto  37.448598
-3  Mountain View  37.406940
-4       San Jose  37.352601"""
+    expected_result = """            city  MAX of lat
+0  San Francisco   37.804770
+1   Redwood City   37.491269
+2      Palo Alto   37.448598
+3  Mountain View   37.406940
+4       San Jose   37.352601"""
     expected_suggestions = """[]"""
     assert(expected_result == query_result[0].to_string())
     assert(expected_suggestions == str(query_result[1]))
