@@ -150,6 +150,14 @@ else
   list_logs+=("oversights/test_benchmark_set_too_different passed")
 fi
 
+if ! python3 oversights/test_weighted_mean_with_different_weights.py;
+then
+  err "oversights/test_weighted_mean_with_different_weights failed"
+  list_logs+=("oversights/test_weighted_mean_with_different_weights failed")
+else
+  list_logs+=("oversights/test_weighted_mean_with_different_weights passed")
+fi
+
 echo 'All tests completed '
 echo 'Results -'
 

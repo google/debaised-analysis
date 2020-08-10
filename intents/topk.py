@@ -75,9 +75,11 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
     Returns:
         The function will return both suggestions and the results in a tuple.
         (results, suggestions)
-        results: Type - pandas dataframe, The results of the intended top-k
-        suggestions: Type - List of strings, List of suggestions.
 
+        results: Type -pandas dataframe, The results of the weighted mean intent
+
+        suggestions: Type - List of dictionaries(suggestion structure), List of
+            suggestions.
     """
     date_column_name = kwargs.get('date_column_name', 'date')
     date_range = kwargs.get('date_range', None)

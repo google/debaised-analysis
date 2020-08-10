@@ -27,15 +27,15 @@ from util.enums import *
 def test_1():
     """An example from the IPL dataset 
     question : show all cities in season 2017 in the
-    			date range 2008-05-08 to 2017-04-12
+                date range 2008-05-08 to 2017-04-12
     """
     table = pandas.read_csv('data/matches.csv')
     query_result = show.show(table,
-    							dimensions=['city'],
+                                dimensions=['city'],
                                 slices=[('season', Filters.EQUAL_TO, 2017)],
-    	                        date_range=('2008-05-08', '2017-04-12'),
-    	                        date_column_name='date',
-    	                        date_format='%Y-%m-%d')
+                                date_range=('2008-05-08', '2017-04-12'),
+                                date_column_name='date',
+                                date_format='%Y-%m-%d')
 
 
     print(query_result);
@@ -50,7 +50,10 @@ def test_1():
 7     Indore
 8       Pune
 9     Mumbai"""
-    assert(expected_result == query_result.to_string())
+    assert(expected_result == query_result[0].to_string())
+    expected_suggestions = "[]"
+    assert(expected_suggestions == str(query_result[1]))
+
 
 
 def test_2():
@@ -60,19 +63,22 @@ def test_2():
     """
     table = pandas.read_csv('data/matches.csv')
     query_result = show.show(table,
-    							dimensions=['player_of_match'],
-    							metric='win_by_runs' ,
+                                dimensions=['player_of_match'],
+                                metric='win_by_runs' ,
                                 slices=[('season', Filters.EQUAL_TO, 2017)],
-    	                        date_range=('2017-05-09', '2017-05-12'),
-    	                        date_column_name='date', date_format='%Y-%m-%d',
-    	                        summary_operator=SummaryOperators.MEAN)
+                                date_range=('2017-05-09', '2017-05-12'),
+                                date_column_name='date', date_format='%Y-%m-%d',
+                                summary_operator=SummaryOperators.MEAN)
     print(query_result)
     expected_result = """  player_of_match  win_by_runs
 0         KK Nair            7
 1       MM Sharma           14
 2         SS Iyer            0
 3         WP Saha            7"""
-    assert(expected_result == query_result.to_string())
+    assert(expected_result == query_result[0].to_string())
+    expected_suggestions = "[]"
+    assert(expected_suggestions == str(query_result[1]))
+
 
 def test_3():
     """An example from the IPL dataset
@@ -80,9 +86,9 @@ def test_3():
     """
     table = pandas.read_csv('data/matches.csv')
     query_result = show.show(table,
-    							dimensions=['season'],
-    							summary_operator=SummaryOperators.DISTINCT)
-    print(query_result.to_string())
+                                dimensions=['season'],
+                                summary_operator=SummaryOperators.DISTINCT)
+    print(query_result)
     expected_result = """   season
 0    2008
 1    2009
@@ -94,7 +100,10 @@ def test_3():
 7    2015
 8    2016
 9    2017"""
-    assert(expected_result == query_result.to_string())
+    assert(expected_result == query_result[0].to_string())
+    expected_suggestions = "[]"
+    assert(expected_suggestions == str(query_result[1]))
+
 
 def test_4():
     """An example from the IPL dataset
@@ -102,15 +111,18 @@ def test_4():
     """
     table = pandas.read_csv('data/matches.csv')
     query_result = show.show(table,
-    	                        slices=[('season', Filters.EQUAL_TO, 2008), ('winner', Filters.EQUAL_TO, 'Royal Challengers Bangalore')],
-    							dimensions = ['team1','team2'],)
-    print(query_result.to_string())
+                                slices=[('season', Filters.EQUAL_TO, 2008), ('winner', Filters.EQUAL_TO, 'Royal Challengers Bangalore')],
+                                dimensions = ['team1','team2'],)
+    print(query_result)
     expected_result = """                         team1                        team2
 0               Mumbai Indians  Royal Challengers Bangalore
 1              Deccan Chargers  Royal Challengers Bangalore
 2  Royal Challengers Bangalore          Chennai Super Kings
 3  Royal Challengers Bangalore              Deccan Chargers"""
-    assert(expected_result == query_result.to_string())    
+    assert(expected_result == query_result[0].to_string())
+    expected_suggestions = "[]"
+    assert(expected_suggestions == str(query_result[1]))
+    
 
 def test_5():
     """An example from the IPL dataset
@@ -118,29 +130,32 @@ def test_5():
     """
     table = pandas.read_csv('data/matches.csv')
     query_result = show.show(table,
-    							dimensions=['umpire1'],
+                                dimensions=['umpire1'],
                                 slices=[('season', Filters.EQUAL_TO, 2017)],
-    	                        date_range=('2017-05-09', '2017-05-12'),
-    	                        date_column_name='date', date_format='%Y-%m-%d',
-    	                        summary_operator=SummaryOperators.DISTINCT)
-    print(query_result.to_string())
+                                date_range=('2017-05-09', '2017-05-12'),
+                                date_column_name='date', date_format='%Y-%m-%d',
+                                summary_operator=SummaryOperators.DISTINCT)
+    print(query_result)
     expected_result = """                 umpire1
 0             A Deshmukh
 1         A Nand Kishore
 2  KN Ananthapadmanabhan
 3               YC Barde"""
-    assert(expected_result == query_result.to_string())    
+    assert(expected_result == query_result[0].to_string())
+    expected_suggestions = "[]"
+    assert(expected_suggestions == str(query_result[1]))
+    
 
 def test_6():
-	"""An example from the IPL dataset
+    """An example from the IPL dataset
     question :show the toss_winners of season 2017
     """
-	table = pandas.read_csv('data/matches.csv')
-	query_result = show.show(table,
-    							dimensions=['toss_winner'],
+    table = pandas.read_csv('data/matches.csv')
+    query_result = show.show(table,
+                                dimensions=['toss_winner'],
                                 slices=[('season', Filters.EQUAL_TO, 2017)],)
-	print(query_result.to_string())
-	expected_result = """                    toss_winner
+    print(query_result)
+    expected_result = """                    toss_winner
 0   Royal Challengers Bangalore
 1        Rising Pune Supergiant
 2         Kolkata Knight Riders
@@ -200,7 +215,10 @@ def test_6():
 56        Kolkata Knight Riders
 57               Mumbai Indians
 58               Mumbai Indians"""
-	assert(expected_result == query_result.to_string())
+    assert(expected_result == query_result[0].to_string())
+    expected_suggestions = "[]"
+    assert(expected_suggestions == str(query_result[1]))
+
 
 
 def test_7():
@@ -215,7 +233,10 @@ def test_7():
     print(query_result)
     expected_result = """  Summary Operator  win_by_runs
 0              SUM         8702"""
-    assert(expected_result == query_result.to_string())
+    assert(expected_result == query_result[0].to_string())
+    expected_suggestions = "[]"
+    assert(expected_suggestions == str(query_result[1]))
+
     
 
 def test_8():
@@ -233,7 +254,10 @@ def test_8():
     print(query_result)
     expected_result = """  Summary Operator  win_by_runs
 0             MEAN            7"""
-    assert(expected_result == query_result.to_string())
+    assert(expected_result == query_result[0].to_string())
+    expected_suggestions = "[]"
+    assert(expected_suggestions == str(query_result[1]))
+
 
 
 

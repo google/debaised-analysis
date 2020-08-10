@@ -37,8 +37,9 @@ In Type 1 the result contains only 1 number as the result.
 And in Type 2 the result is a table and a correlation coefficient for each
 of the groupings.
 """
-from util import aspects
 import pandas
+from util import aspects
+from oversights import weighted_mean_with_different_weights
 
 def weighted_mean(table, metric, weight_col, **kwargs):
     """ This function returns both the results according to the intent
@@ -53,7 +54,7 @@ def weighted_mean(table, metric, weight_col, **kwargs):
             It has the contents of the table in sheets
         metric : Type-string
             The column whose mean is to be found
-        weight_col : Type-strings
+        weight_col : Type-string
             The weight column which is multiplied as weights to metric column
         dimensions: Type-list of str
             It the list of columns according to which groups are formed
@@ -98,6 +99,13 @@ def weighted_mean(table, metric, weight_col, **kwargs):
                                           slices=slices)
 
     suggestions = []
+
+    different_weight_suggestion = weighted_mean_with_different_weights.\
+                            weighted_mean_with_different_weights(table, metric,
+                                                                 weight_col=weight_col)
+    
+    if different_weight_suggestion is not None:
+        suggestions.append(different_weight_suggestion)
 
     return (result_table, suggestions)
 
@@ -152,7 +160,7 @@ def _weighted_mean_results(table, metric, weight_col, **kwargs):
 
     dimensions = kwargs.get('dimensions', None)
 
-    table = aspects.apply_date_range(table, date_range,date_column_name, date_format)
+    table = aspects.apply_date_range(table, date_range, date_column_name, date_format)
 
     table = aspects.slice_table(table, slices)
 

@@ -21,6 +21,7 @@ Some of the operations are optional.
 """
 
 from util import aspects
+from oversights import weighted_mean_with_different_weights
 
 def show(table,**kwargs):
     """This function will implement the show intent
@@ -66,10 +67,13 @@ def show(table,**kwargs):
          and only when grouping is done
 
     Returns:
-        The function will return the `table(a pandas dataframe object)`
-        after applying the intent on the
-        given `table(a pandas dataframe object)``
+        The function will return both suggestions and the results in a tuple.
+        (results, suggestions)
 
+        results: Type -pandas dataframe, The results of the weighted mean intent
+
+        suggestions: Type - List of dictionaries(suggestion structure), List of
+            suggestions.
     """
 
     date_column_name = kwargs.get('date_column_name', 'date')
@@ -112,9 +116,15 @@ def show(table,**kwargs):
 
     table = aspects.group_by(table, dimensions, summary_operator)
 
-    return table
+    suggestions = []
 
+    different_weight_suggestion = weighted_mean_with_different_weights.\
+                                  weighted_mean_with_different_weights(table, metric)
 
+    if different_weight_suggestion is not None:
+        suggestions.append(different_weight_suggestion)
+
+    return (table , suggestions)
 
 
 def _add_temporary_column_of_summary_operator(table,summary_operator):
