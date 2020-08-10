@@ -42,7 +42,7 @@ def top_down_error(table, metric, all_dimensions, slice_compare_column,
             In query:'compare batsman A and B according to total_runs',
              dimension is 'batsman'. we group by dimensions.
         all_dimension: Type-list of str
-        	It contains list of all dimensions
+            It contains list of all dimensions
         slice_compare_column: Type-string
             name of the slice-compare column.
         slice1: Type-string
@@ -120,7 +120,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
     # result_table is the result table requested by user.
     result_table = aspects.group_by(query_table,
                                             grouping_columns,
-                                            summary_operator)
+                                            summary_operator)['table']
     # suggestions store the list of debiasing for this oversight.
     suggestions = []
 
@@ -146,7 +146,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
             # result table after adding the new column in the grouping list.
             new_result_table = aspects.group_by(new_cropped_table,
                                                 new_grouping_columns,
-                                                summary_operator)
+                                                summary_operator)['table']
 
             # it will return the debiasing suggestion after comparing the
             # initial result table and new result table.

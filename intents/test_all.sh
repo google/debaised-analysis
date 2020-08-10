@@ -150,6 +150,14 @@ else
   list_logs+=("oversights/test_benchmark_set_too_different passed")
 fi
 
+if ! python3 oversights/test_attribution_with_hidden_negative.py;
+then
+  err "oversights/test_attribution_with_hidden_negative failed"
+  list_logs+=("oversights/test_attribution_with_hidden_negative failed")
+else
+  list_logs+=("oversights/test_attribution_with_hidden_negative passed")
+fi
+
 echo 'All tests completed '
 echo 'Results -'
 

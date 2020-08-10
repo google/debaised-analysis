@@ -124,7 +124,11 @@ def test_3():
     """
     table = pandas.read_csv('data/data_for_test_aspects/test_1.csv')
 
-    result_table = aspects.group_by(table, ['Gender'], enums.SummaryOperators.MEDIAN)
+    result = aspects.group_by(table, ['Gender'], enums.SummaryOperators.MEDIAN)
+
+    result_table = result['table']
+
+    result_suggestions = result['suggestions']
 
     print(result_table)
 
@@ -132,7 +136,10 @@ def test_3():
 0  Female   50
 1    Male   51"""
 
+    expected_suggestions = "[]"
+
     assert(result_table.to_string() == expected_result)
+    assert(str(result_suggestions) == expected_suggestions)
 
 def test_4():
     """ Test for summary operator = PROPORTION_OF_COUNT
@@ -143,10 +150,13 @@ def test_4():
     """
     table = pandas.read_csv('data/data_for_test_aspects/student_performance.csv')
 
-    result_table = aspects.group_by(table, ['race/ethnicity'], 
+    result = aspects.group_by(table, ['race/ethnicity'], 
                              enums.SummaryOperators.PROPORTION_OF_COUNT)
     
+    result_table = result['table']
     result_table = aspects.crop_other_columns(result_table, ['race/ethnicity', 'gender'])
+
+    result_suggestions = result['suggestions']
     
     # Sum of proportion column should be(close to) 1.0
     assert(result_table['gender'].sum() == 1.0)
@@ -160,7 +170,10 @@ def test_4():
 3        group D   0.262
 4        group E   0.140"""
 
+    expected_suggestions = "[]"
+
     assert(expected_result_table == result_table.to_string())
+    assert(str(result_suggestions) == expected_suggestions)
 
 def test_5():
     """ Test for summary operator = PROPORTION_OF_SUM
@@ -171,11 +184,14 @@ def test_5():
     """
     table = pandas.read_csv('data/data_for_test_aspects/student_performance.csv')
 
-    result_table = aspects.group_by(table, ['race/ethnicity'], 
+    result = aspects.group_by(table, ['race/ethnicity'], 
                              enums.SummaryOperators.PROPORTION_OF_SUM)
     
+    result_table = result['table']
     result_table = aspects.crop_other_columns(result_table, ['race/ethnicity', 'reading score'])
     
+    result_suggestions = result['suggestions']
+
     # Sum of proportion column should be(close to) 1.0
     assert(float(format(result_table['reading score'].sum(), '.5f')) == 1)
 
@@ -188,7 +204,41 @@ def test_5():
 3        group D       0.265263
 4        group E       0.147812"""
 
+    expected_suggestions = "[]"
+
     assert(expected_result_table == result_table.to_string())
+    assert(str(result_suggestions) == expected_suggestions) 
+
+def test_6():
+    """ Test for oversight : Attribution With Hidden Negative
+    Proportion of sum of reading score for each race/ethnicity
+    Dataset used : https://www.kaggle.com/spscientist/students-performance-in-exams
+    Args:
+    Returns:
+    """
+    table = pandas.read_csv('data/data_for_test_aspects/student_performance_updated_to_create_attribution_with_hidden_negative_oversight.csv')
+
+    result = aspects.group_by(table, ['race/ethnicity'], 
+                             enums.SummaryOperators.PROPORTION_OF_SUM)
+    
+    result_table = result['table']
+    result_table = aspects.crop_other_columns(result_table, ['race/ethnicity', 'reading score'])
+
+    result_suggestions = result['suggestions']
+
+    print(result_table)
+
+    expected_result_table = """  race/ethnicity  reading score
+0        group A       0.083434
+1        group B       0.185493
+2        group C       0.316920
+3        group D       0.265955
+4        group E       0.148198"""
+
+    expected_suggestions = "[{'suggestion': 'There exists negative values among the values on which proportion is being applied', 'oversight_name': 'Attribution to Hidden Negative', 'is_row_level_suggestion': True, 'confidence_score': 1, 'row_list': [{'row': 14, 'confidence_score': 1}]}]"  
+
+    assert(expected_result_table == result_table.to_string())
+    assert(str(result_suggestions) == expected_suggestions)
 
 # print(generate_1.__doc__)
 # generate_1()
@@ -207,5 +257,8 @@ test_4()
 
 print(test_5.__doc__)
 test_5()
+
+print(test_6.__doc__)
+test_6()
 
 print('Test cases completed')

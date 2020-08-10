@@ -32,7 +32,7 @@ def generate_1():
     """
     table = pandas.read_csv('data/data_for_test_looking_at_tails/fide_historical.csv')
     result_table = topk.topk_results(table, 'rating',
-                                     ['name', 'birth_year', 'games'], False, -1)
+                                     ['name', 'birth_year', 'games'], False, -1)[0]
     result_table.to_csv('data/data_for_test_looking_at_tails/result_table_for_test_1',
                         index=False)
 
@@ -43,7 +43,7 @@ def generate_2():
     Stored in - data/data_for_test_looking_at_tails/fide_historical.csv
     """
     table = pandas.read_csv('data/data_for_test_aspects/test_1.csv')
-    result_table = topk.topk_results(table, 'Age', ['Name', 'Gender'], False, -1)
+    result_table = topk.topk_results(table, 'Age', ['Name', 'Gender'], False, -1)[0]
     result_table.to_csv('data/data_for_test_looking_at_tails/result_table_for_test_2',
                         index=False)
 

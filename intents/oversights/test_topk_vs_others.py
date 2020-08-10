@@ -38,7 +38,7 @@ def generate():
     """
     table = pandas.read_csv('data/data_for_test_topk_vs_others/sheet1.csv')
     result_table = topk.topk_results(table, 'UnitCost',
-                                     ['Item'], True, -1)
+                                     ['Item'], True, -1)[0]
     result_table.to_csv('data/data_for_test_topk_vs_others/result_table.csv',
                         index=False)
 
