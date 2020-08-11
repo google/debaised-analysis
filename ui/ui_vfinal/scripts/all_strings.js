@@ -225,7 +225,7 @@ var addOnText = {
     'correlation': {
       'sidebarTitle': 'Correlation',
       'intentName': 'Correlation',
-      'description': 'Calculates the correlation between the two variables provided. Remember that the correlation ranges from -1 to 1',
+      'description': 'Calculates the correlation between the two variables provided. Note that the correlation ranges from -1 to 1',
       'queryFilledWords': {
         'correlationBetween': 'Correlation between ',
         'forEach': ' for each ',
