@@ -24,7 +24,7 @@ deviation of top-k to decide if any row is similar to the
 
 """
 
-from util import constants
+from util import constants, enums
 
 def more_than_just_topk(result_table, k, metric):
     """This function gives suggestions if 'more than just top-k' oversight is
@@ -91,7 +91,7 @@ def more_than_just_topk(result_table, k, metric):
         suggestion['change_list'] = change_list
         suggestion['suggestion'] = 'value of ' + metric + ' in some rows after the top-k is similar to the Kth row'
         suggestion['confidence_score'] = confidence_score
-        suggestion['oversight_name'] = 'More than just topk'
+        suggestion['oversight'] = enums.Oversights.MORE_THAN_JUST_TOPK
         return suggestion
     else:
         return

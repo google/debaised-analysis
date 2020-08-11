@@ -46,7 +46,7 @@ def test_1():
 7     Mumbai            0
 8     Indore            0
 9     Mumbai            0"""
-    expected_suggestions = """[{'suggestion': 'The results has duplicates', 'oversight_name': 'Duplicates in top-k'}, {'suggestion': 'Instead of 40 only 10 rows are present in the results', 'oversight_name': 'Top10 when 9 are present'}]"""
+    expected_suggestions = """[{'suggestion': 'The results has duplicates', 'oversight': <Oversights.DUPLICATES_IN_TOPK: 1>}, {'suggestion': 'Instead of 40 only 10 rows are present in the results', 'oversight': <Oversights.TOPK_WHEN_LESS_THAN_K_PRESENT: 2>}]"""
     assert(expected_result == query_result[0].to_string())
     assert(expected_suggestions == str(query_result[1]))
 
@@ -68,7 +68,7 @@ def test_2():
 1         KK Nair            7
 2         WP Saha            7
 3         SS Iyer            0"""
-    expected_suggestions = """[{'oversight_name': 'Regression to the mean', 'suggestion': "very few of the top-k in the given date range will be in the previous window's top-k"}, {'suggestion': 'Instead of 5 only 4 rows are present in the results', 'oversight_name': 'Top10 when 9 are present'}]"""
+    expected_suggestions = """[{'suggestion': 'Instead of 5 only 4 rows are present in the results', 'oversight': <Oversights.TOPK_WHEN_LESS_THAN_K_PRESENT: 2>}, {'oversight': <Oversights.REGRESSION_TO_THE_MEAN: 4>, 'suggestion': "very few of the top-k in the given date range will be in the previous window's top-k"}]"""
     assert(expected_result == query_result[0].to_string())
     assert(expected_suggestions == str(query_result[1]))
 
@@ -87,7 +87,7 @@ def test_3():
     print(query_result)
     expected_result = """  Creation  Department_ID
 0     1789              2"""
-    expected_suggestions = """[{'change_list': {'topKLimit': 14}, 'suggestion': 'The rows NOT in the top-k have a much larger sum over Department_ID than the rows in top-k', 'confidence_score': 0.15384615384615385}]"""
+    expected_suggestions = """[{'oversight': <Oversights.TOPK_VS_OTHERS: 6>, 'change_list': {'topKLimit': 14}, 'suggestion': 'The rows NOT in the top-k have a much larger sum over Department_ID than the rows in top-k', 'confidence_score': 0.15384615384615385}]"""
     assert(expected_result == query_result[0].to_string())
     assert(expected_suggestions == str(query_result[1]))
 
@@ -155,7 +155,7 @@ def test_6():
 4      August 2008   3000000.0
 5       March 2007   2000000.0
 6       April 2007   2000000.0"""
-    expected_suggestions = """[{'suggestion': 'The results has duplicates', 'oversight_name': 'Duplicates in top-k'}]"""
+    expected_suggestions = """[{'suggestion': 'The results has duplicates', 'oversight': <Oversights.DUPLICATES_IN_TOPK: 1>}]"""
     assert(expected_result == query_result[0].to_string())
     assert(expected_suggestions == str(query_result[1]))
 
@@ -201,7 +201,7 @@ def test_7():
 28       Betty Adams  227489
 29       Lisa Walker  256481
 30     George Wright  289950"""
-    expected_suggestions = """[{'suggestion': 'The results has duplicates', 'oversight_name': 'Duplicates in top-k'}]"""
+    expected_suggestions = """[{'suggestion': 'The results has duplicates', 'oversight': <Oversights.DUPLICATES_IN_TOPK: 1>}]"""
     assert(expected_result == query_result[0].to_string())
     assert(expected_suggestions == str(query_result[1]))
 
@@ -222,7 +222,7 @@ def test_8():
 1     300iq    4300
 2       cba    5200
 3   tourist    6100"""
-    expected_suggestions = """[{'oversight_name': 'Regression to the mean', 'suggestion': "The ranks of the top-k in the date range differs much from the previous window's top-k"}]"""
+    expected_suggestions = """[{'oversight': <Oversights.REGRESSION_TO_THE_MEAN: 4>, 'suggestion': "The ranks of the top-k in the date range differs much from the previous window's top-k"}]"""
     assert(expected_result == query_result[0].to_string())
     assert(expected_suggestions == str(query_result[1]))
 

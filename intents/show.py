@@ -20,7 +20,7 @@ that do not follow the conditions) , groupy by.
 Some of the operations are optional.
 """
 
-from util import aspects
+from util import aspects, oversights_order, rank_oversights
 from oversights import weighted_mean_with_different_weights
 
 def show(table,**kwargs):
@@ -123,6 +123,9 @@ def show(table,**kwargs):
 
     if different_weight_suggestion is not None:
         suggestions.append(different_weight_suggestion)
+
+    order = oversights_order.ORDER_IN_SHOW
+    suggestions = rank_oversights.rank_oversights(suggestions, order)
 
     return (table , suggestions)
 
