@@ -34,7 +34,7 @@ def test_1():
                                                    dimensions = ['class'])
     print(query_result)
 
-    expected_result = "[{'suggestion': 'Some values are similar here but will vary if we add subject for grouping ', 'oversight_name': 'top-down error', 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}, {'row': 3, 'confidence_score': 100}, {'row': 4, 'confidence_score': 100}]}]"
+    expected_result = "[{'suggestion': 'Some values are similar here but will vary if we add subject for grouping ', 'oversight': <Oversights.TOP_DOWN_ERROR: 9>, 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}, {'row': 3, 'confidence_score': 100}, {'row': 4, 'confidence_score': 100}]}]"
     assert(str(query_result) == expected_result)
 
 def test_2():
@@ -49,7 +49,7 @@ def test_2():
                                                    dimensions = ['class'])
     print(query_result)
 
-    expected_result = "[{'suggestion': 'Some values are similar here but will vary if we add subject for grouping ', 'oversight_name': 'top-down error', 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}]"
+    expected_result = "[{'suggestion': 'Some values are similar here but will vary if we add subject for grouping ', 'oversight': <Oversights.TOP_DOWN_ERROR: 9>, 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}]"
     assert(str(query_result) == expected_result)
 
 print("\ncompare average score of A and B by class.")

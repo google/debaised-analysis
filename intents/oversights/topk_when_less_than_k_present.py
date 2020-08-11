@@ -20,6 +20,8 @@ This oversight would be very useful in the case when the entire
 table is not visible to the user & it is difficult for him to scroll.
 """
 
+from util import enums
+
 def topk_when_less_than_k_present(result_table, k):
     """
     This function returns the suggestion when the 'TopK when less than k present'
@@ -41,5 +43,5 @@ def topk_when_less_than_k_present(result_table, k):
     if num_rows < k and k != -1:
     	suggestion = {}
     	suggestion['suggestion'] = 'Instead of {} only {} rows are present in the results'.format(k, num_rows)
-    	suggestion['oversight_name'] = 'TopK when less than k present'
+    	suggestion['oversight'] = enums.Oversights.TOPK_WHEN_LESS_THAN_K_PRESENT
     	return suggestion

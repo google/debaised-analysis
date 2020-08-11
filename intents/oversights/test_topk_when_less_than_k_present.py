@@ -77,7 +77,7 @@ def test_2():
 
     print(suggestion)
 
-    expected_suggestion = """{'suggestion': 'Instead of 6 only 5 rows are present in the results', 'oversight_name': 'Top10 when 9 are present'}"""
+    expected_suggestion = """{'suggestion': 'Instead of 6 only 5 rows are present in the results', 'oversight': <Oversights.TOPK_WHEN_LESS_THAN_K_PRESENT: 2>}"""
 
     assert(str(suggestion) == expected_suggestion)
 

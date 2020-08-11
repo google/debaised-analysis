@@ -18,7 +18,7 @@ Having duplicates in the top-k results might create a bias in the user's
 thinking. Also, chances are that user forgot to apply group by operation
 due to which duplicates occur in the results.
 """
-from util import aspects
+from util import aspects, enums
 
 def duplicates_in_topk(topk_results, dimensions):
     """
@@ -42,7 +42,7 @@ def duplicates_in_topk(topk_results, dimensions):
     if len(topk_results_set) != topk_results.shape[0]:
     	suggestion = {}
     	suggestion['suggestion'] = 'The results has duplicates'
-    	suggestion['oversight_name'] = 'Duplicates in top-k'
+    	suggestion['oversight'] = enums.Oversights.DUPLICATES_IN_TOPK
     	return suggestion
 
 def _convert_to_set(table, columns):

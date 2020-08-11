@@ -32,7 +32,7 @@ def test_1():
                                                    'A', SummaryOperators.MEAN)
     print(query_result)
 
-    expected_result = "[{'suggestion': 'A looks different from others on avg_hour_of_work. You might also want to look at lines_of_code since A also looks different on this.', 'oversight_name': 'Benchmark set too different', 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}]"
+    expected_result = "[{'suggestion': 'A looks different from others on avg_hour_of_work. You might also want to look at lines_of_code since A also looks different on this.', 'oversight': <Oversights.BENCHMARK_SET_TOO_DIFFERENT: 10>, 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}]"
 
     assert(str(query_result) == expected_result)
 
@@ -46,7 +46,7 @@ def test_2():
                                                    'A', SummaryOperators.MEAN, dimensions = ['country_name'])
     print(query_result)
 
-    expected_result = "[{'suggestion': 'A looks different from others on current_year_revenue. You might also want to look at last_year_revenue since A also looks different on this.', 'oversight_name': 'Benchmark set too different', 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}, {'row': 3, 'confidence_score': 100}, {'row': 4, 'confidence_score': 100}, {'row': 7, 'confidence_score': 100}, {'row': 8, 'confidence_score': 100}]}]"
+    expected_result = "[{'suggestion': 'A looks different from others on current_year_revenue. You might also want to look at last_year_revenue since A also looks different on this.', 'oversight': <Oversights.BENCHMARK_SET_TOO_DIFFERENT: 10>, 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}, {'row': 3, 'confidence_score': 100}, {'row': 4, 'confidence_score': 100}, {'row': 7, 'confidence_score': 100}, {'row': 8, 'confidence_score': 100}]}]"
 
     assert(str(query_result) == expected_result)
 
@@ -60,7 +60,7 @@ def test_3():
                                                    'company_name', 'A', SummaryOperators.MEAN)
     print(query_result)
 
-    expected_result = "[{'suggestion': 'A looks different from others on current_year_revenue. You might also want to look at last_year_revenue since A also looks different on this.', 'oversight_name': 'Benchmark set too different', 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}]"
+    expected_result = "[{'suggestion': 'A looks different from others on current_year_revenue. You might also want to look at last_year_revenue since A also looks different on this.', 'oversight': <Oversights.BENCHMARK_SET_TOO_DIFFERENT: 10>, 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}]"
 
     assert(str(query_result) == expected_result)
 
