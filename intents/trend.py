@@ -25,7 +25,7 @@ Some of the operations are optional.
 
 import datetime
 
-from util import aspects, date_module
+from util import aspects, date_module, oversights_order, rank_oversights
 
 def trend(table, metric, granularity, summary_operator, **kwargs):
     """This function will implement the trend intent
@@ -94,5 +94,13 @@ def trend(table, metric, granularity, summary_operator, **kwargs):
     table = aspects.group_by(table, [date_column_name], summary_operator)
 
     table = table.sort_values(by=[date_column_name])
+
+    suggestions = []
+
+    # add mean vs median suggestion
+
+    order = oversights_order.ORDER_IN_TREND
+
+    suggestions = rank_oversights.rank_oversights(suggestions, order)
 
     return table

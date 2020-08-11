@@ -24,16 +24,22 @@ from oversights.regression_to_mean import regression_to_mean
 from oversights.looking_at_tails import looking_at_tails
 from oversights.duplicates_in_topk import duplicates_in_topk
 from oversights.more_than_just_topk import more_than_just_topk
+from oversights.topk_when_less_than_k_present import topk_when_less_than_k_present
 from oversights.topk_vs_others import topk_vs_others
 from util.enums import *
-from util import aspects
+from util import aspects, oversights_order, rank_oversights
 
 def topk(table, metric, dimensions, is_asc, k, **kwargs):
     """ This function returns both the results according to the intent
     as well as the debiasing suggestions.
-    Some of the oversights considered in this intent are-
+    
+    Oversights that may be detected in top-k
     1. Regression to the mean
-    2. Looking at tails to find causes - TODO
+    2. Looking at tails to find causes
+    3. Duplicates in top-k
+    4. More than just top-k
+    5. Top-k vs others
+    6. Top-k when less than k present
 
     Args:
         table: Type-pandas.dataframe
@@ -131,6 +137,14 @@ def topk(table, metric, dimensions, is_asc, k, **kwargs):
 
     if looking_at_tails_suggestion is not None:
         suggestions.append(looking_at_tails_suggestion)
+
+    topk_when_less_than_k_present_suggestion = topk_when_less_than_k_present(result_table, k)
+
+    if topk_when_less_than_k_present_suggestion is not None:
+        suggestions.append(topk_when_less_than_k_present_suggestion)
+
+    order = oversights_order.ORDER_IN_TOPK
+    suggestions = rank_oversights.rank_oversights(suggestions, order)
 
     return (result_table, suggestions)
 

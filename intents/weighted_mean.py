@@ -37,7 +37,7 @@ In Type 1 the result contains only 1 number as the result.
 And in Type 2 the result is a table and a correlation coefficient for each
 of the groupings.
 """
-from util import aspects
+from util import aspects, oversights_order, rank_oversights
 import pandas
 
 def weighted_mean(table, metric, weight_col, **kwargs):
@@ -98,6 +98,10 @@ def weighted_mean(table, metric, weight_col, **kwargs):
                                           slices=slices)
 
     suggestions = []
+
+    order = oversights_order.ORDER_IN_WEIGHTED_MEAN
+
+    suggestions = rank_oversights.rank_oversights(suggestions, order)
 
     return (result_table, suggestions)
 

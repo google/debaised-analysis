@@ -63,7 +63,7 @@ def test_1():
     suggestions = topk_vs_others.topk_vs_others(result_table, k, metric)
 
     print(suggestions)
-    expected_suggestions = """{'change_list': {'topKLimit': 43}, 'suggestion': 'The rows NOT in the top-k have a much larger sum over UnitCost than the rows in top-k', 'confidence_score': 0.008621645877239863}"""
+    expected_suggestions = """{'oversight': <Oversights.TOPK_VS_OTHERS: 6>, 'change_list': {'topKLimit': 43}, 'suggestion': 'The rows NOT in the top-k have a much larger sum over UnitCost than the rows in top-k', 'confidence_score': 0.008621645877239863}"""
 
     assert(expected_suggestions == str(suggestions))
 
@@ -118,7 +118,7 @@ def test_3():
     suggestions = topk_vs_others.topk_vs_others(result_table, k, metric)
 
     print(suggestions)
-    expected_suggestions = """{'change_list': {'topKLimit': 7}, 'suggestion': 'The sum of Sales in top-k rows is negative whereas sum of rows not in top-k is positive', 'confidence_score': -1.1538461538461537}"""
+    expected_suggestions = """{'oversight': <Oversights.TOPK_VS_OTHERS: 6>, 'change_list': {'topKLimit': 7}, 'suggestion': 'The sum of Sales in top-k rows is negative whereas sum of rows not in top-k is positive', 'confidence_score': -1.1538461538461537}"""
 
     assert(expected_suggestions == str(suggestions))
 

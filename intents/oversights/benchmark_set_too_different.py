@@ -21,7 +21,7 @@ which the disimilarity might have appeared.
 
 import pandas
 from util import aspects, constants
-from util.enums import SummaryOperators, Filters
+from util.enums import SummaryOperators, Filters, Oversights
 
 def benchmark_set_too_different(table, metric, all_metric, slice_compare_column, 
                                 slice1, summary_operator, **kwargs):
@@ -148,7 +148,7 @@ def benchmark_set_too_different(table, metric, all_metric, slice_compare_column,
                 append it to the list of dictionary."""
             suggestion_i = {}
             suggestion_i['suggestion'] = slice1 + ' looks different from others on ' + metric + '. You might also want to look at ' + columns_order[column_i] +' since ' + slice1 + ' also looks different on this.'
-            suggestion_i['oversight_name'] = 'Benchmark set too different'
+            suggestion_i['oversight'] = Oversights.BENCHMARK_SET_TOO_DIFFERENT
             suggestion_i['is_row_level_suggestion'] = True
             suggestion_i['row_list'] = column_i_suggestion_list
             suggestion.append(suggestion_i)

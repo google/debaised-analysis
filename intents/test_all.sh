@@ -102,6 +102,15 @@ else
   list_logs+=("util/test_insert_as_column passed")
 fi
 
+
+if ! python3 util/test_rank_oversights.py;
+then
+  err "util/test_rank_oversights failed"
+  list_logs+=("util/test_rank_oversights failed")
+else
+  list_logs+=("util/test_rank_oversights passed")
+fi
+
 if ! python3 oversights/test_mean_vs_median.py;
 then
   err "oversights/test_mean_vs_median failed"
@@ -148,6 +157,15 @@ then
   list_logs+=("oversights/test_benchmark_set_too_different failed")
 else
   list_logs+=("oversights/test_benchmark_set_too_different passed")
+fi
+
+
+if ! python3 oversights/test_benchmark_set_too_different.py;
+then
+  err "oversights/topk_when_less_than_k_present failed"
+  list_logs+=("oversights/topk_when_less_than_k_present failed")
+else
+  list_logs+=("oversights/topk_when_less_than_k_present passed")
 fi
 
 echo 'All tests completed '

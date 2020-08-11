@@ -24,7 +24,7 @@ metrics to decide when to return a debissing suggestion.
 import sys
 sys.path.append(".")
 
-from util import constants
+from util import constants, enums
 
 def topk_vs_others(result_table, k, metric):
     """This function gives suggestions if 'top-k vs others' oversight is
@@ -74,6 +74,7 @@ def topk_vs_others(result_table, k, metric):
     if ratio < constants.TOPK_VS_OTHERS_THRESHOLD:
         change_list = {'topKLimit':result_table.shape[0]}
         suggestion = {}
+        suggestion['oversight'] = enums.Oversights.TOPK_VS_OTHERS
         suggestion['change_list'] = change_list
         if ratio > 0:
             suggestion['suggestion'] = 'The rows NOT in the top-k have a much larger sum over ' \
