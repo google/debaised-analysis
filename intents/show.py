@@ -110,6 +110,13 @@ def show(table,**kwargs):
         # To groupby 'Summary Operator' column inserted
         dimensions.append('Summary Operator')
 
+        table = aspects.group_by(table, dimensions, summary_operator)
+
+        # Droping the 'Summary Operator' column which was inserted above
+        table = table.drop(columns=['Summary Operator'])
+
+        return table
+
     table = aspects.group_by(table, dimensions, summary_operator)
 
     return table
