@@ -21,7 +21,7 @@ slicing(removing rows that do not follow the conditions), group by.
 Some of the operations are optional.
 """
 
-from util import aspects
+from util import aspects, oversights_order, rank_oversights
 from oversights.simpsons_paradox import simpsons_paradox
 from oversights.benchmark_set_too_different import benchmark_set_too_different
 from oversights.top_down_error import top_down_error
@@ -145,6 +145,11 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
                                                day_first = day_first,
                                                slices = slices)
     suggestions += simpsons_paradox_suggestion + top_down_error_suggestion
+
+
+    order = oversights_order.ORDER_IN_SLICE_COMPARE
+
+    suggestions = rank_oversights.rank_oversights(suggestions, order)
 
     return (result_table, suggestions)
 

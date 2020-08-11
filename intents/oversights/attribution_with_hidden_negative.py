@@ -23,6 +23,8 @@ and the values contains a negative value , the oversight is passed.
 
 """
 
+from util import enums
+
 def attribution_with_hidden_negative(values):
     """ This function gives suggestion if the attribution_with_hidden_negative
     oversight is detected when summary_operator is 'proportion of <sum/count>'  
@@ -44,7 +46,7 @@ def attribution_with_hidden_negative(values):
     if negative_exists :
         suggestion = {}
         suggestion['suggestion'] = 'There exists negative values among the values on which proportion is being applied'
-        suggestion['oversight_name'] = 'Attribution to Hidden Negative'
+        suggestion['oversight'] = enums.Oversights.ATTRIBUTION_WITH_HIDDEN_NEGATIVES
         suggestion['is_row_level_suggestion'] = True
         suggestion['confidence_score'] = 1
         

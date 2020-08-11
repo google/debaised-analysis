@@ -123,7 +123,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
                                               current_topk, dimensions)
 
     suggestion = {}
-    suggestion['oversight_name'] = 'Regression to the mean'
+    suggestion['oversight'] = Oversights.REGRESSION_TO_THE_MEAN
 
     if set_intersect_suggestions is not None:
         suggestion['suggestion'] = set_intersect_suggestions

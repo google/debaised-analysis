@@ -41,7 +41,7 @@ def test_2():
 
 	suggestion = attribution_with_hidden_negative(values)
 	print(suggestion)
-	expected_suggestion = """{'suggestion': 'There exists negative values among the values on which proportion is being applied', 'oversight_name': 'Attribution to Hidden Negative', 'is_row_level_suggestion': True, 'confidence_score': 1}"""
+	expected_suggestion = """{'suggestion': 'There exists negative values among the values on which proportion is being applied', 'oversight': <Oversights.ATTRIBUTION_WITH_HIDDEN_NEGATIVES: 11>, 'is_row_level_suggestion': True, 'confidence_score': 1}"""
 
 	assert(str(suggestion) == expected_suggestion)
 

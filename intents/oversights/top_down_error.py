@@ -22,7 +22,7 @@ suggest the user to do operation on those groups.
 """
 import pandas
 from util import aspects
-from util.enums import SummaryOperators, Filters
+from util.enums import SummaryOperators, Filters, Oversights
 from util import constants 
 
 def top_down_error(table, metric, all_dimensions, slice_compare_column, 
@@ -235,7 +235,7 @@ def _check_top_down_error(result_table, new_result_table, new_added_column,
         new_suggestion = {}
         new_suggestion['suggestion'] = 'Some values are similar here but will vary if we add '\
                                                          + new_added_column + ' for grouping '
-        new_suggestion['oversight_name'] = 'top-down error'
+        new_suggestion['oversight'] = Oversights.TOP_DOWN_ERROR
         new_suggestion['is_row_level_suggestion'] = True
         new_suggestion['row_list'] = suggestion_row_list
         return new_suggestion
