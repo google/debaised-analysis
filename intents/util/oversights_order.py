@@ -43,7 +43,8 @@ ORDER_IN_SHOW = [enums.Oversights.MEAN_VS_MEDIAN,
 ORDER_IN_SLICE_COMPARE = [enums.Oversights.MEAN_VS_MEDIAN,
                           enums.Oversights.TOP_DOWN_ERROR,
                           enums.Oversights.SIMPSONS_PARADOX,
-                          enums.Oversights.BENCHMARK_SET_TOO_DIFFERENT
+                          enums.Oversights.BENCHMARK_SET_TOO_DIFFERENT,
+                          enums.Oversights.CALENDAR_VS_EXPERIENCE_IN_TIME_SERIES
                          ]
 
 ORDER_IN_TIME_COMPARE = [enums.Oversights.MEAN_VS_MEDIAN,

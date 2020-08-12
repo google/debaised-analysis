@@ -53,3 +53,6 @@ TOP_DOWN_ERROR_DISSIMILARITY_THRESHOLD = 0.30
 
 # Threshold of ratio between sum of top-k & sum of others
 TOPK_VS_OTHERS_THRESHOLD = .7
+
+# calendar vs experience in time series  threshold value
+CALENDAR_VS_EXPERIENCE_TIME_THRESHOLD = .8
