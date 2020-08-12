@@ -37,7 +37,7 @@ directions with respect to their means.
 
 Correlation value close to 0 means that the 2 columns are weakly correlated.
 """
-from util import aspects
+from util import aspects, oversights_order, rank_oversights
 import pandas
 
 def correlation(table, metric1, metric2, **kwargs):
@@ -91,7 +91,11 @@ def correlation(table, metric1, metric2, **kwargs):
                                          slices=slices)
 
     suggestions = []
-    # ToDo (Onhold oversight) : Anscombe Quartet Error
+    # ToDo (Onhold oversight) : Anscombe Quartet Error    
+    
+    order = oversights_order.ORDER_IN_CORRELATION
+
+    suggestions = rank_oversights.rank_oversights(suggestions, order)
 
     return (result_table, suggestions)
 

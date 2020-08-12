@@ -85,8 +85,8 @@ var addOnText = {
       'queryPlaceholders': {
         'limit': '<top-k>',
         'sortOrder': '<maximum/minimum>',
-        'metric': '<column>',
-        'dimension': '<value(s)>',
+        'metric': '<value>',
+        'dimension': '<column(s)>',
         'slice': '<filter(s)>',
         'dateRange': '<date range>'
       },
@@ -105,8 +105,8 @@ var addOnText = {
       'cardHeading': {
         'limit': 'K',
         'sortOrder': 'Sort Order',
-        'metric': 'Column',
-        'dimension': 'Value(s)',
+        'metric': 'Value',
+        'dimension': 'Column(s)',
         'slice': 'Filter(s)',
         'dateRange': 'Date Range'
       },
@@ -117,9 +117,9 @@ var addOnText = {
       }
     },
     'sliceCompare': {
-      'sidebarTitle': 'Slice-Compare',
-      'intentName': 'Slice-Compare',
-      'description': 'Compare 2 objects based on provided criterion',
+      'sidebarTitle': 'Compare Subgroups',
+      'intentName': 'Compare Subgroups',
+      'description': 'Compare 2 subgroups based on provided criterion',
       'queryFilledWords': {
         'compareThe': 'Compare the ',
         'for': ' for ',
@@ -225,7 +225,7 @@ var addOnText = {
     'correlation': {
       'sidebarTitle': 'Correlation',
       'intentName': 'Correlation',
-      'description': 'Describes the degree of relationship between two values',
+      'description': 'Calculates the correlation between the two variables provided. Note that the correlation ranges from -1 to 1',
       'queryFilledWords': {
         'correlationBetween': 'Correlation between ',
         'forEach': ' for each ',

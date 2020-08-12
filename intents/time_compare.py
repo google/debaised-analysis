@@ -21,7 +21,7 @@ slicing(removing rows that do not follow the conditions), group by.
 Some of the operations are optional.
 """
 
-from util import aspects
+from util import aspects, oversights_order, rank_oversights
 import pandas
 from oversights.simpsons_paradox import simpsons_paradox
 from oversights.top_down_error import top_down_error
@@ -123,6 +123,10 @@ def time_compare(table, metric, all_dimensions, time_compare_column, date_range1
                                                slices = slices)
 
     suggestions = simpsons_paradox_suggestion + top_down_error_suggestion
+    
+    order = oversights_order.ORDER_IN_TIME_COMPARE
+
+    suggestions = rank_oversights.rank_oversights(suggestions, order)
 
     if summary_operator is not None:
         result_table = aspects.update_metric_column_name(result_table, summary_operator, metric)

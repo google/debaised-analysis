@@ -63,7 +63,7 @@ def test_2():
     expected_result = """   year Person name  SUM of salary
 0  2019           A          10239
 1  2019           B           8190"""
-    expected_suggestion = "[{'suggestion': 'the relation between slices might changed a lot if you will consider month in grouping.', 'oversight_name': 'simpsons-paradox', 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}]"
+    expected_suggestion = """[{'suggestion': 'the relation between slices might changed a lot if you will consider month in grouping.', 'oversight': <Oversights.SIMPSONS_PARADOX: 8>, 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}]"""
 
     assert(expected_result == query_result[0].to_string())
     assert(expected_suggestion == str(query_result[1]))
@@ -123,7 +123,7 @@ def test_4():
     expected_output = """  intern_name  avg_hour_of_work
 0           A               8.5
 1         ALL               5.5"""
-    expected_suggestion = "[{'suggestion': 'A looks different from others on avg_hour_of_work. You might also want to look at lines_of_code since A also looks different on this.', 'oversight_name': 'Benchmark set too different', 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}]"
+    expected_suggestion = "[{'suggestion': 'A looks different from others on avg_hour_of_work. You might also want to look at lines_of_code since A also looks different on this.', 'oversight': <Oversights.BENCHMARK_SET_TOO_DIFFERENT: 10>, 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}]"
 
     assert(expected_output == query_result[0].to_string())
     assert(expected_suggestion == str(query_result[1]))
@@ -145,7 +145,7 @@ def test_5():
 1   7th            B             75
 2   8th            A             75
 3   8th            B             75"""
-    expected_suggestion = "[{'suggestion': 'the relation between slices might changed a lot if you will consider subject in grouping.', 'oversight_name': 'simpsons-paradox', 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}, {'suggestion': 'Some values are similar here but will vary if we add subject for grouping ', 'oversight_name': 'top-down error', 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}, {'row': 3, 'confidence_score': 100}, {'row': 4, 'confidence_score': 100}]}]"
+    expected_suggestion = "[{'suggestion': 'Some values are similar here but will vary if we add subject for grouping ', 'oversight': <Oversights.TOP_DOWN_ERROR: 9>, 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}, {'row': 3, 'confidence_score': 100}, {'row': 4, 'confidence_score': 100}]}, {'suggestion': 'the relation between slices might changed a lot if you will consider subject in grouping.', 'oversight': <Oversights.SIMPSONS_PARADOX: 8>, 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}]"
 
     assert(expected_output == query_result[0].to_string())
     assert(expected_suggestion == str(query_result[1]))
