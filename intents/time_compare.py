@@ -82,12 +82,16 @@ def time_compare(table, metric, all_dimensions, time_compare_column, date_range1
 
     dimensions = kwargs.get('dimensions', None)
 
-    result_table = _time_compare_results(table, metric, 
+    result_tuple = _time_compare_results(table, metric, 
                                          time_compare_column,
                                          date_range1, date_range2, 
                                          date_format, summary_operator,
                                          dimensions = dimensions, 
                                          slices = slices)
+
+    result_table = result_tuple[0]
+
+    suggestions = result_tuple[1]
 
     table_slice1 = aspects.apply_date_range(table, date_range1,
                                             time_compare_column, 
@@ -101,8 +105,6 @@ def time_compare(table, metric, all_dimensions, time_compare_column, date_range1
 
     oversights_detection_table = pandas.concat([table_slice2, table_slice1])
     oversights_detection_table = oversights_detection_table.reset_index(drop = True)
-
-    suggestions = []
 
     simpsons_paradox_suggestion = simpsons_paradox(oversights_detection_table, 
                                                    metric, all_dimensions,
@@ -122,7 +124,7 @@ def time_compare(table, metric, all_dimensions, time_compare_column, date_range1
                                                dimensions = dimensions,
                                                slices = slices)
 
-    suggestions = simpsons_paradox_suggestion + top_down_error_suggestion
+    suggestions += simpsons_paradox_suggestion + top_down_error_suggestion
     
     order = oversights_order.ORDER_IN_TIME_COMPARE
 
@@ -174,8 +176,10 @@ def _time_compare_results(table, metric, time_compare_column,
     Note-summary_operator is always applied on metric column passed,
          and only when grouping is done
     Returns:
-        The function will return the results
-        results: Type - pandas dataframe, The results of the intended time-compare
+        The function will return both suggestions and the results in a tuple.
+        (results, suggestions)
+        results: Type - pandas dataframe, The results of the intended slice-compare
+        suggestions: Type - List of strings, List of suggestions.
     """
 
     slices = kwargs.get('slices', None)
@@ -215,7 +219,11 @@ def _time_compare_results(table, metric, time_compare_column,
         grouping_columns = dimensions.copy()
     grouping_columns.append(time_compare_column)
 
-    result_table = aspects.group_by(updated_table, grouping_columns, 
+    after_group_by = aspects.group_by(updated_table, grouping_columns, 
                                                    summary_operator)
 
-    return result_table
+    result_table = after_group_by['table']
+
+    suggestions = after_group_by['suggestions']
+
+    return (result_table, suggestions)

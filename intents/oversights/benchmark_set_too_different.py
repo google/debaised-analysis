@@ -99,7 +99,7 @@ def benchmark_set_too_different(table, metric, all_metric, slice_compare_column,
         grouping_columns = dimensions.copy()
     grouping_columns.append(slice_compare_column)
     
-    result_table = aspects.group_by(updated_table, grouping_columns, summary_operator)
+    result_table = aspects.group_by(updated_table, grouping_columns, summary_operator)['table']
 
     other_metrics = all_metric.copy()
     other_metrics.remove(metric)
