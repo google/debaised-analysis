@@ -159,7 +159,6 @@ else
   list_logs+=("oversights/test_benchmark_set_too_different passed")
 fi
 
-
 if ! python3 oversights/test_topk_when_less_than_k_present.py;
 then
   err "oversights/test_topk_when_less_than_k_present failed"
@@ -174,6 +173,14 @@ then
   list_logs+=("oversights/test_calendar_vs_experience_time failed")
 else
   list_logs+=("oversights/test_calendar_vs_experience_time passed")
+fi
+
+if ! python3 oversights/test_attribution_with_hidden_negative.py;
+then
+  err "oversights/test_attribution_with_hidden_negative failed"
+  list_logs+=("oversights/test_attribution_with_hidden_negative failed")
+else
+  list_logs+=("oversights/test_attribution_with_hidden_negative passed")
 fi
 
 echo 'All tests completed '

@@ -63,9 +63,10 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
             It denotes the granularity we need to apply to the dates.
 
     Returns:
-        The function will return the `table(a pandas dataframe object)`
-        after applying the intent on the given
-        `table(a pandas dataframe object)`
+        The function will return both suggestions and the results in a tuple.
+        (results, suggestions)
+        results: Type - pandas dataframe, The results of the intended trend
+        suggestions: Type - List of strings, List of suggestions.
 
     """
     date_column_name = kwargs.get('date_column_name', 'date')
@@ -91,11 +92,13 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
         row_date = aspects.granular_time(row_date, granularity)
         table.loc[row, date_column_name] = row_date.strftime(date_format)
 
-    table = aspects.group_by(table, [date_column_name], summary_operator)
+    after_group_by = aspects.group_by(table, [date_column_name], summary_operator)
+
+    table = after_group_by['table']
 
     table = table.sort_values(by=[date_column_name])
 
-    suggestions = []
+    suggestions = after_group_by['suggestions']
 
     # add mean vs median suggestion
 
@@ -103,4 +106,4 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     suggestions = rank_oversights.rank_oversights(suggestions, order)
 
-    return table
+    return (table, suggestions)

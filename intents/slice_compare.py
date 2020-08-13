@@ -90,7 +90,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
     dimensions = kwargs.get('dimensions', None)
 
     if slice2 == "*":
-        result_table = _slice_compare_results_for_all(table, metric,
+        result_tuple = _slice_compare_results_for_all(table, metric,
                                                       slice_compare_column,
                                                       slice1, slice2, 
                                                       summary_operator,
@@ -99,7 +99,10 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
                                                       date_column_name = date_column_name,
                                                       date_range = date_range, 
                                                       day_first = day_first)
-        suggestions = []
+        
+        result_table = result_tuple[0]
+
+        suggestions = result_tuple[1]
 
         if summary_operator == SummaryOperators.MEAN or summary_operator == SummaryOperators.MEDIAN:
             suggestions = benchmark_set_too_different(table, metric, all_metric, 
@@ -114,14 +117,16 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
         return (result_table, suggestions)
 
-    result_table = _slice_compare_results(table, metric, slice_compare_column,
+    result_tuple = _slice_compare_results(table, metric, slice_compare_column,
                                           slice1, slice2, summary_operator,
                                           slices = slices, dimensions = dimensions,
                                           date_column_name = date_column_name,
                                           date_range = date_range, 
                                           day_first = day_first)
 
-    suggestions = []
+    result_table = result_tuple[0]
+
+    suggestions = result_tuple[1]
 
     simpsons_paradox_suggestion = simpsons_paradox(table, metric, all_dimensions,
                                                    slice_compare_column, slice1,
@@ -208,9 +213,10 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
          and only when grouping is done
 
     Returns:
-        The function will return the `table(a pandas dataframe object)`
-        after applying the intent on the
-        given `table(a pandas dataframe object)``
+        The function will return both suggestions and the results in a tuple.
+        (results, suggestions)
+        results: Type - pandas dataframe, The results of the intended slice-compare
+        suggestions: Type - List of strings, List of suggestions.
 
     """
 
@@ -248,9 +254,13 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
         grouping_columns = dimensions.copy()
     grouping_columns.append(slice_compare_column)
     
-    result_table = aspects.group_by(table, grouping_columns, summary_operator)
+    after_group_by = aspects.group_by(table, grouping_columns, summary_operator)
 
-    return result_table
+    result_table = after_group_by['table']
+
+    suggestions = after_group_by['suggestions']
+
+    return (result_table, suggestions)
 
 def _slice_compare_results_for_all(table, metric, slice_compare_column,
                                    slice1, slice2, summary_operator, **kwargs):
@@ -301,9 +311,10 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
          and only when grouping is done
 
     Returns:
-        The function will return the `table(a pandas dataframe object)`
-        after applying the intent on the
-        given `table(a pandas dataframe object)``
+        The function will return both suggestions and the results in a tuple.
+        (results, suggestions)
+        results: Type - pandas dataframe, The results of the intended slice-compare
+        suggestions: Type - List of strings, List of suggestions.
 
     """
 
@@ -345,6 +356,10 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
         grouping_columns = dimensions.copy()
     grouping_columns.append(slice_compare_column)
     
-    result_table = aspects.group_by(updated_table, grouping_columns, summary_operator)
+    after_group_by = aspects.group_by(updated_table, grouping_columns, summary_operator)
 
-    return result_table
+    result_table = after_group_by['table']
+
+    suggestions = after_group_by['suggestions']
+
+    return (result_table, suggestions)

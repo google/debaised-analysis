@@ -21,8 +21,19 @@ on it and return the updated table.
 Example in slicing - the rows that do not satisft the slicing condition
 are dropped.
 """
-import datetime
+import datetime , statistics
 from util import enums
+from oversights.mean_vs_median import mean_vs_median
+from oversights.attribution_with_hidden_negative import attribution_with_hidden_negative
+
+# Global Variables used by group_by and _mean to give oversights
+
+# Row index of the groups in the result table
+group_row_index = 1
+
+# List of suggestions created by grouping , each suggestion being a dictionary defined by the oversight
+suggestions = []
+
 
 def apply_date_range(table, date_range, date_column_name, date_format,  **kwargs):
     """This function removes the rows from from the table that
@@ -189,7 +200,158 @@ def _count_distinct(values):
         distinct_set.add(value)
     return len(distinct_set)
 
-def group_by(table, dimensions, summary_operator):
+
+def _mean(values):
+    """ This function returns the average of values ,
+    along with it the function also tests the existence of
+    mean_vs_median oversight
+
+    Args:
+        values: Type - anything that can be iterated over
+
+    Returns:
+        Average of values
+
+    Updates global variables,
+        group_row_index always increases by 1
+        suggestions is updated by the mean_vs_median suggestion if it exists    
+    """
+
+    global group_row_index , suggestions
+
+    mean = statistics.mean(values)
+
+    # to collect all numbers in values
+    numbers = []
+
+    for value in values :
+        numbers.append(value)
+
+    suggestion = mean_vs_median(numbers)
+
+    if(suggestion is not None) :
+
+        row_suggestion = {}
+        row_suggestion['row'] = group_row_index
+        row_suggestion['confidence_score'] = suggestion['confidence_score']
+
+        # First mean_vs_median suggestion
+        if len(suggestions) == 0:
+            suggestion['row_list'] = []
+            
+            suggestion['row_list'].append(row_suggestion)
+            suggestions.append(suggestion)
+        
+        else:
+            #Updating the mean_vs_median suggestion
+            suggestions[-1]['row_list'].append(row_suggestion)
+
+    group_row_index += 1
+
+    return mean
+
+def _sum_for_propotion(values):
+    """ This function returns the sum of values ,
+    it is called separately to be able to check the 
+    oversight of attribution with hidden negative
+
+    Args:
+        values: Type - anything that can be iterated over
+
+    Returns:
+        sum of values
+
+    Updates global variables,
+        group_row_index always increases by 1
+        suggestions is updated by the attribution with hidden negative suggestion if it exists    
+    """
+
+    global group_row_index , suggestions
+
+    # to collect all numbers in values
+    numbers = []
+
+    sum_of_values = 0
+
+    for value in values :
+        sum_of_values += value
+        numbers.append(value)
+
+    suggestion = attribution_with_hidden_negative(numbers)
+
+    if(suggestion is not None) :
+
+        row_suggestion = {}
+        row_suggestion['row'] = group_row_index
+        row_suggestion['confidence_score'] = suggestion['confidence_score']
+
+        # First suggestion
+        if len(suggestions) == 0:
+            suggestion['row_list'] = []
+            
+            suggestion['row_list'].append(row_suggestion)
+            suggestions.append(suggestion)
+        
+        else:
+            #Updating the suggestion
+            suggestions[-1]['row_list'].append(row_suggestion)
+
+    group_row_index += 1
+
+    return sum_of_values
+
+def _count_for_propotion(values):
+    """ This function returns the count of values ,
+    it is called separately to be able to check the 
+    oversight of attribution with hidden negative
+
+    Args:
+        values: Type - anything that can be iterated over
+
+    Returns:
+        sum of values
+
+    Updates global variables,
+        group_row_index always increases by 1
+        suggestions is updated by the attribution with hidden negative suggestion if it exists    
+    """
+
+    global group_row_index , suggestions
+
+    # to collect all numbers in values
+    numbers = []
+
+    count_of_values = 0
+
+    for value in values :
+        count_of_values += 1
+        numbers.append(value)
+
+    suggestion = attribution_with_hidden_negative(numbers)
+
+    if(suggestion is not None) :
+
+        row_suggestion = {}
+        row_suggestion['row'] = group_row_index
+        row_suggestion['confidence_score'] = suggestion['confidence_score']
+
+        # First suggestion
+        if len(suggestions) == 0:
+            suggestion['row_list'] = []
+            
+            suggestion['row_list'].append(row_suggestion)
+            suggestions.append(suggestion)
+        
+        else:
+            #Updating the suggestion
+            suggestions[-1]['row_list'].append(row_suggestion)
+
+    group_row_index += 1
+
+    return count_of_values
+
+
+def group_by(table, dimensions, summary_operator, **kwargs):
     """Groups the column by the columns in dimensions
     Basically makes a map in which keys contain dimensions and values
     are evaluated after applying the summary operator.
@@ -203,15 +365,32 @@ def group_by(table, dimensions, summary_operator):
             It denotes the summary operator
 
     Returns:
-        Returns the table as a dataframe obj after applying grouping
+        Returns a dictionary with the following (key,values) :
+        'table' -> the table as a dataframe obj after applying grouping
+        'suggestions' -> List of suggestions structure i.e debiasing suggestion 
     """
+
+    global group_row_index , suggestions
+
+    # Dictionary that will be returned
+    result = {}
+    result['table'] = table
+    result['suggestions'] = []
+
+    # defining the first row index as 1
+    group_row_index = 1
+
+    # starting with an empty list of suggestions
+    suggestions = []
+
     if summary_operator is None:
-        return table
+        return result
+
     if summary_operator == enums.SummaryOperators.SUM:
         table = table.groupby(dimensions).sum()
 
     if summary_operator == enums.SummaryOperators.MEAN:
-        table = table.groupby(dimensions).mean()
+        table = table.groupby(dimensions).agg(_mean)
 
     if summary_operator == enums.SummaryOperators.MEDIAN:
         table = table.groupby(dimensions).median()
@@ -239,22 +418,25 @@ def group_by(table, dimensions, summary_operator):
 
     if summary_operator == enums.SummaryOperators.DISTINCT:
         table = table.groupby(dimensions).agg(_count_distinct)
-
+    
     if summary_operator == enums.SummaryOperators.PROPORTION_OF_SUM:
-        table = table.groupby(dimensions).sum()
+        table = table.groupby(dimensions).agg(_sum_for_propotion)
         for column in table.columns:
             if column not in dimensions:
                 table[column] /= table[column].sum()
 
     if summary_operator == enums.SummaryOperators.PROPORTION_OF_COUNT:
-        table = table.groupby(dimensions).count()
+        table = table.groupby(dimensions).agg(_count_for_propotion)
         for column in table.columns:
             if column not in dimensions:
                 table[column] /= table[column].sum()
 
     table = table.reset_index()
 
-    return table
+    result['table'] = table
+    result['suggestions'] = suggestions
+
+    return result
 
 def granular_time(row_date, granularity):
     """ Sets the time such that all time thats difference
