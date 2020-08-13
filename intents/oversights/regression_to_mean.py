@@ -91,7 +91,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
                                      date_column_name=date_column_name,
                                      date_range=date_range,
                                      date_format=date_format, slices=slices,
-                                     summary_operator=summary_operator)
+                                     summary_operator=summary_operator)[0]
 
     if date_range is None:
         return
@@ -117,13 +117,13 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
                                       summary_operator=summary_operator,
                                       date_column_name=date_column_name,
                                       date_format=date_format,
-                                      date_range=(previous_start, previous_end))
+                                      date_range=(previous_start, previous_end))[0]
 
     set_intersect_suggestions = _set_intersect(previous_topk,
                                               current_topk, dimensions)
 
     suggestion = {}
-    suggestion['oversight_name'] = 'Regression to the mean'
+    suggestion['oversight'] = Oversights.REGRESSION_TO_THE_MEAN
 
     if set_intersect_suggestions is not None:
         suggestion['suggestion'] = set_intersect_suggestions

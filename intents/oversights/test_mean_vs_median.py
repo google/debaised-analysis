@@ -25,7 +25,8 @@ def test_1():
 	suggestion = mean_vs_median(values)
 	print(suggestion)
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
-	expected_suggestion = """{'suggestion': 'Median is very different from the Mean', 'oversight_name': 'Mean vs Median'}"""
+
+	expected_suggestion = """{'suggestion': 'Median is very different from the Mean', 'oversight': <Oversights.MEAN_VS_MEDIAN: 7>, 'is_row_level_suggestion': True, 'confidence_score': 5.315150951994627}"""
 
 	assert(str(suggestion) == expected_suggestion)
 
@@ -56,7 +57,8 @@ def test_3():
 	suggestion = mean_vs_median(values)
 	print(suggestion)
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
-	expected_suggestion = """{'suggestion': 'Median is very different from the Mean', 'oversight_name': 'Mean vs Median'}"""
+
+	expected_suggestion = """None"""
 
 	assert(str(suggestion) == expected_suggestion)	
 
@@ -102,7 +104,8 @@ def test_6():
 	suggestion = mean_vs_median(values)
 	print(suggestion)
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
-	expected_suggestion = """{'suggestion': 'Median is very different from the Mean', 'oversight_name': 'Mean vs Median'}"""
+
+	expected_suggestion = """None"""
 
 	assert(str(suggestion) == expected_suggestion)	
 
@@ -118,7 +121,8 @@ def test_7():
 	suggestion = mean_vs_median(values)
 	print(suggestion)
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
-	expected_suggestion = """{'suggestion': 'Median is very different from the Mean', 'oversight_name': 'Mean vs Median'}"""
+
+	expected_suggestion = """None"""
 
 	assert(str(suggestion) == expected_suggestion)	
 
@@ -133,7 +137,8 @@ def test_8():
 	suggestion = mean_vs_median(values)
 	print(suggestion)
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
-	expected_suggestion = """{'suggestion': 'Median is very different from the Mean', 'oversight_name': 'Mean vs Median'}"""
+
+	expected_suggestion = """{'suggestion': 'Median is very different from the Mean', 'oversight': <Oversights.MEAN_VS_MEDIAN: 7>, 'is_row_level_suggestion': True, 'confidence_score': 3.779277130195112}"""
 
 	assert(str(suggestion) == expected_suggestion)	
 
@@ -149,7 +154,8 @@ def test_9():
 	suggestion = mean_vs_median(values)
 	print(suggestion)
 	print("Mean: " + str(statistics.mean(values)) + " Median: " + str(statistics.median(values)))
-	expected_suggestion = """{'suggestion': 'Median is very different from the Mean', 'oversight_name': 'Mean vs Median'}"""
+
+	expected_suggestion = """None"""
 
 	assert(str(suggestion) == expected_suggestion)		
 

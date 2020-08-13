@@ -24,16 +24,22 @@ from oversights.regression_to_mean import regression_to_mean
 from oversights.looking_at_tails import looking_at_tails
 from oversights.duplicates_in_topk import duplicates_in_topk
 from oversights.more_than_just_topk import more_than_just_topk
+from oversights.topk_when_less_than_k_present import topk_when_less_than_k_present
 from oversights.topk_vs_others import topk_vs_others
 from util.enums import *
-from util import aspects
+from util import aspects, oversights_order, rank_oversights
 
 def topk(table, metric, dimensions, is_asc, k, **kwargs):
     """ This function returns both the results according to the intent
     as well as the debiasing suggestions.
-    Some of the oversights considered in this intent are-
+    
+    Oversights that may be detected in top-k
     1. Regression to the mean
-    2. Looking at tails to find causes - TODO
+    2. Looking at tails to find causes
+    3. Duplicates in top-k
+    4. More than just top-k
+    5. Top-k vs others
+    6. Top-k when less than k present
 
     Args:
         table: Type-pandas.dataframe
@@ -87,13 +93,15 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     summary_operator = kwargs.get('summary_operator', None)
 
-    result_table = topk_results(table, metric, dimensions, is_asc, k,
+    result_tuple = topk_results(table, metric, dimensions, is_asc, k,
                                 date_column_name=date_column_name,
                                 date_range=date_range, date_format=date_format,
                                 slices=slices,
                                 summary_operator=summary_operator)
 
-    suggestions = []
+    result_table = result_tuple[0]
+
+    suggestions = result_tuple[1]
 
     duplicates_in_topk_suggestion = duplicates_in_topk(result_table, dimensions)
 
@@ -115,7 +123,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
                                                date_column_name=date_column_name,
                                                date_range=date_range, date_format=date_format,
                                                slices=slices,
-                                               summary_operator=summary_operator)
+                                               summary_operator=summary_operator)[0]
 
     more_than_just_topk_suggestion = more_than_just_topk(results_without_k_condition, k, metric)
 
@@ -131,6 +139,14 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     if looking_at_tails_suggestion is not None:
         suggestions.append(looking_at_tails_suggestion)
+
+    topk_when_less_than_k_present_suggestion = topk_when_less_than_k_present(result_table, k)
+
+    if topk_when_less_than_k_present_suggestion is not None:
+        suggestions.append(topk_when_less_than_k_present_suggestion)
+
+    order = oversights_order.ORDER_IN_TOPK
+    suggestions = rank_oversights.rank_oversights(suggestions, order)
 
     return (result_table, suggestions)
 
@@ -185,9 +201,10 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
          and only when grouping is done
 
     Returns:
-        The function will return the `table(a pandas dataframe object)`
-        after applying the intent on the
-        given `table(a pandas dataframe object)``
+        The function will return both suggestions and the results in a tuple.
+        (results, suggestions)
+        results: Type - pandas dataframe, The results of the intended top-k
+        suggestions: Type - List of strings, List of suggestions.
 
     """
     date_column_name = kwargs.get('date_column_name', 'date')
@@ -212,7 +229,11 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     table = aspects.crop_other_columns(table, required_columns)
 
-    table = aspects.group_by(table, dimensions, summary_operator)
+    after_group_by = aspects.group_by(table, dimensions, summary_operator)
+
+    table = after_group_by['table']
+
+    suggestions = after_group_by['suggestions']
 
     # using a stable sort('mergesort') will help to preserve the order
     # if equal values of [metric] are present
@@ -226,4 +247,4 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
     if k != -1:
         table = table.head(k)
 
-    return table
+    return (table, suggestions)

@@ -22,7 +22,7 @@ suggest the user to do operation on those groups.
 """
 import pandas
 from util import aspects
-from util.enums import SummaryOperators, Filters
+from util.enums import SummaryOperators, Filters, Oversights
 from util import constants 
 
 def simpsons_paradox(table, metric, all_dimensions, slice_compare_column, 
@@ -41,7 +41,7 @@ def simpsons_paradox(table, metric, all_dimensions, slice_compare_column,
             In query:'compare batsman A and B according to total_runs',
              dimension is 'batsman'. we group by dimensions.
         all_dimension: Type-list of str
-        	It contains list of all dimensions
+            It contains list of all dimensions
         slice_compare_column: Type-string
             name of the slice-compare column.
         slice1: Type-string
@@ -118,7 +118,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
     # initial_result_table is the result table requested by user.
     initial_result_table = aspects.group_by(query_table,
                                             grouping_columns,
-                                            summary_operator)
+                                            summary_operator)['table']
     # suggestions store the list of debiasing for this oversight.
     suggestions = []
 
@@ -144,7 +144,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
             # result table after adding the new column in the grouping list.
             new_result_table = aspects.group_by(new_cropped_table,
                                                 new_grouping_columns,
-                                                summary_operator)
+                                                summary_operator)['table']
             
             # it will return the debiasing suggestion after comparing the
             # initial result table and new result table.
@@ -247,7 +247,7 @@ def _check_simpsons_paradox(initial_result_table, new_result_table, new_added_co
     else:
         new_suggestion = {}
         new_suggestion['suggestion'] = 'the relation between slices might changed a lot if you will consider ' + new_added_column + ' in grouping.'
-        new_suggestion['oversight_name'] = 'simpsons-paradox'
+        new_suggestion['oversight'] = Oversights.SIMPSONS_PARADOX
         new_suggestion['is_row_level_suggestion'] = True
         new_suggestion['row_list'] = suggestion_row_list
         return new_suggestion

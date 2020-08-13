@@ -32,7 +32,7 @@ def generate_1():
     """
     table = pandas.read_csv('data/data_for_test_looking_at_tails/fide_historical.csv')
     result_table = topk.topk_results(table, 'rating',
-                                     ['name', 'birth_year', 'games'], False, -1)
+                                     ['name', 'birth_year', 'games'], False, -1)[0]
     result_table.to_csv('data/data_for_test_looking_at_tails/result_table_for_test_1',
                         index=False)
 
@@ -43,7 +43,7 @@ def generate_2():
     Stored in - data/data_for_test_looking_at_tails/fide_historical.csv
     """
     table = pandas.read_csv('data/data_for_test_aspects/test_1.csv')
-    result_table = topk.topk_results(table, 'Age', ['Name', 'Gender'], False, -1)
+    result_table = topk.topk_results(table, 'Age', ['Name', 'Gender'], False, -1)[0]
     result_table.to_csv('data/data_for_test_looking_at_tails/result_table_for_test_2',
                         index=False)
 
@@ -65,7 +65,7 @@ def test_1():
     suggestions = oversights.looking_at_tails.looking_at_tails(result_table, k, metric)
 
     print(suggestions)
-    expected_suggestions = """{'suggestion': "Values in top-k rows of columns - 'games' are similar for other rows also", 'oversight_name': 'Looking at tails to find causes', 'is_column_level_suggestion': True, 'col_list': [{'column': 'games', 'confidence_score': 0.5549613585989281}]}"""
+    expected_suggestions = """{'suggestion': "Values in top-k rows of columns - 'games' are similar for other rows also", 'oversight': <Oversights.LOOKING_AT_TAILS_TO_FIND_CAUSES: 5>, 'is_column_level_suggestion': True, 'col_list': [{'column': 'games', 'confidence_score': 0.5549613585989281}]}"""
 
     assert(expected_suggestions == str(suggestions))
 
@@ -86,7 +86,7 @@ def test_2():
     suggestions = oversights.looking_at_tails.looking_at_tails(result_table, k, metric)
 
     print(suggestions)
-    expected_suggestions = """{'suggestion': "Values in top-k rows of columns - 'Gender' are similar for other rows also", 'oversight_name': 'Looking at tails to find causes', 'is_column_level_suggestion': True, 'col_list': [{'column': 'Gender', 'confidence_score': 0.05474928826225144}]}"""
+    expected_suggestions = """{'suggestion': "Values in top-k rows of columns - 'Gender' are similar for other rows also", 'oversight': <Oversights.LOOKING_AT_TAILS_TO_FIND_CAUSES: 5>, 'is_column_level_suggestion': True, 'col_list': [{'column': 'Gender', 'confidence_score': 0.05474928826225144}]}"""
 
     assert(expected_suggestions == str(suggestions))
 

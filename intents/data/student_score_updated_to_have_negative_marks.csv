@@ -1,0 +1,17 @@
+class,student_name,subject,marks
+7th,A,maths,-90
+7th,A,science,90
+7th,A,Social science,90
+7th,A,english,90
+7th,B,maths,91
+7th,B,science,91
+7th,B,Social science,91
+7th,B,english,79
+8th,A,maths,91
+8th,A,science,91
+8th,A,Social science,91
+8th,A,english,-79
+8th,B,maths,90
+8th,B,science,90
+8th,B,Social science,90
+8th,B,english,-90

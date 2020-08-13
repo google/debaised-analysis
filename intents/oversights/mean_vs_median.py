@@ -30,7 +30,7 @@ sys.path.append(".")
 # for calculation standard deviation i.e pstdev() and mean i.e mean()
 import statistics 
 
-from util import constants
+from util import constants, enums
  
 def mean_vs_median(values):
     """ This function gives suggestion if the mean_vs_median oversight
@@ -57,7 +57,9 @@ def mean_vs_median(values):
     else:
     	suggestion = {}
     	suggestion['suggestion'] = 'Median is very different from the Mean'
-    	suggestion['oversight_name'] = 'Mean vs Median'
+    	suggestion['oversight'] = enums.Oversights.MEAN_VS_MEDIAN
+    	suggestion['is_row_level_suggestion'] = True
+    	suggestion['confidence_score'] = skew_value
     	return suggestion
 
 def _skew(values):
@@ -101,6 +103,4 @@ def _skew(values):
 	skew_value = (skew_value * size) / ((size - 1) * (size - 2))
 
 	return skew_value
-
-
 
