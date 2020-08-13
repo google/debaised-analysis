@@ -90,6 +90,28 @@ def test_2():
 
     assert(expected_suggestions == str(suggestions))
 
+
+def test_3():
+    """
+    This test verifies the division by zero case when standard deviation is zero
+    Having all the entries same in column 'Science Marks' will have standard deviation zero
+    The table is hardcoded as it's a rare case.
+    """
+    result_table = pandas.DataFrame()
+    result_table['Students'] = pandas.Series(['A', 'B', 'C', 'D'])
+    result_table['Math Marks'] = pandas.Series([100, 90, 80, 10])
+    result_table['Science Marks'] = pandas.Series([20, 20, 20, 20])
+    metric = 'Math Marks'
+    k = 3
+
+    suggestions = oversights.looking_at_tails.looking_at_tails(result_table, k, metric)
+
+    print(suggestions)
+
+    expected_suggestions = """{'suggestion': "Values in top-k rows of columns - 'Science Marks' are similar for other rows also", 'oversight': <Oversights.LOOKING_AT_TAILS_TO_FIND_CAUSES: 5>, 'is_column_level_suggestion': True, 'col_list': [{'column': 'Science Marks', 'confidence_score': 0}]}"""
+    
+    assert(expected_suggestions == str(suggestions))
+
 # print(generate_1.__doc__)
 # generate_1()
 
@@ -101,5 +123,8 @@ test_1()
 
 print(test_2.__doc__)
 test_2()
+
+print(test_3.__doc__)
+test_3()
 
 print('Test cases completed')
