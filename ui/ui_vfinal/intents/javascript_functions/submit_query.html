@@ -152,9 +152,6 @@
       }
     }
     
-    index = 0;
-    showSuggestion(index);
-    
     hideNextButton();
     hidePreviousButton();
     
@@ -225,8 +222,7 @@
       else {
           displayPreviousButton();
       }
-      if(index < 0)
-      {
+      if(index < 0) {
           return;
       }
       displayNextButton();
@@ -296,8 +292,7 @@
       suggestionsContent.style.maxHeight = suggestionsContent.scrollHeight + 'px';
       // index check rqd
       index=0;
-      if(suggestions.length > 1)
-      {
+      if(suggestions.length >= 1) {
           displayNextButton();
       }
     }
