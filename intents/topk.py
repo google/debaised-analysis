@@ -93,13 +93,15 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     summary_operator = kwargs.get('summary_operator', None)
 
-    result_table = topk_results(table, metric, dimensions, is_asc, k,
+    result_tuple = topk_results(table, metric, dimensions, is_asc, k,
                                 date_column_name=date_column_name,
                                 date_range=date_range, date_format=date_format,
                                 slices=slices,
                                 summary_operator=summary_operator)
 
-    suggestions = []
+    result_table = result_tuple[0]
+
+    suggestions = result_tuple[1]
 
     duplicates_in_topk_suggestion = duplicates_in_topk(result_table, dimensions)
 
@@ -121,7 +123,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
                                                date_column_name=date_column_name,
                                                date_range=date_range, date_format=date_format,
                                                slices=slices,
-                                               summary_operator=summary_operator)
+                                               summary_operator=summary_operator)[0]
 
     more_than_just_topk_suggestion = more_than_just_topk(results_without_k_condition, k, metric)
 
@@ -199,9 +201,10 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
          and only when grouping is done
 
     Returns:
-        The function will return the `table(a pandas dataframe object)`
-        after applying the intent on the
-        given `table(a pandas dataframe object)``
+        The function will return both suggestions and the results in a tuple.
+        (results, suggestions)
+        results: Type - pandas dataframe, The results of the intended top-k
+        suggestions: Type - List of strings, List of suggestions.
 
     """
     date_column_name = kwargs.get('date_column_name', 'date')
@@ -226,7 +229,11 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     table = aspects.crop_other_columns(table, required_columns)
 
-    table = aspects.group_by(table, dimensions, summary_operator)
+    after_group_by = aspects.group_by(table, dimensions, summary_operator)
+
+    table = after_group_by['table']
+
+    suggestions = after_group_by['suggestions']
 
     # using a stable sort('mergesort') will help to preserve the order
     # if equal values of [metric] are present
@@ -240,4 +247,4 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
     if k != -1:
         table = table.head(k)
 
-    return table
+    return (table, suggestions)

@@ -26,16 +26,20 @@ def test_1():
     """
     table = pandas.read_csv('data/matches.csv')
     query_result = trend.trend(table, 'win_by_runs', Granularities.ANNUALLY,
-    	                          SummaryOperators.MAX,
-    	                          date_range=('2008-05-08', '2010-04-12'),
-    	                          date_column_name='date',
-    	                          date_format='%Y-%m-%d')
+                                  SummaryOperators.MAX,
+                                  date_range=('2008-05-08', '2010-04-12'),
+                                  date_column_name='date',
+                                  date_format='%Y-%m-%d')
     print(query_result)
+
     expected_result = """         date  win_by_runs
 0  2008-01-01          105
 1  2009-01-01           92
 2  2010-01-01           98"""
-    assert(expected_result == query_result.to_string())
+    expected_suggestions = "[]"
+
+    assert(expected_result == query_result[0].to_string())
+    assert(expected_suggestions == str(query_result[1]))
 
 print(test_1.__doc__)
 test_1()
