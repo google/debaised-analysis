@@ -56,6 +56,7 @@ def hello_http(request):
     date = _get_value(request_json, 'dateRange')
     time_granularity = _get_value(request_json, 'timeGranularity')
     correlation_metrics = _get_value(request_json, 'correlationMetrics')
+    rangeA1Notation = _get_value(request_json, 'rangeA1Notation')
 
 
 
@@ -123,8 +124,6 @@ def hello_http(request):
     time_granularity = _str_to_time_granularity_enum(time_granularity)
 
     suggestions = []
-
-    table = query_table_dataframe
 
     if intent == 'show':
         query_table_dataframe = show(query_table_dataframe,
@@ -259,6 +258,21 @@ def hello_http(request):
     final_table.insert(0, list(query_table_dataframe.columns.values))
 
     json_ret = {'outputTable' : final_table, 'suggestions' : suggestions}
+
+    if rangeA1Notation is not None :
+        all_row_labels = get_all_row_labels(rangeA1Notation)
+        all_column_labels = get_all_column_labels(rangeA1Notation)
+        cheader_to_clabel = get_cheader_to_clabel(table, all_column_labels)
+
+        if slices_list is not None:
+            json_ret['slicing_passed_list'] = insert_as_column.insert_as_column_show(table, cheader_to_clabel, all_row_labels[0], all_row_labels[-1], all_column_labels[0], all_column_labels[-1], slices=slices_list)
+
+        if intent == 'topk' and summary_operator is None:
+            filter_column_label_number = get_number_of_column_label(all_column_labels[-1]) + 1
+            filter_column_label = get_label_from_number(filter_column_label_number)
+
+            json_ret['list_topk_indices'] = insert_as_column.insert_as_column_topk_column(table, cheader_to_clabel, all_row_labels[0], all_row_labels[-1], all_column_labels[0], all_column_labels[-1], filter_column_label, metric, is_asc, k)
+
 
     json_string = json.dumps(json_ret)
     return json_string
@@ -443,3 +457,151 @@ def _list_all_dimensions_metrics(table, dimensions, metric):
             else:
                 all_dimensions.append(column)
     return (all_dimensions, all_metrics)
+
+def get_number_of_column_label(label):
+    """
+    This function returns a number which corresponds to the label.
+    Example : 'A' -> 1 , 'Z' -> 26 , 'AA' -> 27 , 'BA' -> 53
+
+    Args : 
+        label : Type-str
+            Denotes the label given to the column by sheets
+    Returns :
+        num : Type-int
+            Denotes the numbering of columns(1-indexed)
+
+    """
+
+    num = 0
+    power_of_26 = 1
+
+    for i in range(len(label)-1,-1,-1):
+        value = ord(label[i]) - ord('A') + 1
+
+        num += power_of_26*value
+
+        power_of_26 = 26*power_of_26
+
+    return num
+
+def get_label_from_number(num):
+    """
+    This function returns the label associated with the corresponding number
+    Example : 1 -> 'A' , 26 -> 'Z' , 27 -> 'AA' , 53 -> 'BA'
+
+    Args : 
+        num : Type-int
+            Denotes the numbering of columns(1-indexed)
+    Returns :
+        label : Type-str
+            Denotes the label given to the column by sheets
+
+    """
+
+    label = ''
+
+    while(num > 0):
+        x = num % 26
+
+        if x == 0 :
+            label += 'Z'
+            num //= 26
+            num -= 1
+        else :
+            label += chr(x + ord('A') - 1)
+            num //= 26
+
+    return label[::-1]
+
+def get_all_column_labels(rangeA1Notation):
+    """
+    This function returns a list which gives all the column labels present in the table
+
+    Args:
+        rangeA1Notation : Type-str
+                          Denotes the data range selected by user. 
+                          Example : "A1:C18" , "AA1:CC33"
+    Returns:
+        List of all column labels where data is present.
+        Example : ['A','B','C']
+    """
+
+    starting_col = ""
+    ending_col = ""
+
+    starting_column_filled = False
+
+    for c in rangeA1Notation :
+        if c.isalpha():
+            if not starting_column_filled :
+                starting_col += c
+            else :
+                ending_col += c
+        else:
+            starting_column_filled = True
+
+    list_of_column_labels = []
+
+    starting_col_label_number = get_number_of_column_label(starting_col)
+    ending_col_label_number = get_number_of_column_label(ending_col)
+
+    for label_number in range(starting_col_label_number, ending_col_label_number + 1) :
+        list_of_column_labels.append(get_label_from_number(label_number))
+
+    return list_of_column_labels
+
+def get_all_row_labels(rangeA1Notation):
+    """
+    This function returns a list which gives all the row labels present in the table
+
+    Args:
+        rangeA1Notation : Type-str
+                          Denotes the data range selected by user. 
+                          Example : "A1:C18" , "AA1:CC33"
+    Returns:
+        List of all column labels where data is present.
+        Example : [1,2,3,4,5,...,17,18]
+    """
+
+    starting_row = ""
+    ending_row = ""
+
+    starting_row_filled = False
+
+    for c in rangeA1Notation: 
+        if c.isnumeric():
+            if not starting_row_filled :
+                starting_row += c
+            else :
+                ending_row += c
+        elif c == ':' :
+            starting_row_filled = True
+
+    list_of_row_labels = []
+
+    for label_number in range(int(starting_row) + 1 , int(ending_row) + 1):
+        list_of_row_labels.append(label_number) 
+
+    return list_of_row_labels
+
+def get_cheader_to_clabel(table, all_column_labels): 
+    """ 
+    This function returns a dictionary mapping all column headers to their respective
+    column label.
+
+    Args:
+        table : Type-Pandas dataframe
+            Contents of the sheets
+        all_column_lables : Type-list of str
+            Contains all column labels in same order as column headers
+    Returns:
+        Dictionary with (key,value) where key is column header 
+        and value is the respective column label
+    """
+
+    cheader_to_clabel = {}
+
+    for i in range(len(all_column_labels)) :
+        cheader_to_clabel[table[0][i]] = all_column_labels[i]
+
+    return cheader_to_clabel

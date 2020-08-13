@@ -78,6 +78,11 @@ function evalQuery(
 
   jsonObj.intent = intent;
 
+  var userProperties = PropertiesService.getUserProperties();
+  var rangeA1Notation = userProperties.getProperty('rangeA1Notation');
+
+  jsonObj.rangeA1Notation = rangeA1Notation;
+
   if(metric !== null) {
     jsonObj.metric = metric;
   }
