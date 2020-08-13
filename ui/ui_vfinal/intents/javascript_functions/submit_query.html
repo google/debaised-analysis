@@ -152,45 +152,11 @@
       }
     }
     
-    // Creating suggestions list
-    var messages = '';
-    for(var i = 0; i < suggestions.length; i++) {
-      messages += '<div class="suggestion-box">';
-      
-      // Adding suggestions text
-      messages += '<span class="suggestion-text">' + suggestions[i].suggestion + '</span>';
-      
-      messages += '<div class="flex-right">';
-      // If suggestion contains column list, add option to highlight columns in output table
-      if(suggestions[i].is_column_level_suggestion) {
-        messages += '<button ' +
-                      'class="btn primary suggestion-btn" ' + 
-                      'onclick=\'highlightColumns(this,' + JSON.stringify(suggestions[i].col_list) + ')\'>' +
-                         'Highlight in table' +
-                    '</button>';
-      }
-      // If suggestion contains row list, add option to highlight rows in output table
-      if(suggestions[i].is_row_level_suggestion) {
-        messages += '<button ' +
-                      'class="btn primary suggestion-btn" ' + 
-                      'onclick=\'highlightRows(this,' + JSON.stringify(suggestions[i].row_list) + ')\'>' +
-                         'Highlight in table' +
-                    '</button>';
-      }
-      // If suggestion contains json for alternate query, add option to run it
-      if('json' in suggestions[i]) {
-        console.log('suggestion json',JSON.stringify(suggestions[i].json));
-        messages += '<button ' +
-                      'class="btn primary suggestion-btn" ' + 
-                      'onclick=\'submitDebiasingQuery(' + JSON.stringify(suggestions[i].json) + ')\'>' +
-                         'Try this' +
-                    '</button>';
-      }
-      messages += '</div>';
-      
-      messages += '</div>';
-    }
-    document.querySelector('#suggestions-content').innerHTML = messages;
+    index = 0;
+    showSuggestion(index);
+    
+    hideNextButton();
+    hidePreviousButton();
     
     // Specifying number of suggestions to the user
     var suggestionsHeading = 'You have ' + suggestions.length + ' suggestions '
@@ -208,6 +174,109 @@
       document.querySelector('#debiasing-suggestions').classList.add('hide');
     }
   }
+  
+  
+  // helper functions to show & display next & previous button
+
+  function hideNextButton() {
+    document.querySelector('#next').classList.add('hide');
+  }
+  
+  function displayNextButton() {
+    document.querySelector('#next').classList.remove('hide');
+  }
+  
+  function hidePreviousButton() {
+    document.querySelector('#previous').classList.add('hide');
+  }
+  
+  function displayPreviousButton() {
+    document.querySelector('#previous').classList.remove('hide');
+  }
+  
+  function showNext() {
+      index++;
+      if(index >= suggestions.length - 1) {
+          // hide next button
+          hideNextButton();
+      }
+      else {
+          displayNextButton();
+      }
+    
+      if(index >= suggestions.length) 
+      {
+          return;
+      }
+      displayPreviousButton();
+      showSuggestion(index);
+      // for setting height of suggestion area
+      var collapsibleCard = document.querySelector('#collapse-card');
+      var suggestionsContent = collapsibleCard.nextElementSibling;
+      suggestionsContent.style.maxHeight = suggestionsContent.scrollHeight + 'px';
+  }
+  
+  function showPrevious() {
+      index--;
+      if(index <= 0) {
+          // hide previous button
+          hidePreviousButton();
+      }
+      else {
+          displayPreviousButton();
+      }
+      if(index < 0)
+      {
+          return;
+      }
+      displayNextButton();
+      showSuggestion(index);
+      // for setting height of suggestion area
+      var collapsibleCard = document.querySelector('#collapse-card');
+      var suggestionsContent = collapsibleCard.nextElementSibling;
+      suggestionsContent.style.maxHeight = suggestionsContent.scrollHeight + 'px';
+  }
+  
+  function showSuggestion(index) {
+    var messages = '';
+    messages += '<div class="suggestion-box">';
+      
+    // Adding suggestions text
+    messages += '<span class="suggestion-text">' + suggestions[index].suggestion + '</span>';
+      
+    messages += '<div class="flex-right">';
+    // If suggestion contains column list, add option to highlight columns in output table
+    if(suggestions[index].is_column_level_suggestion) {
+      messages += '<button ' +
+                     'class="btn primary suggestion-btn" ' + 
+                     'onclick=\'highlightColumns(this,' + JSON.stringify(suggestions[index].col_list) + ')\'>' +
+                        'Highlight in table' +
+                   '</button>';
+    }
+    // If suggestion contains row list, add option to highlight rows in output table
+    if(suggestions[index].is_row_level_suggestion) {
+      messages += '<button ' +
+                    'class="btn primary suggestion-btn" ' + 
+                    'onclick=\'highlightRows(this,' + JSON.stringify(suggestions[index].row_list) + ')\'>' +
+                       'Highlight in table' +
+                  '</button>';
+    }
+    // If suggestion contains json for alternate query, add option to run it
+    if('json' in suggestions[index]) {
+      console.log('suggestion json',JSON.stringify(suggestions[index].json));
+      messages += '<button ' +
+                    'class="btn primary suggestion-btn" ' + 
+                    'onclick=\'submitDebiasingQuery(' + JSON.stringify(suggestions[index].json) + ')\'>' +
+                       'Try this' +
+                  '</button>';
+    }
+    messages += '</div>';
+    
+    messages += '</div>';
+    document.querySelector('#suggestions-content').innerHTML = messages;
+  }
+  
+  
 
   /**
    * Collapse and expand the suggestions card 
@@ -219,11 +288,19 @@
       
     if (suggestionsContent.style.maxHeight){
       suggestionsContent.style.maxHeight = null;
+      hideNextButton();
+      hidePreviousButton();
+      index=0;
     } 
     else {
       suggestionsContent.style.maxHeight = suggestionsContent.scrollHeight + 'px';
+      // index check rqd
+      index=0;
+      if(suggestions.length > 1)
+      {
+          displayNextButton();
+      }
     }
-      
     icon.classList.toggle('expand-icon');
     icon.classList.toggle('collapse-icon');
   }
