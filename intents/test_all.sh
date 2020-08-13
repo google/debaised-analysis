@@ -159,13 +159,12 @@ else
   list_logs+=("oversights/test_benchmark_set_too_different passed")
 fi
 
-
-if ! python3 oversights/test_benchmark_set_too_different.py;
+if ! python3 oversights/test_attribution_with_hidden_negative.py;
 then
-  err "oversights/topk_when_less_than_k_present failed"
-  list_logs+=("oversights/topk_when_less_than_k_present failed")
+  err "oversights/test_attribution_with_hidden_negative failed"
+  list_logs+=("oversights/test_attribution_with_hidden_negative failed")
 else
-  list_logs+=("oversights/topk_when_less_than_k_present passed")
+  list_logs+=("oversights/test_attribution_with_hidden_negative passed")
 fi
 
 echo 'All tests completed '
