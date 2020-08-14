@@ -20,6 +20,7 @@ var jsonQueryShow =
       '["6/25/2019","Central","Morgan","Pencil",90,4.99,449.1],' +
       '["7/12/2019","East","Howard","Binder",29,1.99,57.71]],' +
 	'"intent":"show",' +
+  '"rangeA1Notation":"C3:I15",' +
 	'"metric":"Units",' +
 	'"summaryOperator":"Sum",' +
 	'"isAsc":false,' +
@@ -55,6 +56,7 @@ var jsonQueryTopK =
       '["6/25/2019","Central","Morgan","Pencil",90,4.99,449.1],' +
       '["7/12/2019","East","Howard","Binder",29,1.99,57.71]],' +
 	'"intent":"topk",' +
+  '"rangeA1Notation":"C3:I15",' +
 	'"metric":"Total",' +
 	'"isAsc":false,' +
 	'"topKLimit":7,' +
@@ -89,6 +91,7 @@ var jsonQuerySliceCompare =
       '["6/25/2019","Central","Morgan","Pencil",90,4.99,449.1],' +
       '["7/12/2019","East","Howard","Binder",29,1.99,57.71]],' +
 	'"intent":"slice_compare",' +
+  '"rangeA1Notation":"C3:I15",' +
 	'"metric":"Unit Cost",' +
 	'"summaryOperator":"Mean",' +
 	'"isAsc":false,' +
@@ -124,6 +127,7 @@ var jsonQueryTimeCompare =
       '["6/25/2019","Central","Morgan","Pencil",90,4.99,449.1],' +
       '["7/12/2019","East","Howard","Binder",29,1.99,57.71]],' +
 	'"intent":"time_compare",' +
+  '"rangeA1Notation":"C3:I15",' +
 	'"metric":"Unit Cost",' +
 	'"summaryOperator":"Mean",' +
 	'"isAsc":false,' +
@@ -164,6 +168,7 @@ var jsonQueryTrend =
       '["6/25/2019","Central","Morgan","Pencil",90,4.99,449.1],' +
       '["7/12/2019","East","Howard","Binder",29,1.99,57.71]],' +
 	'"intent":"trend",' +
+  '"rangeA1Notation":"C3:I15",' +
 	'"metric":"Units",' +
 	'"summaryOperator":"Sum",' +
 	'"isAsc":false,' +
@@ -200,6 +205,7 @@ var jsonQueryCorrelation =
       '["6/25/2019","Central","Morgan","Pencil",90,4.99,449.1],' +
       '["7/12/2019","East","Howard","Binder",29,1.99,57.71]],' +
 	'"intent":"correlation",' +
+  '"rangeA1Notation":"C3:I15",' +
 	'"isAsc":false,' +
 	'"topKLimit":10,' +
 	'"dimensions":["Item"],' +
