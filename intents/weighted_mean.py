@@ -39,6 +39,7 @@ of the groupings.
 """
 from util import aspects, oversights_order, rank_oversights
 import pandas
+from oversights import weighted_mean_with_different_weights
 
 def weighted_mean(table, metric, weight_col, **kwargs):
     """ This function returns both the results according to the intent
@@ -53,7 +54,7 @@ def weighted_mean(table, metric, weight_col, **kwargs):
             It has the contents of the table in sheets
         metric : Type-string
             The column whose mean is to be found
-        weight_col : Type-strings
+        weight_col : Type-string
             The weight column which is multiplied as weights to metric column
         dimensions: Type-list of str
             It the list of columns according to which groups are formed
@@ -99,8 +100,14 @@ def weighted_mean(table, metric, weight_col, **kwargs):
 
     suggestions = []
 
-    order = oversights_order.ORDER_IN_WEIGHTED_MEAN
+    different_weight_suggestion = weighted_mean_with_different_weights.\
+                            weighted_mean_with_different_weights(table, metric,
+                                                                 weight_col=weight_col)
+    
+    if different_weight_suggestion is not None:
+        suggestions.append(different_weight_suggestion)
 
+    order = oversights_order.ORDER_IN_WEIGHTED_MEAN
     suggestions = rank_oversights.rank_oversights(suggestions, order)
 
     return (result_table, suggestions)
@@ -156,7 +163,7 @@ def _weighted_mean_results(table, metric, weight_col, **kwargs):
 
     dimensions = kwargs.get('dimensions', None)
 
-    table = aspects.apply_date_range(table, date_range,date_column_name, date_format)
+    table = aspects.apply_date_range(table, date_range, date_column_name, date_format)
 
     table = aspects.slice_table(table, slices)
 

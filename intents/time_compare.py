@@ -27,10 +27,14 @@ from oversights.simpsons_paradox import simpsons_paradox
 from oversights.top_down_error import top_down_error
 
 def time_compare(table, metric, all_dimensions, time_compare_column, date_range1, 
-                           date_range2, date_format, summary_operator, **kwargs):
+                           date_range2, day_first, summary_operator, **kwargs):
 
     """ This function returns both the results according to the intent
     as well as the debiasing suggestions.
+
+    Also, if summary operator is applied, the name of metric column is
+    renamed to "<summary operator> of metric".
+
     Some of the oversights considered in this intent are-
     Args:
         table: Type-pandas.dataframe
@@ -57,10 +61,10 @@ def time_compare(table, metric, all_dimensions, time_compare_column, date_range1
             first date range for which we have to do comparision
         date_range2: Type-tuple of start_date and end_date
             second date range for which we have to do comparision
-        date_format: Type-str
-            It is required by datetime.strp_time to parse the date in the format
-            Format Codes
-            https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
+        day_first: Type-str
+            Day_first denotes that does day in the date occurs before month in the
+            dates in the date column
+            Example - '29-02-19', here day_first is true
         summary_operator: Type-summary_operators enum members
             It denotes the summary operator, after grouping by dimensions.
             ex. SummaryOperators.MAX, SummaryOperators.SUM
@@ -81,7 +85,7 @@ def time_compare(table, metric, all_dimensions, time_compare_column, date_range1
     result_tuple = _time_compare_results(table, metric, 
                                          time_compare_column,
                                          date_range1, date_range2, 
-                                         date_format, summary_operator,
+                                         day_first, summary_operator,
                                          dimensions = dimensions, 
                                          slices = slices)
 
@@ -91,12 +95,12 @@ def time_compare(table, metric, all_dimensions, time_compare_column, date_range1
 
     table_slice1 = aspects.apply_date_range(table, date_range1,
                                             time_compare_column, 
-                                            date_format)
+                                            day_first)
     table_slice1[time_compare_column] = date_range1[0] + " - " + date_range1[1]
     
     table_slice2 = aspects.apply_date_range(table, date_range2,
                                             time_compare_column, 
-                                            date_format)
+                                            day_first)
     table_slice2[time_compare_column] = date_range2[0] + " - " + date_range2[1]
 
     oversights_detection_table = pandas.concat([table_slice2, table_slice1])
@@ -126,10 +130,13 @@ def time_compare(table, metric, all_dimensions, time_compare_column, date_range1
 
     suggestions = rank_oversights.rank_oversights(suggestions, order)
 
+    if summary_operator is not None:
+        result_table = aspects.update_metric_column_name(result_table, summary_operator, metric)
+
     return (result_table, suggestions)
 
 def _time_compare_results(table, metric, time_compare_column, 
-                          date_range1, date_range2, date_format, 
+                          date_range1, date_range2, day_first, 
                           summary_operator, **kwargs):
 
     """ This function returns the results according to the intent.
@@ -158,10 +165,10 @@ def _time_compare_results(table, metric, time_compare_column,
             first date range for which we have to do comparision
         date_range2: Type-tuple of start_date and end_date
             second date range for which we have to do comparision
-        date_format: Type-str
-            It is required by datetime.strp_time to parse the date in the format
-            Format Codes
-            https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
+        day_first: Type-str
+            Day_first denotes that does day in the date occurs before month in the
+            dates in the date column
+            Example - '29-02-19', here day_first is true
         summary_operator: Type-summary_operators enum members
             It denotes the summary operator, after grouping by dimensions.
             ex. SummaryOperators.MAX, SummaryOperators.SUM
@@ -194,13 +201,13 @@ def _time_compare_results(table, metric, time_compare_column,
     table_slice1 = aspects.apply_date_range(required_table,  
                                             date_range1,
                                             time_compare_column,
-                                            date_format)
+                                            day_first)
     table_slice1[time_compare_column] = date_range1[0] + " - " + date_range1[1]
 
     table_slice2 = aspects.apply_date_range(required_table,  
                                             date_range2,
                                             time_compare_column,
-                                            date_format)
+                                            day_first)
     table_slice2[time_compare_column] = date_range2[0] + " - " + date_range2[1]
 
     # Pandas library to combine the tables.

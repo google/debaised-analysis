@@ -42,7 +42,7 @@ def test_1():
                                                    'Company', 'A', 'B',
                                                    SummaryOperators.MEAN,
                                                    date_column_name='year',
-                                                   date_range=['2000', '2010'],
+                                                   date_range=['2000-01-01', '2010-01-01'],
                                                    date_format='%Y')
     print(suggestion)
 
@@ -65,7 +65,7 @@ def test_2():
                                                    'Company', 'A', 'B',
                                                    SummaryOperators.MEAN,
                                                    date_column_name='year',
-                                                   date_range=['2000', '2010'],
+                                                   date_range=['2000-01-01', '2010-01-01'],
                                                    date_format='%Y')
     print(suggestion)
 

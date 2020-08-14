@@ -56,3 +56,6 @@ TOPK_VS_OTHERS_THRESHOLD = .7
 
 # calendar vs experience in time series  threshold value
 CALENDAR_VS_EXPERIENCE_TIME_THRESHOLD = .8
+
+# Threshold of wrong points oversight
+WRONG_POINTS_THRESHOLD = .45

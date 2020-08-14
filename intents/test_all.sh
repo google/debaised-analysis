@@ -127,6 +127,14 @@ else
   list_logs+=("oversights/test_topk_vs_others passed")
 fi
 
+if ! python3 oversights/test_more_than_just_topk.py;
+then
+  err "oversights/test_more_than_just_topk failed"
+  list_logs+=("oversights/test_more_than_just_topk failed")
+else
+  list_logs+=("oversights/test_more_than_just_topk passed")
+fi
+
 if ! python3 oversights/test_simpsons_paradox.py;
 then
   err "oversights/test_simpsons_paradox failed"
@@ -151,6 +159,14 @@ else
   list_logs+=("oversights/test_looking_at_tails passed")
 fi
 
+if ! python3 oversights/test_wrong_points.py;
+then
+  err "oversights/test_wrong_points failed"
+  list_logs+=("oversights/test_wrong_points failed")
+else
+  list_logs+=("oversights/test_wrong_points passed")
+fi
+
 if ! python3 oversights/test_benchmark_set_too_different.py;
 then
   err "oversights/test_benchmark_set_too_different failed"
@@ -173,6 +189,14 @@ then
   list_logs+=("oversights/test_calendar_vs_experience_time failed")
 else
   list_logs+=("oversights/test_calendar_vs_experience_time passed")
+fi
+
+if ! python3 oversights/test_weighted_mean_with_different_weights.py;
+then
+  err "oversights/test_weighted_mean_with_different_weights failed"
+  list_logs+=("oversights/test_weighted_mean_with_different_weights failed")
+else
+  list_logs+=("oversights/test_weighted_mean_with_different_weights passed")
 fi
 
 if ! python3 oversights/test_attribution_with_hidden_negative.py;

@@ -31,11 +31,11 @@ def test_1():
     """
     table = pandas.read_csv('data/matches.csv')
     query_result = show.show(table,
-                                dimensions=['city'],
-                                slices=[('season', Filters.EQUAL_TO, 2017)],
-                                date_range=('2008-05-08', '2017-04-12'),
-                                date_column_name='date',
-                                date_format='%Y-%m-%d')
+                             dimensions=['city'],
+                             slices=[('season', Filters.EQUAL_TO, 2017)],
+    	                       date_range=('2008-05-08', '2017-04-12'),
+    	                       date_column_name='date',
+    	                       day_first=False)
 
 
     print(query_result);
@@ -50,10 +50,8 @@ def test_1():
 7     Indore
 8       Pune
 9     Mumbai"""
-
-    expected_suggestions = "[]"
-
     assert(expected_result == query_result[0].to_string())
+    expected_suggestions = "[]"
     assert(expected_suggestions == str(query_result[1]))
 
 
@@ -64,18 +62,18 @@ def test_2():
     """
     table = pandas.read_csv('data/matches.csv')
     query_result = show.show(table,
-                                dimensions=['player_of_match'],
-                                metric='win_by_runs' ,
-                                slices=[('season', Filters.EQUAL_TO, 2017)],
-                                date_range=('2017-05-09', '2017-05-12'),
-                                date_column_name='date', date_format='%Y-%m-%d',
-                                summary_operator=SummaryOperators.MEAN)
+                              dimensions=['player_of_match'],
+                              metric='win_by_runs' ,
+                              slices=[('season', Filters.EQUAL_TO, 2017)],
+    	                        date_range=('2017-05-09', '2017-05-12'),
+    	                        date_column_name='date', day_first=False,
+    	                        summary_operator=SummaryOperators.MEAN)
     print(query_result)
-    expected_result = """  player_of_match  win_by_runs
-0         KK Nair            7
-1       MM Sharma           14
-2         SS Iyer            0
-3         WP Saha            7"""
+    expected_result = """  player_of_match  MEAN of win_by_runs
+0         KK Nair                    7
+1       MM Sharma                   14
+2         SS Iyer                    0
+3         WP Saha                    7"""
 
     expected_suggestions = "[]"
 
@@ -102,11 +100,10 @@ def test_3():
 7    2015
 8    2016
 9    2017"""
-
-    expected_suggestions = "[]"
-
     assert(expected_result == query_result[0].to_string())
+    expected_suggestions = "[]"
     assert(expected_suggestions == str(query_result[1]))
+
 
 def test_4():
     """An example from the IPL dataset
@@ -134,11 +131,12 @@ def test_5():
     """
     table = pandas.read_csv('data/matches.csv')
     query_result = show.show(table,
-                                dimensions=['umpire1'],
-                                slices=[('season', Filters.EQUAL_TO, 2017)],
-                                date_range=('2017-05-09', '2017-05-12'),
-                                date_column_name='date', date_format='%Y-%m-%d',
-                                summary_operator=SummaryOperators.DISTINCT)
+                              dimensions=['umpire1'],
+                              slices=[('season', Filters.EQUAL_TO, 2017)],
+    	                        date_range=('2017-05-09', '2017-05-12'),
+    	                        date_column_name='date', day_first=False,
+    	                        summary_operator=SummaryOperators.DISTINCT)
+
     print(query_result)
     expected_result = """                 umpire1
 0             A Deshmukh
@@ -221,6 +219,7 @@ def test_6():
 57               Mumbai Indians
 58               Mumbai Indians"""
 
+
     expected_suggestions = "[]"
 
     assert(expected_result == query_result[0].to_string())
@@ -234,11 +233,13 @@ def test_7():
     table = pandas.read_csv('data/matches.csv')
     query_result = show.show(table,
                                 metric='win_by_runs' ,
-                                date_column_name='date', date_format='%Y-%m-%d',
+                                date_column_name='date', day_first=False,
                                 summary_operator=SummaryOperators.SUM)
     print(query_result)
-    expected_result = """  Summary Operator  win_by_runs
-0              SUM         8702"""
+
+
+    expected_result = """   SUM of win_by_runs
+0                8702"""
     
     expected_suggestions = "[]"
 
@@ -256,11 +257,12 @@ def test_8():
                                 metric='win_by_runs' ,
                                 slices=[('season', Filters.EQUAL_TO, 2017)],
                                 date_range=('2017-05-09', '2017-05-12'),
-                                date_column_name='date', date_format='%Y-%m-%d',
+                                date_column_name='date', day_first=False,
                                 summary_operator=SummaryOperators.MEAN)
     print(query_result)
-    expected_result = """  Summary Operator  win_by_runs
-0             MEAN            7"""
+
+    expected_result = """   MEAN of win_by_runs
+0                    7"""
 
     expected_suggestions = "[]"
 
@@ -277,10 +279,10 @@ def test_9():
                                 dimensions=['Resident City'] ,
                                 summary_operator=SummaryOperators.MEAN)
     print(query_result)
-    expected_result = """  Resident City  Salary(in $)
-0       Chicago  1.658889e+05
-1     Palo Alto  3.033333e+04
-2    Washington  2.002740e+07"""
+    expected_result = """  Resident City  MEAN of Salary(in $)
+0       Chicago          1.658889e+05
+1     Palo Alto          3.033333e+04
+2    Washington          2.002740e+07"""
 
     expected_suggestions = "[{'suggestion': 'Median is very different from the Mean', 'oversight': <Oversights.MEAN_VS_MEDIAN: 7>, 'is_row_level_suggestion': True, 'confidence_score': 3.1249999406334665, 'row_list': [{'row': 3, 'confidence_score': 3.1249999406334665}]}]"
 
@@ -298,13 +300,13 @@ def test_10():
                                 dimensions=['subject'] ,
                                 summary_operator=SummaryOperators.PROPORTION_OF_SUM)
     print(query_result)
-    expected_result = """          subject     marks
-0  Social science  0.399558
-1         english  0.000000
-2           maths  0.200883
-3         science  0.399558"""
+    expected_result = """          subject  PROPORTION_OF_SUM of marks
+0  Social science                    0.399558
+1         english                    0.000000
+2           maths                    0.200883
+3         science                    0.399558"""
 
-    expected_suggestions = "[{'suggestion': 'There exists negative values among the values on which proportion is being applied', 'oversight': <Oversights.ATTRIBUTION_WITH_HIDDEN_NEGATIVES: 11>, 'is_row_level_suggestion': True, 'confidence_score': 1, 'row_list': [{'row': 3, 'confidence_score': 1}, {'row': 4, 'confidence_score': 1}]}]"
+    expected_suggestions = "[{'suggestion': 'There exists negative values among the values on which proportion is being applied', 'oversight': <Oversights.ATTRIBUTION_WITH_HIDDEN_NEGATIVES: 11>, 'is_row_level_suggestion': True, 'confidence_score': 1, 'row_list': [{'row': 2, 'confidence_score': 1}, {'row': 3, 'confidence_score': 1}]}]"
 
     assert(expected_result == query_result[0].to_string())
     assert(expected_suggestions == str(query_result[1]))

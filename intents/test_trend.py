@@ -26,10 +26,11 @@ def test_1():
     """
     table = pandas.read_csv('data/matches.csv')
     query_result = trend.trend(table, 'win_by_runs', Granularities.ANNUALLY,
-                                  SummaryOperators.MAX,
-                                  date_range=('2008-05-08', '2010-04-12'),
-                                  date_column_name='date',
-                                  date_format='%Y-%m-%d')
+                                SummaryOperators.MAX,
+                                date_range=('2008-05-08', '2010-04-12'),
+                                date_column_name='date',
+                                day_first=False)   
+
     print(query_result)
 
     expected_result = """         date  win_by_runs

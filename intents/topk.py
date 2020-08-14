@@ -32,7 +32,10 @@ from util import aspects, oversights_order, rank_oversights
 def topk(table, metric, dimensions, is_asc, k, **kwargs):
     """ This function returns both the results according to the intent
     as well as the debiasing suggestions.
-    
+
+    Also, if summary operator is applied, the name of metric column is
+    renamed to "<summary operator> of metric".
+
     Oversights that may be detected in top-k
     1. Regression to the mean
     2. Looking at tails to find causes
@@ -61,10 +64,10 @@ def topk(table, metric, dimensions, is_asc, k, **kwargs):
             Tuple of start_date and end_date
         date_column_name: Type-str
             It is the name of column which contains date
-        date_format: Type-str
-            It is required by datetime.strp_time to parse the date in the format
-            Format Codes
-https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
+        day_first: Type-str
+            Day_first denotes that does day in the date occurs before month in the
+            dates in the date column
+            Example - '29-02-19', here day_first is true
         slices: Type-List of tuples
             Tuple represents the conditon to keep the row.
             (column_name, filter, value)
@@ -81,13 +84,15 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
     Returns:
         The function will return both suggestions and the results in a tuple.
         (results, suggestions)
-        results: Type - pandas dataframe, The results of the intended top-k
-        suggestions: Type - List of strings, List of suggestions.
 
+        results: Type -pandas dataframe, The results of the weighted mean intent
+
+        suggestions: Type - List of dictionaries(suggestion structure), List of
+            suggestions.
     """
     date_column_name = kwargs.get('date_column_name', 'date')
     date_range = kwargs.get('date_range', None)
-    date_format = kwargs.get('date_format', '%Y-%m-%d')
+    day_first = kwargs.get('day_first', False)
 
     slices = kwargs.get('slices', None)
 
@@ -95,7 +100,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     result_tuple = topk_results(table, metric, dimensions, is_asc, k,
                                 date_column_name=date_column_name,
-                                date_range=date_range, date_format=date_format,
+                                date_range=date_range, day_first=day_first,
                                 slices=slices,
                                 summary_operator=summary_operator)
 
@@ -113,7 +118,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
         rmt_suggestion = regression_to_mean(table, metric, dimensions, is_asc, k,
                                             date_column_name=date_column_name,
                                             date_range=date_range,
-                                            date_format=date_format, slices=slices,
+                                            day_first=day_first, slices=slices,
                                             summary_operator=summary_operator)
 
         if rmt_suggestion is not None:
@@ -121,7 +126,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     results_without_k_condition = topk_results(table, metric, dimensions, is_asc, -1,
                                                date_column_name=date_column_name,
-                                               date_range=date_range, date_format=date_format,
+                                               date_range=date_range, day_first=day_first,
                                                slices=slices,
                                                summary_operator=summary_operator)[0]
 
@@ -147,6 +152,9 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     order = oversights_order.ORDER_IN_TOPK
     suggestions = rank_oversights.rank_oversights(suggestions, order)
+
+    if summary_operator is not None:
+        result_table = aspects.update_metric_column_name(result_table, summary_operator, metric)
 
     return (result_table, suggestions)
 
@@ -183,10 +191,10 @@ def topk_results(table, metric, dimensions, is_asc, k, **kwargs):
             Tuple of start_date and end_date
         date_column_name: Type-str
             It is the name of column which contains date
-        date_format: Type-str
-            It is required by datetime.strp_time to parse the date in the format
-            Format Codes
-https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
+        day_first: Type-str
+            Day_first denotes that does day in the date occurs before month in the
+            dates in the date column
+            Example - '29-02-19', here day_first is true
         slices: Type-List of tuples
             Tuple represents the conditon to keep the row.
             (column_name, filter, value)
@@ -209,7 +217,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
     """
     date_column_name = kwargs.get('date_column_name', 'date')
     date_range = kwargs.get('date_range', None)
-    date_format = kwargs.get('date_format', '%Y-%m-%d')
+    day_first = kwargs.get('day_first', False)
 
     slices = kwargs.get('slices', None)
 
@@ -217,7 +225,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
 
     table = aspects.apply_date_range(table, date_range,
-                                     date_column_name, date_format)
+                                     date_column_name, day_first)
 
     table = aspects.slice_table(table, slices)
 

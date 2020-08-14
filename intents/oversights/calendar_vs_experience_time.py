@@ -19,7 +19,7 @@ The oversight occurs in the slice compare intent when date range is used
 and both the slices are not consistent & differs in experience time.
 """
 import pandas, datetime
-from util import aspects, enums
+from util import aspects, enums, date_module
 from util.enums import SummaryOperators, Filters, Oversights
 from util import constants 
 
@@ -51,10 +51,8 @@ def calendar_vs_experience_time(table, metric, all_dimensions, slice_compare_col
             Tuple of start_date and end_date
         date_column_name: Type-str
             It is the name of column which contains date
-        date_format: Type-str
-            It is required by datetime.strp_time to parse the date in 
-            the format Format Codes
-https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
+        day_first: Type-Bool
+            Tells whether day occurs first or month in the date
         slices: Type-List of tuples
             Tuple represents the conditon to keep the row.
             (column_name, filter, value)
@@ -75,7 +73,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     date_column_name = kwargs.get('date_column_name', 'date')
     date_range = kwargs.get('date_range', None)
-    date_format = kwargs.get('date_format', '%Y-%m-%d')
+    day_first = kwargs.get('day_first', False)
 
     slices = kwargs.get('slices', None)
 
@@ -87,7 +85,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
         return
 
     table = aspects.apply_date_range(table, date_range,
-                                     date_column_name, date_format)
+                                     date_column_name, day_first)
     
     slice_list = []
     if slices is not None:
@@ -109,8 +107,8 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
             date_column_2.append(table.loc[row, date_column_name])
     
     # converting string dates to datetime objects
-    date_column_1 = [datetime.datetime.strptime(date, date_format) for date in date_column_1]
-    date_column_2 = [datetime.datetime.strptime(date, date_format) for date in date_column_2]
+    date_column_1 = [date_module.str_to_datetime(date, day_first) for date in date_column_1]
+    date_column_2 = [date_module.str_to_datetime(date, day_first) for date in date_column_2]
 
 
     date_column_1.sort()

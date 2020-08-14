@@ -34,6 +34,8 @@ def slice_compare(table, metric, all_dimensions, all_metric,
                                summary_operator, **kwargs):
     """ This function returns both the results according to the intent
     as well as the debiasing suggestions.
+    Also, if summary operator is applied, the name of metric column is
+    renamed to "<summary operator> of metric".
     Some of the oversights considered in this intent are-
     1. simpson's paradox
     Args:
@@ -56,9 +58,9 @@ def slice_compare(table, metric, all_dimensions, all_metric,
         date_column_name: Type-str
             It is the name of column which contains date
         day_first: Type-str
-            It is required by datetime.strp_time to parse the date in the format
-            Format Codes
-https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
+            Day_first denotes that does day in the date occurs before month in the
+            dates in the date column
+            Example - '29-02-19', here day_first is true
         slices: Type-List of tuples
             Tuple represents the conditon to keep the row.
             (column_name, filter, value)
@@ -83,7 +85,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
     """
     date_column_name = kwargs.get('date_column_name', 'date')
     date_range = kwargs.get('date_range', None)
-    day_first = kwargs.get('day_first', '%Y-%m-%d')
+    day_first = kwargs.get('day_first', False)
 
     slices = kwargs.get('slices', None)
 
@@ -163,6 +165,9 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     suggestions = rank_oversights.rank_oversights(suggestions, order)
 
+    if summary_operator is not None:
+        result_table = aspects.update_metric_column_name(result_table, summary_operator, metric)
+
     return (result_table, suggestions)
 
 def _slice_compare_results(table, metric, slice_compare_column,
@@ -222,7 +227,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     date_column_name = kwargs.get('date_column_name', 'date')
     date_range = kwargs.get('date_range', None)
-    day_first = kwargs.get('day_first', '%Y-%m-%d')
+    day_first = kwargs.get('day_first', False)
 
     slices = kwargs.get('slices', None)
 
@@ -320,7 +325,7 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     date_column_name = kwargs.get('date_column_name', 'date')
     date_range = kwargs.get('date_range', None)
-    day_first = kwargs.get('day_first', '%Y-%m-%d')
+    day_first = kwargs.get('day_first', False)
 
     slices = kwargs.get('slices', None)
 

@@ -21,8 +21,8 @@ on it and return the updated table.
 Example in slicing - the rows that do not satisft the slicing condition
 are dropped.
 """
+from util import enums, date_module
 import datetime , statistics
-from util import enums
 from oversights.mean_vs_median import mean_vs_median
 from oversights.attribution_with_hidden_negative import attribution_with_hidden_negative
 
@@ -35,7 +35,7 @@ group_row_index = 1
 suggestions = []
 
 
-def apply_date_range(table, date_range, date_column_name, date_format,  **kwargs):
+def apply_date_range(table, date_range, date_column_name, day_first, **kwargs):
     """This function removes the rows from from the table that
        are not in the date range(contains start date and end date) given.
 
@@ -44,15 +44,13 @@ def apply_date_range(table, date_range, date_column_name, date_format,  **kwargs
             It has the contents of the csv file
         date_range: Type-tuple
             Tuple of start_date and end_date
+            start_date & end_date are in a fixed format - '%Y-%m-%d'
         date_column_name: Type-str
             It is the name of column which contains date
-        date_format: Type-str
-            It is required by datetime.strp_time to parse the date in the format
-            Format Codes
-https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
-        reset_index: Bool
-            True/False- to perform reset index or not
-            Used only for generating the new column in insert_as_column
+        day_first: Type-str
+            Day_first denotes that does day in the date occurs before month in the
+            dates in the date column
+            Example - '29-02-19', here day_first is true
 
     Returns:
         The updated table after aplying the condition, in pandas.dataframe type
@@ -60,28 +58,24 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
     if date_range is None:
         return table
 
-    # initialized with True, so will not affect intents layer
     reset_index = kwargs.get('reset_index', True)
-
+    
     num_rows = table.shape[0]
 
-    rows_to_be_dropped = []
-
     for row in range(num_rows):
-        row_date = datetime.datetime.strptime(table.loc[row, date_column_name],
-                                              date_format)
-        start_date = datetime.datetime.strptime(date_range[0], date_format)
-        end_date = datetime.datetime.strptime(date_range[1], date_format)
+        row_date = date_module.str_to_datetime(table.loc[row, date_column_name],
+                                               day_first)
+
+        # format of start_date & end_date strings is always fixed
+        start_date = datetime.datetime.strptime(date_range[0], '%Y-%m-%d')
+        end_date = datetime.datetime.strptime(date_range[1], '%Y-%m-%d')
 
         if row_date < start_date or end_date < row_date:
-            rows_to_be_dropped.append(row)
+            table = table.drop([row])
 
-    table = table.drop(rows_to_be_dropped)
-    
     # drop=True drops the new columnn named 'index' created in reset_index call
     if reset_index is True:
         table = table.reset_index(drop=True)
-
     return table
 
 def slice_table(table, slices,  **kwargs):
@@ -474,3 +468,34 @@ def granular_time(row_date, granularity):
         row_date = row_date.replace(second=0, minute=0, hour=0, day=1, month=1)
 
     return row_date
+
+def update_metric_column_name(table, summary_operator, metric):
+    """
+    The function updates the name of the metric column to
+    '<summary_operator> of metric'.
+
+    Args:
+        table: Type-Pandas.DataFrame 
+            The table in which the name of metric is to be updated
+        summary_operator: Type-SummaryOperators enum members
+            It denotes the summary operator
+        metric: Type-string
+            It is the name of the column on which
+            summary operator is applied in case of grouping. Metric could a column
+            containing strings, if we are applying count operator on it.
+
+    Returns:
+        The table with name of metric column updated.
+    """
+    if metric is None:
+        return table
+    # New name of metric column
+    updated_metric_name = '{} of {}'.format(summary_operator.name, metric)
+
+    # Create new column 
+    table[updated_metric_name] = table[metric]
+
+    # Drop old column
+    table = table.drop([metric], axis=1)
+
+    return table

@@ -21,6 +21,7 @@ Some of the operations are optional.
 """
 
 from util import aspects, oversights_order, rank_oversights
+from oversights import weighted_mean_with_different_weights
 
 def show(table,**kwargs):
     """This function will implement the show intent
@@ -32,7 +33,9 @@ def show(table,**kwargs):
     If the summary_operator is not None , it groups by dimensions.
     If some of the optional args are None (not passed),
     it is assumed that we don't have to apply them.
-
+    
+    Also, if summary operator is applied, the name of metric column is
+    renamed to "<summary operator> of metric".
     Args:
         table: Type-pandas.dataframe
             It has the contents of the csv file
@@ -48,10 +51,10 @@ def show(table,**kwargs):
             Tuple of start_date and end_date
         date_column_name: Type-str
             It is the name of column which contains date
-        date_format: Type-str
-            It is required by datetime.strp_time to parse the date in the format
-            Format Codes
-            https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
+        day_first: Type-str
+            Day_first denotes that does day in the date occurs before month in the
+            dates in the date column
+            Example - '29-02-19', here day_first is true
         slices: Type-List of tuples
             Tuple represents the conditon to keep the row.
             (column_name, filter, value)
@@ -68,14 +71,16 @@ def show(table,**kwargs):
     Returns:
         The function will return both suggestions and the results in a tuple.
         (results, suggestions)
-        results: Type - pandas dataframe, The results of the intended show
-        suggestions: Type - List of strings, List of suggestions.
 
+        results: Type - pandas dataframe, The results of the intended show
+
+        suggestions: Type - List of dictionaries(suggestion structure), List of
+            suggestions.
     """
 
     date_column_name = kwargs.get('date_column_name', 'date')
     date_range = kwargs.get('date_range', None)
-    date_format = kwargs.get('date_format', 'yyyy-mm-dd')
+    day_first = kwargs.get('day_first', False)
 
     slices = kwargs.get('slices', None)
 
@@ -85,7 +90,7 @@ def show(table,**kwargs):
 
     dimensions = kwargs.get('dimensions',None)
 
-    table = aspects.apply_date_range(table, date_range, date_column_name, date_format)
+    table = aspects.apply_date_range(table, date_range, date_column_name, day_first)
 
     table = aspects.slice_table(table, slices)
 
@@ -111,11 +116,33 @@ def show(table,**kwargs):
         # To groupby 'Summary Operator' column inserted
         dimensions.append('Summary Operator')
 
+        after_group_by = aspects.group_by(table, dimensions, summary_operator)
+  
+        table = after_group_by['table']
+
+        suggestions = []
+
+        if len(after_group_by['suggestions']) > 0:
+            suggestions.extend(after_group_by['suggestions'])
+
+        # Droping the 'Summary Operator' column which was inserted above
+        table = table.drop(columns=['Summary Operator'])
+        
+        table = aspects.update_metric_column_name(table, summary_operator, metric)
+        
+        return (table, suggestions)
+      
     after_group_by = aspects.group_by(table, dimensions, summary_operator)
 
     table = after_group_by['table']
 
     suggestions = []
+
+    different_weight_suggestion = weighted_mean_with_different_weights.\
+                                  weighted_mean_with_different_weights(table, metric)
+
+    if different_weight_suggestion is not None:
+        suggestions.append(different_weight_suggestion)
 
     if len(after_group_by['suggestions']) > 0:
         suggestions.extend(after_group_by['suggestions'])
@@ -123,9 +150,15 @@ def show(table,**kwargs):
     order = oversights_order.ORDER_IN_SHOW
     suggestions = rank_oversights.rank_oversights(suggestions, order)
 
+    if summary_operator is not None:
+        table = aspects.update_metric_column_name(table, summary_operator, metric)
+
     return (table , suggestions)
 
+    order = oversights_order.ORDER_IN_SHOW
+    suggestions = rank_oversights.rank_oversights(suggestions, order)
 
+    return (table , suggestions)
 
 
 def _add_temporary_column_of_summary_operator(table,summary_operator):
