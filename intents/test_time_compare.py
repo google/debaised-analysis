@@ -40,9 +40,9 @@ def test_1():
                                              )
     print(query_result[0])
 
-    expected_result = """  team_name            date_of_match  total_run
-0        MI  01/01/2008 - 31/12/2009        776
-1        MI  01/01/2010 - 31/12/2011        420"""
+    expected_result = """  team_name            date_of_match  SUM of total_run
+0        MI  01/01/2008 - 31/12/2009               776
+1        MI  01/01/2010 - 31/12/2011               420"""
     expected_suggestions = "[]"
 
     assert(expected_result == query_result[0].to_string())
@@ -67,9 +67,9 @@ def test_2():
                                              dimensions = ['home_team', 'away_team', 'country'])
     print(query_result)
 
-    expected_result = """  home_team away_team  country                     date  tournament
-0   England     Wales  England  1871-11-30 - 1950-12-30          33
-1   England     Wales  England  1950-12-31 - 2020-01-01          19"""
+    expected_result = """  home_team away_team  country                     date  COUNT of tournament
+0   England     Wales  England  1871-11-30 - 1950-12-30                   33
+1   England     Wales  England  1950-12-31 - 2020-01-01                   19"""
     expected_suggestions = "[]"
 
     assert(expected_result == query_result[0].to_string())

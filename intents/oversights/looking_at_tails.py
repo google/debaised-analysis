@@ -105,6 +105,9 @@ def _get_param_in_float_column(column, k):
     """
     standard_deviation = column.std()
 
+    if standard_deviation == 0:
+        return 0
+
     average_of_topk = column[:k].mean()
 
     average_of_others = column[k:].mean()
