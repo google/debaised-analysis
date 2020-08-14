@@ -37,7 +37,7 @@ def test_1():
 
     print(suggestion)
 
-    expected_suggestion = """{'oversight': <Oversights.WRONG_POINTS: 12>, 'suggestion': 'Some cells in the table may be wrongly written, maybe to represent NO data', 'confidence_score': 0.46153846153846156}"""
+    expected_suggestion = """{'oversight': <Oversights.WRONG_POINTS: 13>, 'suggestion': 'Some cells in the table may be wrongly written, maybe to represent NO data', 'confidence_score': 0.46153846153846156}"""
 
     assert(expected_suggestion == str(suggestion))
 
@@ -54,7 +54,7 @@ def test_2():
 
     print(suggestion)
 
-    expected_suggestion = """{'oversight': <Oversights.WRONG_POINTS: 12>, 'suggestion': 'Some of the entry in the table may have been wrongly typed as they excede the sum of other entries'}"""
+    expected_suggestion = """{'oversight': <Oversights.WRONG_POINTS: 13>, 'suggestion': 'Some of the entry in the table may have been wrongly typed as they excede the sum of other entries'}"""
 
     assert(expected_suggestion == str(suggestion))
 

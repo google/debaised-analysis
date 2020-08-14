@@ -306,7 +306,7 @@ def test_10():
 2           maths                    0.200883
 3         science                    0.399558"""
 
-    expected_suggestions = "[{'suggestion': 'There exists negative values among the values on which proportion is being applied', 'oversight': <Oversights.ATTRIBUTION_WITH_HIDDEN_NEGATIVES: 11>, 'is_row_level_suggestion': True, 'confidence_score': 1, 'row_list': [{'row': 3, 'confidence_score': 1}, {'row': 4, 'confidence_score': 1}]}]"
+    expected_suggestions = "[{'suggestion': 'There exists negative values among the values on which proportion is being applied', 'oversight': <Oversights.ATTRIBUTION_WITH_HIDDEN_NEGATIVES: 11>, 'is_row_level_suggestion': True, 'confidence_score': 1, 'row_list': [{'row': 2, 'confidence_score': 1}, {'row': 3, 'confidence_score': 1}]}]"
 
     assert(expected_result == query_result[0].to_string())
     assert(expected_suggestions == str(query_result[1]))

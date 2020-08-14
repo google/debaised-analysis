@@ -23,6 +23,7 @@ Some of the operations are optional.
 
 from util import aspects, oversights_order, rank_oversights
 from oversights.simpsons_paradox import simpsons_paradox
+from oversights.calendar_vs_experience_time import calendar_vs_experience_time
 from oversights.benchmark_set_too_different import benchmark_set_too_different
 from oversights.top_down_error import top_down_error
 from util.enums import SummaryOperators, Filters
@@ -146,7 +147,19 @@ def slice_compare(table, metric, all_dimensions, all_metric,
                                                date_range = date_range, 
                                                day_first = day_first,
                                                slices = slices)
-    suggestions += simpsons_paradox_suggestion + top_down_error_suggestion
+
+    calendar_vs_experience_time_suggestion = calendar_vs_experience_time(table, metric, all_dimensions,
+                                                                         slice_compare_column, slice1,
+                                                                         slice2, summary_operator,
+                                                                         dimensions = dimensions,
+                                                                         date_column_name = date_column_name,
+                                                                         date_range = date_range, 
+                                                                         day_first = day_first,
+                                                                         slices = slices)
+    suggestions = simpsons_paradox_suggestion + top_down_error_suggestion
+
+    if calendar_vs_experience_time_suggestion is not None:
+      suggestions.append(calendar_vs_experience_time)
 
     order = oversights_order.ORDER_IN_SLICE_COMPARE
 

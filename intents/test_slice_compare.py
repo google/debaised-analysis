@@ -145,8 +145,7 @@ def test_5():
 1   7th            B             75
 2   8th            A             75
 3   8th            B             75"""
-    expected_suggestion = "[{'suggestion': 'Median is very different from the Mean', 'oversight': <Oversights.MEAN_VS_MEDIAN: 7>, 'is_row_level_suggestion': True, 'confidence_score': -3.0792014356780038, 'row_list': [{'row': 1, 'confidence_score': -3.0792014356780038}, {'row': 2, 'confidence_score': 3.0792014356780038}, {'row': 3, 'confidence_score': 3.0792014356780038}, {'row': 4, 'confidence_score': -3.0792014356780038}]}, {'suggestion': 'Some values are similar here but will vary if we add subject for grouping ', 'oversight': <Oversights.TOP_DOWN_ERROR: 9>, 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}, {'row': 3, 'confidence_score': 100}, {'row': 4, 'confidence_score': 100}]}, {'suggestion': 'the relation between slices might changed a lot if you will consider subject in grouping.', 'oversight': <Oversights.SIMPSONS_PARADOX: 8>, 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}]"
-
+    expected_suggestion = "[{'suggestion': 'Some values are similar here but will vary if we add subject for grouping ', 'oversight': <Oversights.TOP_DOWN_ERROR: 9>, 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}, {'row': 3, 'confidence_score': 100}, {'row': 4, 'confidence_score': 100}]}, {'suggestion': 'the relation between slices might changed a lot if you will consider subject in grouping.', 'oversight': <Oversights.SIMPSONS_PARADOX: 8>, 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}]"
     assert(expected_output == query_result[0].to_string())
     assert(expected_suggestion == str(query_result[1]))
 
