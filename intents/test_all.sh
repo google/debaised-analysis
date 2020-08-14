@@ -159,6 +159,14 @@ else
   list_logs+=("oversights/test_looking_at_tails passed")
 fi
 
+if ! python3 oversights/test_wrong_points.py;
+then
+  err "oversights/test_wrong_points failed"
+  list_logs+=("oversights/test_wrong_points failed")
+else
+  list_logs+=("oversights/test_wrong_points passed")
+fi
+
 if ! python3 oversights/test_benchmark_set_too_different.py;
 then
   err "oversights/test_benchmark_set_too_different failed"
