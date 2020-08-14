@@ -142,8 +142,8 @@ def hello_http(request):
         updated_suggestions = []
         for suggestion in suggestions:
             updated_suggestion = suggestion
-            if 'changelist' in suggestion.keys():
-                updated_suggestion['json'] = func(request_json, suggestion['changelist'])
+            if 'change_list' in suggestion.keys():
+                updated_suggestion['json'] = func(request_json, suggestion['change_list'])
             updated_suggestions.append(updated_suggestion)
 
         suggestions = updated_suggestions
@@ -163,8 +163,8 @@ def hello_http(request):
         updated_suggestions = []
         for suggestion in suggestions:
             updated_suggestion = suggestion
-            if 'changelist' in suggestion.keys():
-                updated_suggestion['json'] = func(request_json, suggestion['changelist'])
+            if 'change_list' in suggestion.keys():
+                updated_suggestion['json'] = func(request_json, suggestion['change_list'])
             updated_suggestion['oversight'] = updated_suggestion['oversight'].name
             updated_suggestions.append(updated_suggestion)
 
@@ -190,8 +190,8 @@ def hello_http(request):
 
         for suggestion in suggestions:
             updated_suggestion = suggestion
-            if 'changelist' in suggestion.keys():
-                updated_suggestion['json'] = func(request_json, suggestion['changelist'])
+            if 'change_list' in suggestion.keys():
+                updated_suggestion['json'] = func(request_json, suggestion['change_list'])
             updated_suggestion['oversight'] = updated_suggestion['oversight'].name
             updated_suggestions.append(updated_suggestion)
 
@@ -212,8 +212,8 @@ def hello_http(request):
 
         for suggestion in suggestions:
             updated_suggestion = suggestion
-            if 'changelist' in suggestion.keys():
-                updated_suggestion['json'] = func(request_json, suggestion['changelist'])
+            if 'change_list' in suggestion.keys():
+                updated_suggestion['json'] = func(request_json, suggestion['change_list'])
             updated_suggestion['oversight'] = updated_suggestion['oversight'].name
             updated_suggestions.append(updated_suggestion)
 
@@ -274,6 +274,7 @@ def hello_http(request):
 
             json_ret['list_topk_indices'] = insert_as_column.insert_as_column_topk_column(table, cheader_to_clabel, all_row_labels[0], all_row_labels[-1], all_column_labels[0], all_column_labels[-1], filter_column_label, metric, is_asc, k)
 
+    print(json_ret['suggestions'])
     json_string = json.dumps(json_ret)
     return json_string
 
@@ -371,9 +372,9 @@ def _str_to_time_granularity_enum(time_granularity):
     else:
         raise Exception('Granularity not supported')
 
-def func(inp_json, changelist):
-    for key in changelist.keys():
-        inp_json[key] = changelist[key]
+def func(inp_json, change_list):
+    for key in change_list.keys():
+        inp_json[key] = change_list[key]
 
     return inp_json
 
@@ -415,8 +416,8 @@ def get_hardcoded_mean_vs_median_suggestion():
     suggestion['is_row_level_suggestion'] = True
     suggestion['row_list'] = row_list
 
-    changelist = {'summaryOperator':'Median'}
-    suggestion['changelist'] = changelist
+    change_list = {'summaryOperator':'Median'}
+    suggestion['change_list'] = change_list
 
     return suggestion
 
