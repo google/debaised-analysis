@@ -14,6 +14,8 @@ limitations under the License.
 """
 This module contains the tests for attribution_with_hidden_negative.py
 """
+import sys
+sys.path.append(".")
 
 from attribution_with_hidden_negative import attribution_with_hidden_negative
 

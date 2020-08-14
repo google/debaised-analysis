@@ -125,6 +125,8 @@ def hello_http(request):
 
     suggestions = []
 
+    wrong_points_suggestion = wrong_points.wrong_points(query_table_dataframe)
+
     if intent == 'show':
         query_table_dataframe = show(query_table_dataframe,
                                      slices=slices_list,
@@ -170,7 +172,7 @@ def hello_http(request):
 
         suggestions = updated_suggestions
 
-                                                                      
+
     elif intent == 'slice_compare':
         query_result = slice_compare.slice_compare(query_table_dataframe,
                                                    metric, all_dimensions,
@@ -244,7 +246,6 @@ def hello_http(request):
     else:
         raise Exception("Intent name does not match")
 
-    wrong_points_suggestion = wrong_points.wrong_points(query_table_dataframe)
 
 
     if wrong_points_suggestion is not None:
@@ -274,7 +275,6 @@ def hello_http(request):
 
             json_ret['list_topk_indices'] = insert_as_column.insert_as_column_topk_column(table, cheader_to_clabel, all_row_labels[0], all_row_labels[-1], all_column_labels[0], all_column_labels[-1], filter_column_label, metric, is_asc, k)
 
-    print(json_ret['suggestions'])
     json_string = json.dumps(json_ret)
     return json_string
 
