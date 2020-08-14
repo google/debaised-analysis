@@ -468,3 +468,34 @@ def granular_time(row_date, granularity):
         row_date = row_date.replace(second=0, minute=0, hour=0, day=1, month=1)
 
     return row_date
+
+def update_metric_column_name(table, summary_operator, metric):
+    """
+    The function updates the name of the metric column to
+    '<summary_operator> of metric'.
+
+    Args:
+        table: Type-Pandas.DataFrame 
+            The table in which the name of metric is to be updated
+        summary_operator: Type-SummaryOperators enum members
+            It denotes the summary operator
+        metric: Type-string
+            It is the name of the column on which
+            summary operator is applied in case of grouping. Metric could a column
+            containing strings, if we are applying count operator on it.
+
+    Returns:
+        The table with name of metric column updated.
+    """
+    if metric is None:
+        return table
+    # New name of metric column
+    updated_metric_name = '{} of {}'.format(summary_operator.name, metric)
+
+    # Create new column 
+    table[updated_metric_name] = table[metric]
+
+    # Drop old column
+    table = table.drop([metric], axis=1)
+
+    return table

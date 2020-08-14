@@ -4,7 +4,7 @@
 <div id="debiasing-suggestions" class="card hide">
   <div class="container">
 
-    <div class="collapsible-card flexbox" onclick="toggleCardState(this)">  
+    <div id="collapse-card" class="collapsible-card flexbox" onclick="toggleCardState(this)">  
       <h3 id="suggestions-heading"></h3>
       <span class="icon-hover">
          <span 
@@ -22,6 +22,11 @@
     
     <div id="suggestions-content"></div>
     
+    <div class="update-cancel" style="margin-top: 1rem;">
+        <button id="previous" class="material-icons navigate-before" onclick="showPrevious()" style="margin-right: auto;">navigate_before</button>
+        <button id="next" class="material-icons navigate-next" onclick="showNext()">navigate_next</button>
+    </div>
+      
   </div>
 </div>
 

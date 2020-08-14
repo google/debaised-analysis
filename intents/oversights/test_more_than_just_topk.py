@@ -60,7 +60,7 @@ def test_1():
     suggestions = more_than_just_topk.more_than_just_topk(result_table, k, metric)
 
     print(suggestions)
-    expected_suggestions = """{'change_list': {'k': 11}, 'suggestion': 'value of UnitCost in some rows after the top-k is similar to the Kth row', 'confidence_score': 0.010367761396212786}"""
+    expected_suggestions = """{'change_list': {'k': 11}, 'suggestion': 'value of UnitCost in some rows after the top-k is similar to the Kth row', 'confidence_score': 0.0, 'oversight': <Oversights.MORE_THAN_JUST_TOPK: 3>}"""
 
     assert(expected_suggestions == str(suggestions))
 
@@ -84,9 +84,31 @@ def test_2():
     suggestions = more_than_just_topk.more_than_just_topk(result_table, k, metric)
 
     print(suggestions)
-    expected_suggestions = """{'change_list': {'k': 13}, 'suggestion': 'value of UnitCost in some rows after the top-k is similar to the Kth row', 'confidence_score': 0.0027918339214391703}"""
+    expected_suggestions = """{'change_list': {'k': 13}, 'suggestion': 'value of UnitCost in some rows after the top-k is similar to the Kth row', 'confidence_score': 0.0, 'oversight': <Oversights.MORE_THAN_JUST_TOPK: 3>}"""
 
     assert(expected_suggestions == str(suggestions))
+
+def test_3():
+    """
+    This test verifies the division by zero case when standard deviation is zero
+    Having all the elements will have standard deviation zero
+    The table is hardcoded as it's a rare case.
+    """
+    result_table = pandas.DataFrame()
+    result_table['Students'] = pandas.Series(['A', 'B', 'C', 'D'])
+    result_table['Marks'] = pandas.Series([100, 100, 100, 10])
+    metric = 'Marks'
+    k = 3
+
+    suggestions = more_than_just_topk.more_than_just_topk(result_table, k, metric)
+
+    print(suggestions)
+
+    expected_suggestions = 'None'
+
+    assert(expected_suggestions == str(suggestions))
+
+
 
 # print('Generating top-k results')
 # print(generate.__doc__)
@@ -99,5 +121,8 @@ test_1()
 
 print(test_2.__doc__)
 test_2()
+
+print(test_3.__doc__)
+test_3()
 
 print('Test cases completed')

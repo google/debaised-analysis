@@ -23,6 +23,7 @@ import json, pandas, enum, topk, slice_compare, correlation, trend, time_compare
 from flask import escape
 from show import show
 from util import enums, insert_as_column
+from oversight import wrong_points
 
 # ToDo : Change the name hello_http (default name on GCP) to a better name
 # that makes sense of the function & also make changes in the UI javascript
@@ -251,6 +252,11 @@ def hello_http(request):
 
     else:
         raise Exception("Intent name does not match")
+
+    wrong_points_suggestion = wrong_points.wrong_points(query_table_dataframe)
+
+    if wrong_points_suggestion is not None:
+        suggestions = [wrong_points_suggestion] + suggestions
 
     final_table = []
 

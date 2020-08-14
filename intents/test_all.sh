@@ -127,6 +127,14 @@ else
   list_logs+=("oversights/test_topk_vs_others passed")
 fi
 
+if ! python3 oversights/test_more_than_just_topk.py;
+then
+  err "oversights/test_more_than_just_topk failed"
+  list_logs+=("oversights/test_more_than_just_topk failed")
+else
+  list_logs+=("oversights/test_more_than_just_topk passed")
+fi
+
 if ! python3 oversights/test_simpsons_paradox.py;
 then
   err "oversights/test_simpsons_paradox failed"
@@ -149,6 +157,14 @@ then
   list_logs+=("oversights/test_looking_at_tails failed")
 else
   list_logs+=("oversights/test_looking_at_tails passed")
+fi
+
+if ! python3 oversights/test_wrong_points.py;
+then
+  err "oversights/test_wrong_points failed"
+  list_logs+=("oversights/test_wrong_points failed")
+else
+  list_logs+=("oversights/test_wrong_points passed")
 fi
 
 if ! python3 oversights/test_benchmark_set_too_different.py;
