@@ -32,7 +32,10 @@ from util import aspects, oversights_order, rank_oversights
 def topk(table, metric, dimensions, is_asc, k, **kwargs):
     """ This function returns both the results according to the intent
     as well as the debiasing suggestions.
-    
+
+    Also, if summary operator is applied, the name of metric column is
+    renamed to "<summary operator> of metric".
+
     Oversights that may be detected in top-k
     1. Regression to the mean
     2. Looking at tails to find causes
@@ -147,6 +150,9 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     order = oversights_order.ORDER_IN_TOPK
     suggestions = rank_oversights.rank_oversights(suggestions, order)
+
+    if summary_operator is not None:
+        result_table = aspects.update_metric_column_name(result_table, summary_operator, metric)
 
     return (result_table, suggestions)
 
