@@ -88,8 +88,10 @@ def more_than_just_topk(result_table, k, metric):
 
     confidence_score = abs(result_table[metric][new_k - 1] - result_table[metric][k - 1]) / standard_deviation_topk
 
+    print(new_k, k)
+
     if new_k != k:
-        change_list = {'k':new_k}
+        change_list = {'topKLimit':new_k}
         suggestion = {}
         suggestion['change_list'] = change_list
         suggestion['suggestion'] = 'value of ' + metric + ' in some rows after the top-k is similar to the Kth row'
