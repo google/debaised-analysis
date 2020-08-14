@@ -21,6 +21,7 @@ Some of the operations are optional.
 """
 
 from util import aspects, oversights_order, rank_oversights
+from oversights import weighted_mean_with_different_weights
 
 def show(table,**kwargs):
     """This function will implement the show intent
@@ -70,9 +71,11 @@ def show(table,**kwargs):
     Returns:
         The function will return both suggestions and the results in a tuple.
         (results, suggestions)
-        results: Type - pandas dataframe, The results of the intended show
-        suggestions: Type - List of strings, List of suggestions.
 
+        results: Type - pandas dataframe, The results of the intended show
+
+        suggestions: Type - List of dictionaries(suggestion structure), List of
+            suggestions.
     """
 
     date_column_name = kwargs.get('date_column_name', 'date')
@@ -135,6 +138,12 @@ def show(table,**kwargs):
 
     suggestions = []
 
+    different_weight_suggestion = weighted_mean_with_different_weights.\
+                                  weighted_mean_with_different_weights(table, metric)
+
+    if different_weight_suggestion is not None:
+        suggestions.append(different_weight_suggestion)
+
     if len(after_group_by['suggestions']) > 0:
         suggestions.extend(after_group_by['suggestions'])
 
@@ -146,7 +155,10 @@ def show(table,**kwargs):
 
     return (table , suggestions)
 
+    order = oversights_order.ORDER_IN_SHOW
+    suggestions = rank_oversights.rank_oversights(suggestions, order)
 
+    return (table , suggestions)
 
 
 def _add_temporary_column_of_summary_operator(table,summary_operator):

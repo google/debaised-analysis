@@ -31,11 +31,11 @@ def test_1():
     """
     table = pandas.read_csv('data/matches.csv')
     query_result = show.show(table,
-                                dimensions=['city'],
-                                slices=[('season', Filters.EQUAL_TO, 2017)],
-    	                        date_range=('2008-05-08', '2017-04-12'),
-    	                        date_column_name='date',
-    	                        day_first=False)
+                             dimensions=['city'],
+                             slices=[('season', Filters.EQUAL_TO, 2017)],
+    	                       date_range=('2008-05-08', '2017-04-12'),
+    	                       date_column_name='date',
+    	                       day_first=False)
 
 
     print(query_result);
@@ -50,10 +50,8 @@ def test_1():
 7     Indore
 8       Pune
 9     Mumbai"""
-
-    expected_suggestions = "[]"
-
     assert(expected_result == query_result[0].to_string())
+    expected_suggestions = "[]"
     assert(expected_suggestions == str(query_result[1]))
 
 
@@ -64,9 +62,9 @@ def test_2():
     """
     table = pandas.read_csv('data/matches.csv')
     query_result = show.show(table,
-                                dimensions=['player_of_match'],
-                                metric='win_by_runs' ,
-                                slices=[('season', Filters.EQUAL_TO, 2017)],
+                              dimensions=['player_of_match'],
+                              metric='win_by_runs' ,
+                              slices=[('season', Filters.EQUAL_TO, 2017)],
     	                        date_range=('2017-05-09', '2017-05-12'),
     	                        date_column_name='date', day_first=False,
     	                        summary_operator=SummaryOperators.MEAN)
@@ -102,11 +100,10 @@ def test_3():
 7    2015
 8    2016
 9    2017"""
-
-    expected_suggestions = "[]"
-
     assert(expected_result == query_result[0].to_string())
+    expected_suggestions = "[]"
     assert(expected_suggestions == str(query_result[1]))
+
 
 def test_4():
     """An example from the IPL dataset
@@ -134,11 +131,12 @@ def test_5():
     """
     table = pandas.read_csv('data/matches.csv')
     query_result = show.show(table,
-                                dimensions=['umpire1'],
-                                slices=[('season', Filters.EQUAL_TO, 2017)],
+                              dimensions=['umpire1'],
+                              slices=[('season', Filters.EQUAL_TO, 2017)],
     	                        date_range=('2017-05-09', '2017-05-12'),
     	                        date_column_name='date', day_first=False,
     	                        summary_operator=SummaryOperators.DISTINCT)
+
     print(query_result)
     expected_result = """                 umpire1
 0             A Deshmukh
@@ -221,6 +219,7 @@ def test_6():
 57               Mumbai Indians
 58               Mumbai Indians"""
 
+
     expected_suggestions = "[]"
 
     assert(expected_result == query_result[0].to_string())
@@ -237,6 +236,7 @@ def test_7():
                                 date_column_name='date', day_first=False,
                                 summary_operator=SummaryOperators.SUM)
     print(query_result)
+
 
     expected_result = """   SUM of win_by_runs
 0                8702"""
