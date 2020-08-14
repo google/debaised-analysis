@@ -260,16 +260,16 @@ def hello_http(request):
     json_ret = {'outputTable' : final_table, 'suggestions' : suggestions}
 
     if rangeA1Notation is not None :
-        all_row_labels = get_all_row_labels(rangeA1Notation)
-        all_column_labels = get_all_column_labels(rangeA1Notation)
-        cheader_to_clabel = get_cheader_to_clabel(table, all_column_labels)
+        all_row_labels = _get_all_row_labels(rangeA1Notation)
+        all_column_labels = _get_all_column_labels(rangeA1Notation)
+        cheader_to_clabel = _get_cheader_to_clabel(table, all_column_labels)
 
         if slices_list is not None:
             json_ret['slicing_passed_list'] = insert_as_column.insert_as_column_show(table, cheader_to_clabel, all_row_labels[0], all_row_labels[-1], all_column_labels[0], all_column_labels[-1], slices=slices_list)
 
         if intent == 'topk' and summary_operator is None:
-            filter_column_label_number = get_number_of_column_label(all_column_labels[-1]) + 1
-            filter_column_label = get_label_from_number(filter_column_label_number)
+            filter_column_label_number = _get_number_of_column_label(all_column_labels[-1]) + 1
+            filter_column_label = _get_label_from_number(filter_column_label_number)
 
             json_ret['list_topk_indices'] = insert_as_column.insert_as_column_topk_column(table, cheader_to_clabel, all_row_labels[0], all_row_labels[-1], all_column_labels[0], all_column_labels[-1], filter_column_label, metric, is_asc, k)
 
@@ -458,7 +458,7 @@ def _list_all_dimensions_metrics(table, dimensions, metric):
                 all_dimensions.append(column)
     return (all_dimensions, all_metrics)
 
-def get_number_of_column_label(label):
+def _get_number_of_column_label(label):
     """
     This function returns a number which corresponds to the label.
     Example : 'A' -> 1 , 'Z' -> 26 , 'AA' -> 27 , 'BA' -> 53
@@ -484,7 +484,7 @@ def get_number_of_column_label(label):
 
     return num
 
-def get_label_from_number(num):
+def _get_label_from_number(num):
     """
     This function returns the label associated with the corresponding number
     Example : 1 -> 'A' , 26 -> 'Z' , 27 -> 'AA' , 53 -> 'BA'
@@ -513,7 +513,7 @@ def get_label_from_number(num):
 
     return label[::-1]
 
-def get_all_column_labels(rangeA1Notation):
+def _get_all_column_labels(rangeA1Notation):
     """
     This function returns a list which gives all the column labels present in the table
 
@@ -542,15 +542,15 @@ def get_all_column_labels(rangeA1Notation):
 
     list_of_column_labels = []
 
-    starting_col_label_number = get_number_of_column_label(starting_col)
-    ending_col_label_number = get_number_of_column_label(ending_col)
+    starting_col_label_number = _get_number_of_column_label(starting_col)
+    ending_col_label_number = _get_number_of_column_label(ending_col)
 
     for label_number in range(starting_col_label_number, ending_col_label_number + 1) :
-        list_of_column_labels.append(get_label_from_number(label_number))
+        list_of_column_labels.append(_get_label_from_number(label_number))
 
     return list_of_column_labels
 
-def get_all_row_labels(rangeA1Notation):
+def _get_all_row_labels(rangeA1Notation):
     """
     This function returns a list which gives all the row labels present in the table
 
@@ -584,7 +584,7 @@ def get_all_row_labels(rangeA1Notation):
 
     return list_of_row_labels
 
-def get_cheader_to_clabel(table, all_column_labels): 
+def _get_cheader_to_clabel(table, all_column_labels): 
     """ 
     This function returns a dictionary mapping all column headers to their respective
     column label.
