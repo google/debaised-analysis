@@ -64,6 +64,29 @@ def test_3():
 
     assert(str(query_result) == expected_result)
 
+
+def test_4():
+    """
+        question :  compare sum revenue for A vs all
+        here the valeues are hardcode as such that sum of vaules is same 
+        for A and all, so this will check the division by zero case.
+     """
+    table = pandas.DataFrame()
+    table['Revenue'] = [30, 10, 10, 10]
+    table['Employee'] = ['A', 'B', 'C', 'D']
+ 
+
+    query_result = benchmark_set_too_different.benchmark_set_too_different(table, 'Revenue',
+                                                   ['Revenue'],
+                                                   'Employee', 'A', SummaryOperators.SUM)
+    print(query_result)
+
+    expected_result = 'None'
+
+    assert(str(query_result) == expected_result)
+
+
+
 print("\n\ncompare average hour work per day of A and rest all interns.\n")
 test_1()
 
@@ -72,5 +95,8 @@ test_2()
 
 print("\n\ncompare average revenue for A vs all\n")
 test_3()
+
+print("\n\ncompare sum revenue for A vs all\n")
+test_4()
 
 print("\nTest cases completed")

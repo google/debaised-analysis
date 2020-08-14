@@ -174,7 +174,7 @@ def _calculate_relation(val1, val2):
         similarity = |val1 - val2| / (|val1| + |val2|)
     """
 
-    if val1 == val2:
+    if (abs(val1) + abs(val2)) == 0:
         return 0
     result = abs(val1 - val2) / (abs(val1) + abs(val2))
 
