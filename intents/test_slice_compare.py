@@ -38,9 +38,9 @@ def test_1():
                                                )
     print(query_result)
 
-    expected_result = """   season         batsman_team  total_runs
-0    2008  Chennai Super Kings         868
-1    2008       Mumbai Indians         346"""
+    expected_result = """   season         batsman_team  SUM of total_runs
+0    2008  Chennai Super Kings                868
+1    2008       Mumbai Indians                346"""
     expected_suggestion = """[]"""
 
     assert(expected_result == query_result[0].to_string())
@@ -60,10 +60,10 @@ def test_2():
                                                dimensions = ['year'])
     print(query_result)
 
-    expected_result = """   year Person name  salary
-0  2019           A   10239
-1  2019           B    8190"""
-    expected_suggestion = "[{'suggestion': 'the relation between slices might changed a lot if you will consider month in grouping.', 'oversight': <Oversights.SIMPSONS_PARADOX: 8>, 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}]"
+    expected_result = """   year Person name  SUM of salary
+0  2019           A          10239
+1  2019           B           8190"""
+    expected_suggestion = """[{'suggestion': 'the relation between slices might changed a lot if you will consider month in grouping.', 'oversight': <Oversights.SIMPSONS_PARADOX: 8>, 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}]"""
 
     assert(expected_result == query_result[0].to_string())
     assert(expected_suggestion == str(query_result[1]))
@@ -82,29 +82,29 @@ def test_3():
                                                slices = [('innings', Filters.IN, ['1st', '2nd'])])
     print(query_result)
 
-    expected_output = """                   batsman_team innings  total_runs
-0           Chennai Super Kings     1st         544
-1           Chennai Super Kings     2nd         324
-2               Deccan Chargers     1st          40
-3               Deccan Chargers     2nd         102
-4              Delhi Daredevils     1st         248
-5              Delhi Daredevils     2nd         342
-6                 Gujarat Lions     1st         100
-7                 Gujarat Lions     2nd           4
-8               Kings XI Punjab     1st         448
-9               Kings XI Punjab     2nd         522
-10        Kolkata Knight Riders     1st         338
-11        Kolkata Knight Riders     2nd         708
-12               Mumbai Indians     1st         330
-13               Mumbai Indians     2nd          16
-14                Pune Warriors     1st          12
-15                Pune Warriors     2nd         158
-16             Rajasthan Royals     1st         368
-17             Rajasthan Royals     2nd         608
-18  Royal Challengers Bangalore     1st         866
-19  Royal Challengers Bangalore     2nd         136
-20          Sunrisers Hyderabad     1st          63
-21          Sunrisers Hyderabad     2nd         331"""
+    expected_output = """                   batsman_team innings  SUM of total_runs
+0           Chennai Super Kings     1st                544
+1           Chennai Super Kings     2nd                324
+2               Deccan Chargers     1st                 40
+3               Deccan Chargers     2nd                102
+4              Delhi Daredevils     1st                248
+5              Delhi Daredevils     2nd                342
+6                 Gujarat Lions     1st                100
+7                 Gujarat Lions     2nd                  4
+8               Kings XI Punjab     1st                448
+9               Kings XI Punjab     2nd                522
+10        Kolkata Knight Riders     1st                338
+11        Kolkata Knight Riders     2nd                708
+12               Mumbai Indians     1st                330
+13               Mumbai Indians     2nd                 16
+14                Pune Warriors     1st                 12
+15                Pune Warriors     2nd                158
+16             Rajasthan Royals     1st                368
+17             Rajasthan Royals     2nd                608
+18  Royal Challengers Bangalore     1st                866
+19  Royal Challengers Bangalore     2nd                136
+20          Sunrisers Hyderabad     1st                 63
+21          Sunrisers Hyderabad     2nd                331"""
     expected_suggestion = """[]"""
 
     assert(expected_output == query_result[0].to_string())
@@ -140,12 +140,12 @@ def test_5():
                                                dimensions = ['class'])
     print(query_result)
 
-    expected_output = """  class student_name  marks
-0   7th            A     75
-1   7th            B     75
-2   8th            A     75
-3   8th            B     75"""
-    expected_suggestion = "[{'suggestion': 'Some values are similar here but will vary if we add subject for grouping ', 'oversight': <Oversights.TOP_DOWN_ERROR: 9>, 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}, {'row': 3, 'confidence_score': 100}, {'row': 4, 'confidence_score': 100}]}, {'suggestion': 'the relation between slices might changed a lot if you will consider subject in grouping.', 'oversight': <Oversights.SIMPSONS_PARADOX: 8>, 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}]"
+    expected_output = """  class student_name  MEAN of marks
+0   7th            A             75
+1   7th            B             75
+2   8th            A             75
+3   8th            B             75"""
+    expected_suggestion = "[{'suggestion': 'Median is very different from the Mean', 'oversight': <Oversights.MEAN_VS_MEDIAN: 7>, 'is_row_level_suggestion': True, 'confidence_score': -3.0792014356780038, 'row_list': [{'row': 1, 'confidence_score': -3.0792014356780038}, {'row': 2, 'confidence_score': 3.0792014356780038}, {'row': 3, 'confidence_score': 3.0792014356780038}, {'row': 4, 'confidence_score': -3.0792014356780038}]}, {'suggestion': 'Some values are similar here but will vary if we add subject for grouping ', 'oversight': <Oversights.TOP_DOWN_ERROR: 9>, 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}, {'row': 3, 'confidence_score': 100}, {'row': 4, 'confidence_score': 100}]}, {'suggestion': 'the relation between slices might changed a lot if you will consider subject in grouping.', 'oversight': <Oversights.SIMPSONS_PARADOX: 8>, 'is_row_level_suggestion': True, 'row_list': [{'row': 1, 'confidence_score': 100}, {'row': 2, 'confidence_score': 100}]}]"
 
     assert(expected_output == query_result[0].to_string())
     assert(expected_suggestion == str(query_result[1]))

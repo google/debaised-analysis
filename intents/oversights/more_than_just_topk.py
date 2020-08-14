@@ -83,7 +83,10 @@ def more_than_just_topk(result_table, k, metric):
         else:
             break
 
-    confidence_score = abs(result_table[metric][new_k] - result_table[metric][k - 1]) / standard_deviation_topk
+    if standard_deviation_topk == 0:
+        return
+
+    confidence_score = abs(result_table[metric][new_k - 1] - result_table[metric][k - 1]) / standard_deviation_topk
 
     if new_k != k:
         change_list = {'k':new_k}

@@ -99,7 +99,7 @@ def benchmark_set_too_different(table, metric, all_metric, slice_compare_column,
         grouping_columns = dimensions.copy()
     grouping_columns.append(slice_compare_column)
     
-    result_table = aspects.group_by(updated_table, grouping_columns, summary_operator)
+    result_table = aspects.group_by(updated_table, grouping_columns, summary_operator)['table']
 
     other_metrics = all_metric.copy()
     other_metrics.remove(metric)
@@ -174,7 +174,7 @@ def _calculate_relation(val1, val2):
         similarity = |val1 - val2| / (|val1| + |val2|)
     """
 
-    if val1 == val2:
+    if (abs(val1) + abs(val2)) == 0:
         return 0
     result = abs(val1 - val2) / (abs(val1) + abs(val2))
 

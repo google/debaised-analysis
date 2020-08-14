@@ -21,10 +21,21 @@ on it and return the updated table.
 Example in slicing - the rows that do not satisft the slicing condition
 are dropped.
 """
-import datetime
-from util import enums
+from util import enums, date_module
+import datetime , statistics
+from oversights.mean_vs_median import mean_vs_median
+from oversights.attribution_with_hidden_negative import attribution_with_hidden_negative
 
-def apply_date_range(table, date_range, date_column_name, date_format,  **kwargs):
+# Global Variables used by group_by and _mean to give oversights
+
+# Row index of the groups in the result table
+group_row_index = 1
+
+# List of suggestions created by grouping , each suggestion being a dictionary defined by the oversight
+suggestions = []
+
+
+def apply_date_range(table, date_range, date_column_name, day_first, **kwargs):
     """This function removes the rows from from the table that
        are not in the date range(contains start date and end date) given.
 
@@ -33,15 +44,13 @@ def apply_date_range(table, date_range, date_column_name, date_format,  **kwargs
             It has the contents of the csv file
         date_range: Type-tuple
             Tuple of start_date and end_date
+            start_date & end_date are in a fixed format - '%Y-%m-%d'
         date_column_name: Type-str
             It is the name of column which contains date
-        date_format: Type-str
-            It is required by datetime.strp_time to parse the date in the format
-            Format Codes
-https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
-        reset_index: Bool
-            True/False- to perform reset index or not
-            Used only for generating the new column in insert_as_column
+        day_first: Type-str
+            Day_first denotes that does day in the date occurs before month in the
+            dates in the date column
+            Example - '29-02-19', here day_first is true
 
     Returns:
         The updated table after aplying the condition, in pandas.dataframe type
@@ -49,28 +58,24 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
     if date_range is None:
         return table
 
-    # initialized with True, so will not affect intents layer
     reset_index = kwargs.get('reset_index', True)
-
+    
     num_rows = table.shape[0]
 
-    rows_to_be_dropped = []
-
     for row in range(num_rows):
-        row_date = datetime.datetime.strptime(table.loc[row, date_column_name],
-                                              date_format)
-        start_date = datetime.datetime.strptime(date_range[0], date_format)
-        end_date = datetime.datetime.strptime(date_range[1], date_format)
+        row_date = date_module.str_to_datetime(table.loc[row, date_column_name],
+                                               day_first)
+
+        # format of start_date & end_date strings is always fixed
+        start_date = datetime.datetime.strptime(date_range[0], '%Y-%m-%d')
+        end_date = datetime.datetime.strptime(date_range[1], '%Y-%m-%d')
 
         if row_date < start_date or end_date < row_date:
-            rows_to_be_dropped.append(row)
+            table = table.drop([row])
 
-    table = table.drop(rows_to_be_dropped)
-    
     # drop=True drops the new columnn named 'index' created in reset_index call
     if reset_index is True:
         table = table.reset_index(drop=True)
-
     return table
 
 def slice_table(table, slices,  **kwargs):
@@ -189,7 +194,158 @@ def _count_distinct(values):
         distinct_set.add(value)
     return len(distinct_set)
 
-def group_by(table, dimensions, summary_operator):
+
+def _mean(values):
+    """ This function returns the average of values ,
+    along with it the function also tests the existence of
+    mean_vs_median oversight
+
+    Args:
+        values: Type - anything that can be iterated over
+
+    Returns:
+        Average of values
+
+    Updates global variables,
+        group_row_index always increases by 1
+        suggestions is updated by the mean_vs_median suggestion if it exists    
+    """
+
+    global group_row_index , suggestions
+
+    mean = statistics.mean(values)
+
+    # to collect all numbers in values
+    numbers = []
+
+    for value in values :
+        numbers.append(value)
+
+    suggestion = mean_vs_median(numbers)
+
+    if(suggestion is not None) :
+
+        row_suggestion = {}
+        row_suggestion['row'] = group_row_index
+        row_suggestion['confidence_score'] = suggestion['confidence_score']
+
+        # First mean_vs_median suggestion
+        if len(suggestions) == 0:
+            suggestion['row_list'] = []
+            
+            suggestion['row_list'].append(row_suggestion)
+            suggestions.append(suggestion)
+        
+        else:
+            #Updating the mean_vs_median suggestion
+            suggestions[-1]['row_list'].append(row_suggestion)
+
+    group_row_index += 1
+
+    return mean
+
+def _sum_for_propotion(values):
+    """ This function returns the sum of values ,
+    it is called separately to be able to check the 
+    oversight of attribution with hidden negative
+
+    Args:
+        values: Type - anything that can be iterated over
+
+    Returns:
+        sum of values
+
+    Updates global variables,
+        group_row_index always increases by 1
+        suggestions is updated by the attribution with hidden negative suggestion if it exists    
+    """
+
+    global group_row_index , suggestions
+
+    # to collect all numbers in values
+    numbers = []
+
+    sum_of_values = 0
+
+    for value in values :
+        sum_of_values += value
+        numbers.append(value)
+
+    suggestion = attribution_with_hidden_negative(numbers)
+
+    if(suggestion is not None) :
+
+        row_suggestion = {}
+        row_suggestion['row'] = group_row_index
+        row_suggestion['confidence_score'] = suggestion['confidence_score']
+
+        # First suggestion
+        if len(suggestions) == 0:
+            suggestion['row_list'] = []
+            
+            suggestion['row_list'].append(row_suggestion)
+            suggestions.append(suggestion)
+        
+        else:
+            #Updating the suggestion
+            suggestions[-1]['row_list'].append(row_suggestion)
+
+    group_row_index += 1
+
+    return sum_of_values
+
+def _count_for_propotion(values):
+    """ This function returns the count of values ,
+    it is called separately to be able to check the 
+    oversight of attribution with hidden negative
+
+    Args:
+        values: Type - anything that can be iterated over
+
+    Returns:
+        sum of values
+
+    Updates global variables,
+        group_row_index always increases by 1
+        suggestions is updated by the attribution with hidden negative suggestion if it exists    
+    """
+
+    global group_row_index , suggestions
+
+    # to collect all numbers in values
+    numbers = []
+
+    count_of_values = 0
+
+    for value in values :
+        count_of_values += 1
+        numbers.append(value)
+
+    suggestion = attribution_with_hidden_negative(numbers)
+
+    if(suggestion is not None) :
+
+        row_suggestion = {}
+        row_suggestion['row'] = group_row_index
+        row_suggestion['confidence_score'] = suggestion['confidence_score']
+
+        # First suggestion
+        if len(suggestions) == 0:
+            suggestion['row_list'] = []
+            
+            suggestion['row_list'].append(row_suggestion)
+            suggestions.append(suggestion)
+        
+        else:
+            #Updating the suggestion
+            suggestions[-1]['row_list'].append(row_suggestion)
+
+    group_row_index += 1
+
+    return count_of_values
+
+
+def group_by(table, dimensions, summary_operator, **kwargs):
     """Groups the column by the columns in dimensions
     Basically makes a map in which keys contain dimensions and values
     are evaluated after applying the summary operator.
@@ -203,15 +359,32 @@ def group_by(table, dimensions, summary_operator):
             It denotes the summary operator
 
     Returns:
-        Returns the table as a dataframe obj after applying grouping
+        Returns a dictionary with the following (key,values) :
+        'table' -> the table as a dataframe obj after applying grouping
+        'suggestions' -> List of suggestions structure i.e debiasing suggestion 
     """
+
+    global group_row_index , suggestions
+
+    # Dictionary that will be returned
+    result = {}
+    result['table'] = table
+    result['suggestions'] = []
+
+    # defining the first row index as 1
+    group_row_index = 1
+
+    # starting with an empty list of suggestions
+    suggestions = []
+
     if summary_operator is None:
-        return table
+        return result
+
     if summary_operator == enums.SummaryOperators.SUM:
         table = table.groupby(dimensions).sum()
 
     if summary_operator == enums.SummaryOperators.MEAN:
-        table = table.groupby(dimensions).mean()
+        table = table.groupby(dimensions).agg(_mean)
 
     if summary_operator == enums.SummaryOperators.MEDIAN:
         table = table.groupby(dimensions).median()
@@ -239,22 +412,25 @@ def group_by(table, dimensions, summary_operator):
 
     if summary_operator == enums.SummaryOperators.DISTINCT:
         table = table.groupby(dimensions).agg(_count_distinct)
-
+    
     if summary_operator == enums.SummaryOperators.PROPORTION_OF_SUM:
-        table = table.groupby(dimensions).sum()
+        table = table.groupby(dimensions).agg(_sum_for_propotion)
         for column in table.columns:
             if column not in dimensions:
                 table[column] /= table[column].sum()
 
     if summary_operator == enums.SummaryOperators.PROPORTION_OF_COUNT:
-        table = table.groupby(dimensions).count()
+        table = table.groupby(dimensions).agg(_count_for_propotion)
         for column in table.columns:
             if column not in dimensions:
                 table[column] /= table[column].sum()
 
     table = table.reset_index()
 
-    return table
+    result['table'] = table
+    result['suggestions'] = suggestions
+
+    return result
 
 def granular_time(row_date, granularity):
     """ Sets the time such that all time thats difference
@@ -292,3 +468,34 @@ def granular_time(row_date, granularity):
         row_date = row_date.replace(second=0, minute=0, hour=0, day=1, month=1)
 
     return row_date
+
+def update_metric_column_name(table, summary_operator, metric):
+    """
+    The function updates the name of the metric column to
+    '<summary_operator> of metric'.
+
+    Args:
+        table: Type-Pandas.DataFrame 
+            The table in which the name of metric is to be updated
+        summary_operator: Type-SummaryOperators enum members
+            It denotes the summary operator
+        metric: Type-string
+            It is the name of the column on which
+            summary operator is applied in case of grouping. Metric could a column
+            containing strings, if we are applying count operator on it.
+
+    Returns:
+        The table with name of metric column updated.
+    """
+    if metric is None:
+        return table
+    # New name of metric column
+    updated_metric_name = '{} of {}'.format(summary_operator.name, metric)
+
+    # Create new column 
+    table[updated_metric_name] = table[metric]
+
+    # Drop old column
+    table = table.drop([metric], axis=1)
+
+    return table

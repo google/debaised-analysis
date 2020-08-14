@@ -25,7 +25,7 @@ Some of the operations are optional.
 
 import datetime
 
-from util import aspects, oversights_order, rank_oversights
+from util import aspects, date_module, oversights_order, rank_oversights
 
 def trend(table, metric, granularity, summary_operator, **kwargs):
     """This function will implement the trend intent
@@ -50,10 +50,10 @@ def trend(table, metric, granularity, summary_operator, **kwargs):
             represents that we don't need to crop
         date_column_name: Type-str
             It is the name of column which contains date
-        date_format: Type-str
-            It is required by datetime.strp_time to parse the date in the format
-            Format Codes-
-https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
+        day_first: Type-str
+            Day_first denotes that does day in the date occurs before month in the
+            dates in the date column
+            Example - '29-02-19', here day_first is true
         slices: Type-dictionary (will be changed)
             contains the key as column name and value as
             instance we want to slice
@@ -63,19 +63,20 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
             It denotes the granularity we need to apply to the dates.
 
     Returns:
-        The function will return the `table(a pandas dataframe object)`
-        after applying the intent on the given
-        `table(a pandas dataframe object)`
+        The function will return both suggestions and the results in a tuple.
+        (results, suggestions)
+        results: Type - pandas dataframe, The results of the intended trend
+        suggestions: Type - List of strings, List of suggestions.
 
     """
     date_column_name = kwargs.get('date_column_name', 'date')
     date_range = kwargs.get('date_range', None)
-    date_format = kwargs.get('date_format', 'yyyy-mm-dd')
+    day_first = kwargs.get('day_first', False)
 
     slices = kwargs.get('slices', None)
 
     table = aspects.apply_date_range(table, date_range,
-                                     date_column_name, date_format)
+                                     date_column_name, day_first)
 
     table = aspects.slice_table(table, slices)
 
@@ -86,16 +87,18 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     num_rows = table.shape[0]
     for row in range(num_rows):
-        row_date = datetime.datetime.strptime(table.loc[row, date_column_name],
-                                              date_format)
+        row_date = date_module.str_to_datetime(table.loc[row, date_column_name],
+                                               day_first)
         row_date = aspects.granular_time(row_date, granularity)
-        table.loc[row, date_column_name] = row_date.strftime(date_format)
+        table.loc[row, date_column_name] = row_date.strftime('%Y-%m-%d')
 
-    table = aspects.group_by(table, [date_column_name], summary_operator)
+    after_group_by = aspects.group_by(table, [date_column_name], summary_operator)
+
+    table = after_group_by['table']
 
     table = table.sort_values(by=[date_column_name])
 
-    suggestions = []
+    suggestions = after_group_by['suggestions']
 
     # add mean vs median suggestion
 
@@ -103,4 +106,4 @@ https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
     suggestions = rank_oversights.rank_oversights(suggestions, order)
 
-    return table
+    return (table, suggestions)
