@@ -113,7 +113,22 @@ def show(table,**kwargs):
         # To groupby 'Summary Operator' column inserted
         dimensions.append('Summary Operator')
 
+        after_group_by = aspects.group_by(table, dimensions, summary_operator)
+  
+        table = after_group_by['table']
 
+        suggestions = []
+
+        if len(after_group_by['suggestions']) > 0:
+            suggestions.extend(after_group_by['suggestions'])
+
+        # Droping the 'Summary Operator' column which was inserted above
+        table = table.drop(columns=['Summary Operator'])
+        
+        table = aspects.update_metric_column_name(table, summary_operator, metric)
+        
+        return (table, suggestions)
+      
     after_group_by = aspects.group_by(table, dimensions, summary_operator)
 
     table = after_group_by['table']
@@ -128,7 +143,7 @@ def show(table,**kwargs):
 
     if summary_operator is not None:
         table = aspects.update_metric_column_name(table, summary_operator, metric)
-    
+
     return (table , suggestions)
 
 
