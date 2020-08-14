@@ -23,7 +23,7 @@ import json, pandas, enum, topk, slice_compare, correlation, trend, time_compare
 from flask import escape
 from show import show
 from util import enums, insert_as_column
-from oversight import wrong_points
+from oversights import wrong_points
 
 # ToDo : Change the name hello_http (default name on GCP) to a better name
 # that makes sense of the function & also make changes in the UI javascript
@@ -109,13 +109,12 @@ def hello_http(request):
         slice2 = slice_comparision_arg['slice2']
 
     if time_comparision_arg is not None:
-        print(time_comparision_arg)
         time_compare_column = time_comparision_arg['dateCol']
         date_range1 = (time_comparision_arg['dateStart1'],
                        time_comparision_arg['dateEnd1'])
         date_range2 = (time_comparision_arg['dateStart2'],
                        time_comparision_arg['dateEnd2'])
-        date_format = request_json['dateColumns'][time_compare_column]['day_first']
+        day_first = request_json['dateColumns'][time_compare_column]['day_first']
 
     if metric == 'null':
         metric = None
@@ -170,6 +169,7 @@ def hello_http(request):
             updated_suggestions.append(updated_suggestion)
 
         suggestions = updated_suggestions
+
                                                                       
     elif intent == 'slice_compare':
         query_result = slice_compare.slice_compare(query_table_dataframe,
@@ -202,7 +202,7 @@ def hello_http(request):
                                                  metric, all_dimensions,
                                                  time_compare_column,
                                                  date_range1, date_range2,
-                                                 date_format, summary_operator,
+                                                 day_first, summary_operator,
                                                  slices=slices_list,
                                                  dimensions = dimensions
                                                  )
@@ -219,14 +219,6 @@ def hello_http(request):
 
         suggestions = updated_suggestions
 
-        query_table_dataframe = slice_compare.slice_compare(query_table_dataframe,
-                                                            metric, dimensions, [], [],
-                                                            slice_compare_column_list,
-                                                            summary_operator=summary_operator,
-                                                            date_column_name=date_column_name,
-                                                            date_range=date_range,
-                                                            slices=slices_list
-                                                            )
     elif intent == 'correlation':
         query_table_dataframe = correlation.correlation(query_table_dataframe,
                                                         correlation_metrics['metric1'],
@@ -254,7 +246,9 @@ def hello_http(request):
 
     wrong_points_suggestion = wrong_points.wrong_points(query_table_dataframe)
 
+
     if wrong_points_suggestion is not None:
+        wrong_points_suggestion['oversight'] =wrong_points_suggestion['oversight'].name
         suggestions = [wrong_points_suggestion] + suggestions
 
     final_table = []
@@ -262,6 +256,7 @@ def hello_http(request):
     # converting into a json object and returning
     final_table = query_table_dataframe.values.tolist()
     final_table.insert(0, list(query_table_dataframe.columns.values))
+
 
     json_ret = {'outputTable' : final_table, 'suggestions' : suggestions}
 
@@ -278,7 +273,6 @@ def hello_http(request):
             filter_column_label = _get_label_from_number(filter_column_label_number)
 
             json_ret['list_topk_indices'] = insert_as_column.insert_as_column_topk_column(table, cheader_to_clabel, all_row_labels[0], all_row_labels[-1], all_column_labels[0], all_column_labels[-1], filter_column_label, metric, is_asc, k)
-
 
     json_string = json.dumps(json_ret)
     return json_string
