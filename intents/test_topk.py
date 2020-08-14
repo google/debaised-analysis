@@ -33,7 +33,7 @@ def test_1():
     	                        slices=[('season', enums.Filters.EQUAL_TO, 2017)],
     	                        date_range=('2008-05-08', '2017-04-12'),
     	                        date_column_name='date',
-    	                        date_format='%Y-%m-%d')
+    	                        day_first=False)
     print(query_result)
     expected_result = """        city  win_by_runs
 0       Pune           97
@@ -60,7 +60,7 @@ def test_2():
     	                        5, slices=[('season', enums.Filters.EQUAL_TO, 2017)],
     	                        date_range=('2017-05-09', '2017-05-12'),
     	                        date_column_name='date',
-                                date_format='%Y-%m-%d',
+                                day_first=False,
     	                        summary_operator=enums.SummaryOperators.MEAN)
     print(query_result)
     expected_result = """  player_of_match  MEAN of win_by_runs
@@ -83,7 +83,7 @@ def test_3():
     	                        slices=None,
                                 date_range=None,
     	                        date_column_name='date',
-                                date_format='%Y-%m-%d',
+                                day_first=False,
     	                        summary_operator=enums.SummaryOperators.COUNT)
     print(query_result)
     expected_result = """  Creation  COUNT of Department_ID
@@ -101,7 +101,7 @@ def test_4():
     query_result = topk.topk(table, 'Year', ['Theme'], True, -1, slices=None,
     	                        date_range=None,
                                 date_column_name='date',
-    	                        date_format='%Y-%m-%d',
+    	                        day_first=False,
                                 group_columns=None,
     	                        summary_operator=None)
     print(query_result)
@@ -124,7 +124,7 @@ def test_5():
     table = data.spider_eval.evaluation.get_table('bike_1', 'station')
     query_result = topk.topk(table, 'lat', ['city'], False, -1, slices=None,
     	                        date_range=None, date_column_name='date',
-    	                        date_format='%Y-%m-%d',
+    	                        day_first=False,
     	                        summary_operator=enums.SummaryOperators.MAX)
     print(query_result)
     expected_result = """            city  MAX of lat
@@ -146,7 +146,7 @@ def test_6():
     	                        slices=None,
                                 date_range=None,
     	                        date_column_name='date',
-                                date_format='%Y-%m-%d')
+                                day_first=False)
     print(query_result)
     expected_result = """  Publication_Date       Price
 0      August 2008  15000000.0
@@ -168,7 +168,7 @@ def test_7():
     query_result = topk.topk(table, 'salary', ['name'], True, -1, slices=None,
     	                        date_range=None,
                                 date_column_name='date',
-    	                        date_format='%Y-%m-%d')
+    	                        day_first=False)
     print(query_result)
     expected_result = """                name  salary
 0        Milo Brooks      20
@@ -214,9 +214,9 @@ def test_8():
     table = pandas.read_csv('data/rating.csv')
     query_result = topk.topk(table, 'Rating', ['User Name'], True, 4,
                              slices=None,
-                             date_range=('23/05/2010', '25/05/2011'),
+                             date_range=('2010-05-23', '2011-05-25'),
                              date_column_name='date',
-                             date_format='%d/%m/%Y')
+                             day_first=True)
     print(query_result)
     expected_result = """  User Name  Rating
 0      Benq    3400

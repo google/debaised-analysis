@@ -32,8 +32,8 @@ def test_1():
     table = pandas.read_csv('data/cricket_data.csv')
     query_result = time_compare.time_compare(table, 'total_run',
                                              ['team_name', 'date_of_match'],
-                                             'date_of_match', ('01/01/2008', '31/12/2009'), 
-                                              ('01/01/2010', '31/12/2011'), '%d/%m/%Y',
+                                             'date_of_match', ('2008-01-01', '2009-12-31'), 
+                                              ('2010-01-01', '2011-12-31'), True,
                                              SummaryOperators.SUM,
                                              slices = [('team_name', Filters.EQUAL_TO, 'MI')],
                                              dimensions = ['team_name']
@@ -41,8 +41,9 @@ def test_1():
     print(query_result[0])
 
     expected_result = """  team_name            date_of_match  SUM of total_run
-0        MI  01/01/2008 - 31/12/2009               776
-1        MI  01/01/2010 - 31/12/2011               420"""
+0        MI  2008-01-01 - 2009-12-31               776
+1        MI  2010-01-01 - 2011-12-31               420"""
+
     expected_suggestions = "[]"
 
     assert(expected_result == query_result[0].to_string())
@@ -59,7 +60,7 @@ def test_2():
     query_result = time_compare.time_compare(table, 'tournament',
                                              ['home_team', 'away_team', 'date', 'country'],
                                              'date', ('1871-11-30', '1950-12-30'), 
-                                              ('1950-12-31', '2020-01-01'), '%Y-%m-%d',
+                                              ('1950-12-31', '2020-01-01'), False,
                                              SummaryOperators.COUNT,
                                              slices = [('home_team', Filters.EQUAL_TO, 'England'), 
                                                        ('away_team', Filters.EQUAL_TO, 'Wales'), 

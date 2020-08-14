@@ -50,10 +50,10 @@ def show(table,**kwargs):
             Tuple of start_date and end_date
         date_column_name: Type-str
             It is the name of column which contains date
-        date_format: Type-str
-            It is required by datetime.strp_time to parse the date in the format
-            Format Codes
-            https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
+        day_first: Type-str
+            Day_first denotes that does day in the date occurs before month in the
+            dates in the date column
+            Example - '29-02-19', here day_first is true
         slices: Type-List of tuples
             Tuple represents the conditon to keep the row.
             (column_name, filter, value)
@@ -77,7 +77,7 @@ def show(table,**kwargs):
 
     date_column_name = kwargs.get('date_column_name', 'date')
     date_range = kwargs.get('date_range', None)
-    date_format = kwargs.get('date_format', 'yyyy-mm-dd')
+    day_first = kwargs.get('day_first', False)
 
     slices = kwargs.get('slices', None)
 
@@ -87,7 +87,7 @@ def show(table,**kwargs):
 
     dimensions = kwargs.get('dimensions',None)
 
-    table = aspects.apply_date_range(table, date_range, date_column_name, date_format)
+    table = aspects.apply_date_range(table, date_range, date_column_name, day_first)
 
     table = aspects.slice_table(table, slices)
 

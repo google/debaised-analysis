@@ -33,9 +33,9 @@ def test_1():
     query_result = show.show(table,
                                 dimensions=['city'],
                                 slices=[('season', Filters.EQUAL_TO, 2017)],
-                                date_range=('2008-05-08', '2017-04-12'),
-                                date_column_name='date',
-                                date_format='%Y-%m-%d')
+    	                        date_range=('2008-05-08', '2017-04-12'),
+    	                        date_column_name='date',
+    	                        day_first=False)
 
 
     print(query_result);
@@ -67,9 +67,9 @@ def test_2():
                                 dimensions=['player_of_match'],
                                 metric='win_by_runs' ,
                                 slices=[('season', Filters.EQUAL_TO, 2017)],
-                                date_range=('2017-05-09', '2017-05-12'),
-                                date_column_name='date', date_format='%Y-%m-%d',
-                                summary_operator=SummaryOperators.MEAN)
+    	                        date_range=('2017-05-09', '2017-05-12'),
+    	                        date_column_name='date', day_first=False,
+    	                        summary_operator=SummaryOperators.MEAN)
     print(query_result)
     expected_result = """  player_of_match  MEAN of win_by_runs
 0         KK Nair                    7
@@ -136,9 +136,9 @@ def test_5():
     query_result = show.show(table,
                                 dimensions=['umpire1'],
                                 slices=[('season', Filters.EQUAL_TO, 2017)],
-                                date_range=('2017-05-09', '2017-05-12'),
-                                date_column_name='date', date_format='%Y-%m-%d',
-                                summary_operator=SummaryOperators.DISTINCT)
+    	                        date_range=('2017-05-09', '2017-05-12'),
+    	                        date_column_name='date', day_first=False,
+    	                        summary_operator=SummaryOperators.DISTINCT)
     print(query_result)
     expected_result = """                 umpire1
 0             A Deshmukh
@@ -234,7 +234,7 @@ def test_7():
     table = pandas.read_csv('data/matches.csv')
     query_result = show.show(table,
                                 metric='win_by_runs' ,
-                                date_column_name='date', date_format='%Y-%m-%d',
+                                date_column_name='date', day_first=False,
                                 summary_operator=SummaryOperators.SUM)
     print(query_result)
     expected_result = """  Summary Operator  SUM of win_by_runs
@@ -256,7 +256,7 @@ def test_8():
                                 metric='win_by_runs' ,
                                 slices=[('season', Filters.EQUAL_TO, 2017)],
                                 date_range=('2017-05-09', '2017-05-12'),
-                                date_column_name='date', date_format='%Y-%m-%d',
+                                date_column_name='date', day_first=False,
                                 summary_operator=SummaryOperators.MEAN)
     print(query_result)
     expected_result = """  Summary Operator  MEAN of win_by_runs
