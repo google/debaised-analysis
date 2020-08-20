@@ -60,7 +60,7 @@ def test_1():
     suggestions = more_than_just_topk.more_than_just_topk(result_table, k, metric)
 
     print(suggestions)
-    expected_suggestions = """{'change_list': {'k': 11}, 'suggestion': 'value of UnitCost in some rows after the top-k is similar to the Kth row', 'confidence_score': 0.0, 'oversight': <Oversights.MORE_THAN_JUST_TOPK: 3>}"""
+    expected_suggestions = """{'change_list': {'topKLimit': 11}, 'suggestion': 'value of UnitCost in some rows after the top-k is similar to the Kth row', 'confidence_score': 0.0, 'oversight': <Oversights.MORE_THAN_JUST_TOPK: 3>}"""
 
     assert(expected_suggestions == str(suggestions))
 
@@ -84,7 +84,7 @@ def test_2():
     suggestions = more_than_just_topk.more_than_just_topk(result_table, k, metric)
 
     print(suggestions)
-    expected_suggestions = """{'change_list': {'k': 13}, 'suggestion': 'value of UnitCost in some rows after the top-k is similar to the Kth row', 'confidence_score': 0.0, 'oversight': <Oversights.MORE_THAN_JUST_TOPK: 3>}"""
+    expected_suggestions = """{'change_list': {'topKLimit': 13}, 'suggestion': 'value of UnitCost in some rows after the top-k is similar to the Kth row', 'confidence_score': 0.0, 'oversight': <Oversights.MORE_THAN_JUST_TOPK: 3>}"""
 
     assert(expected_suggestions == str(suggestions))
 
